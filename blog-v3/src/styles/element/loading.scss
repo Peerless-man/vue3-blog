@@ -1,0 +1,100 @@
+/* coffee cup */
+.coffee_cup {
+  width: 20px;
+  height: 24px;
+  border: 2px rgb(87, 86, 86) solid;
+  border-radius: 0px 0px 5px 5px;
+  position: relative;
+  margin: 20px auto;
+  position: absolute;
+  background-color: #b0a5a5;
+}
+.coffee_cup:after,
+.coffee_cup:before {
+  position: absolute;
+  content: "";
+}
+.coffee_cup:after {
+  width: 5px;
+  height: 12px;
+  border: 2px #303030 solid;
+  border-left: none;
+  border-radius: 0px 20px 20px 0px;
+  left: 20px;
+}
+.coffee_cup:before {
+  width: 2px;
+  height: 5px;
+  background-color: rgb(87, 86, 86);
+  top: -10px;
+  left: 2px;
+  border-radius: 1px;
+  box-shadow: 5px 0px 0px 0px rgb(87, 86, 86), 5px -7px 0px 0px rgb(87, 86, 86), 10px 0px 0px 0px rgb(87, 86, 86);
+  -webkit-animation: steam 1s linear infinite alternate;
+  -moz-animation: steam 1s linear infinite alternate;
+  animation: steam 1s linear infinite alternate;
+}
+
+@-webkit-keyframes steam {
+  0% {
+    height: 5px;
+    transform: translateY(-2px);
+  }
+  100% {
+    height: 0px;
+    transform: translateY(2px);
+  }
+}
+@-moz-keyframes steam {
+  0% {
+    height: 5px;
+    transform: translateY(-2px);
+  }
+  100% {
+    height: 0px;
+    transform: translateY(2px);
+  }
+}
+@keyframes steam {
+  0% {
+    height: 5px;
+    transform: translateY(-2px);
+  }
+  100% {
+    height: 0px;
+    transform: translateY(2px);
+  }
+}
+
+/* 一些元素进入页面 离开页面的动画 */
+.above-enter {
+  animation: aboveEnter 0.8s ease-in-out;
+}
+
+.bottom-enter {
+  animation: bottomEnter 0.8s ease-in-out;
+}
+
+// 向上滚动进入
+@keyframes aboveEnter {
+  0% {
+    scale: 0.95;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+// 向下滚动进入
+@keyframes bottomEnter {
+  0% {
+    scale: 0.95;
+    transform: translateY(20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}

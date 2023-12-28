@@ -1,0 +1,263 @@
+.el-card {
+  border: none;
+  border-radius: 5px 5px 8px 8px;
+  box-shadow: var(--card-box-shadow) !important;
+  background: rgb(255, 255, 255, 0.3);
+  transition: all 0.3s;
+  &__body {
+    width: 100%;
+  }
+
+  :deep(.el-card__body) {
+    padding: 0 !important;
+  }
+}
+
+.card-hover:hover {
+  box-shadow: var(--card-hover-box-shadow) !important;
+  transform: translateY(-3px);
+}
+
+.el-dialog {
+  .el-dialog__header {
+    padding: 10px;
+  }
+  .el-dialog__body {
+    padding: 10px 20px;
+  }
+  .el-dialog__headerbtn {
+    position: absolute;
+    top: -5px;
+    right: 0;
+    font-size: 1.6rem;
+  }
+}
+
+.el-menu {
+  border-right: none;
+  background: transparent;
+  .el-menu-item {
+    border-bottom: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0 10px;
+    background-color: transparent;
+  }
+  .el-menu-item.is-active {
+    border-bottom: none;
+    color: var(--primary) !important;
+  }
+  .el-menu-item:not(.is-disabled):focus,
+  .el-menu-item:not(.is-disabled):hover {
+    color: var(--primary);
+    background-color: transparent;
+  }
+  .el-sub-menu__title {
+    font-size: 1.1rem;
+    padding: 0 10px;
+    border-bottom: none;
+    font-weight: 600;
+  }
+}
+.el-drawer {
+  font-size: 1.2rem;
+  .el-drawer__title {
+    font-size: 1.3rem;
+  }
+  .el-drawer__close-btn {
+    font-size: 1.6rem;
+  }
+}
+.el-button {
+  padding: 0.5rem 1rem;
+}
+
+.el-popper.is-light {
+  border: none !important;
+  font-weight: 600 !important;
+  color: #4090c9 !important;
+  background: linear-gradient(120deg, #faeeff, #cfebf3) !important;
+  max-height: 400px;
+}
+.el-popper.is-light .el-popper__arrow:before {
+  display: none;
+}
+.el-collapse-item__header {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  color: var(--font-color) !important;
+  padding: 0 10px;
+  background: linear-gradient(120deg, #faeeff, #cfebf3) !important;
+}
+.el-collapse-item__content {
+  background: linear-gradient(120deg, #faeeff, #cfebf3) !important;
+}
+.md-editor-catalog-link span {
+  color: var(--primary) !important;
+}
+.md-editor-catalog-active > span {
+  color: var(--md-active) !important;
+}
+.md-editor-catalog-link span:hover {
+  color: var(--md-active) !important;
+}
+.mk-cute-theme a {
+  border-bottom: none !important;
+}
+.el-select-dropdown__item {
+  padding: 0 32px 0 20px !important;
+}
+
+.el-avatar {
+  transition: ease-in-out 1s;
+  background: (
+    90deg,
+    #ffffff 1%,
+    #ead2ea 10.2%,
+    #e4d5ee 19.6%,
+    #d1def3 36.8%,
+    #b5dee5 62.2%,
+    #cfebf3 88.9%,
+    #ffffff 99%
+  ) !important;
+}
+
+.el-avatar:hover {
+  transform: rotate(360deg);
+  -webkit-transform: rotate(360deg);
+}
+
+.el-col-xl,
+.el-col-xl-auto,
+.el-col-xl-12,
+.el-col-xl-11,
+.el-col-xl-10,
+.el-col-xl-9,
+.el-col-xl-8,
+.el-col-xl-7,
+.el-col-xl-6,
+.el-col-xl-5,
+.el-col-xl-4,
+.el-col-xl-3,
+.el-col-xl-2,
+.el-col-xl-1,
+.el-col-lg,
+.el-col-lg-auto,
+.el-col-lg-12,
+.el-col-lg-11,
+.el-col-lg-10,
+.el-col-lg-9,
+.el-col-lg-8,
+.el-col-lg-7,
+.el-col-lg-6,
+.el-col-lg-5,
+.el-col-lg-4,
+.el-col-lg-3,
+.el-col-lg-2,
+.el-col-lg-1,
+.el-col-md,
+.el-col-md-auto,
+.el-col-md-12,
+.el-col-md-11,
+.el-col-md-10,
+.el-col-md-9,
+.el-col-md-8,
+.el-col-md-7,
+.el-col-md-6,
+.el-col-md-5,
+.el-col-md-4,
+.el-col-md-3,
+.el-col-md-2,
+.el-col-md-1,
+.el-col-sm,
+.el-col-sm-auto,
+.el-col-sm-12,
+.el-col-sm-11,
+.el-col-sm-10,
+.el-col-sm-9,
+.el-col-sm-8,
+.el-col-sm-7,
+.el-col-sm-6,
+.el-col-sm-5,
+.el-col-sm-4,
+.el-col-sm-3,
+.el-col-sm-2,
+.el-col-sm-1,
+.el-col,
+.el-col-auto,
+.el-col-12,
+.el-col-11,
+.el-col-10,
+.el-col-9,
+.el-col-8,
+.el-col-7,
+.el-col-6,
+.el-col-5,
+.el-col-4,
+.el-col-3,
+.el-col-2,
+.el-col-1 {
+  padding: 7.5px 3.75px !important;
+}
+
+.el-message {
+  top: 60px !important;
+}
+
+.el-popover.el-popper {
+  min-width: 30px !important;
+  padding: 3px !important;
+}
+
+.el-image__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.el-form-item {
+  padding: 15px 0;
+}
+
+.el-form-item__label {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.el-input__wrapper {
+  border-radius: 12px;
+}
+
+.el-textarea__inner::placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+input::-webkit-input-placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+input::-moz-placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+input:-ms-input-placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+// 手机
+@media screen and (max-width: 768px) {
+  .el-notification {
+    width: 12rem !important;
+    opacity: 0.7 !important;
+  }
+}
+
+// pc
+@media screen and (min-width: 768px) {
+  .el-notification {
+    width: 16rem !important;
+    opacity: 0.7 !important;
+  }
+}

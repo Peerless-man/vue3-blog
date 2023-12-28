@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0"
+    />
+    <title>小张的个人博客</title>
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="keywords" content="Vue3、前后端分离、个人博客网站" />
+    <meta
+      name="description"
+      content="一款基于Vue3、element-plus开发的个人博客网站，用于记录自己的前端学习、生活等"
+    />
+    <style>
+      body {
+        background-color: #fafafa;
+      }
+
+      .app-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 1;
+        height: 40px;
+        width: 40px;
+        transform: translate(-50%, -50%);
+      }
+
+      .ball {
+        position: absolute;
+        display: block;
+        left: 30px;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+        transition: all 0.5s;
+        animation: circleRotate 4s both infinite;
+        transform-origin: 0 250% 0;
+      }
+
+      @keyframes circleRotate {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(1440deg);
+        }
+      }
+
+      .ball-1 {
+        z-index: -1;
+        background-color: #2196f3;
+        animation-timing-function: cubic-bezier(0.5, 0.3, 0.9, 0.9);
+      }
+
+      .ball-2 {
+        z-index: -2;
+        background-color: #03a9f4;
+        animation-timing-function: cubic-bezier(0.5, 0.6, 0.9, 0.9);
+      }
+
+      .ball-3 {
+        z-index: -3;
+        background-color: #00bcd4;
+        animation-timing-function: cubic-bezier(0.5, 0.9, 0.9, 0.9);
+      }
+
+      .ball-4 {
+        z-index: -4;
+        background-color: #009688;
+        animation-timing-function: cubic-bezier(0.5, 1.2, 0.9, 0.9);
+      }
+
+      .ball-5 {
+        z-index: -5;
+        background-color: #4caf50;
+        animation-timing-function: cubic-bezier(0.5, 1.5, 0.9, 0.9);
+      }
+
+      .ball-6 {
+        z-index: -6;
+        background-color: #8bc34a;
+        animation-timing-function: cubic-bezier(0.5, 1.8, 0.9, 0.9);
+      }
+
+      .ball-7 {
+        z-index: -7;
+        background-color: #cddc39;
+        animation-timing-function: cubic-bezier(0.5, 2.1, 0.9, 0.9);
+      }
+
+      .ball-8 {
+        z-index: -8;
+        background-color: #ffeb3b;
+        animation-timing-function: cubic-bezier(0.5, 2.4, 0.9, 0.9);
+      }
+
+      .loading-box {
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loading-text {
+        text-wrap: nowrap;
+        color: #676767;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <noscript>
+        <strong
+          >We're sorry but browser doesn't work properly without JavaScript enabled. Please enable
+          it to continue.</strong
+        >
+      </noscript>
+      <div class="app-spinner">
+        <span class="ball ball-1"></span>
+        <span class="ball ball-2"></span>
+        <span class="ball ball-3"></span>
+        <span class="ball ball-4"></span>
+        <span class="ball ball-5"></span>
+        <span class="ball ball-6"></span>
+        <span class="ball ball-7"></span>
+        <span class="ball ball-8"></span>
+        <div class="loading-box">
+          <div class="loading-text">努力加载中...</div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
