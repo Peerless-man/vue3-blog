@@ -1,0 +1,11 @@
+// 对于markdown样式的调整
+.md-preview-v3 {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.code-block::scrollbar-thumb {
+  background-color: #efbcda !important;
+}
+.code-block::-webkit-scrollbar-thumb {
+  background-color: #efbcda !important;
+}

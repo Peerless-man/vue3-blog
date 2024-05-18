@@ -8,24 +8,11 @@ const onerror = require("koa-onerror");
 const logger = require("koa-logger");
 const parameter = require("koa-parameter");
 const { koaBody } = require("koa-body"); // 新用法
+const swagger = require("./utils/swagger"); // 存放swagger.js的位置，可以自行配置
 const { koaSwagger } = require("koa2-swagger-ui");
-const router = require("./router");
+
 const errorHandler = require("./app/errorHandler"); // 错误处理公共方法
 const { UPLOADTYPE } = require("./config/config.default"); // 上传类型
-// 接口文档
-app.use(
-  koaSwagger({
-    routePrefix: "/swagger", // host at /swagger instead of default /docs
-    swaggerOptions: {
-      url: "/swagger.json", // example path to json
-      showRequestHeaders: true,
-      layout: "StandaloneLayout",
-      docExpansion: "none",
-    },
-    exposeSpec: true,
-    hideTopbar: true,
-  })
-);
 
 // error handler
 onerror(app);
@@ -83,7 +70,18 @@ app.use(async (ctx, next) => {
 });
 
 // router
-app.use(router.routes()).use(router.allowedMethods());
+// app.use(router.routes()).use(router.allowedMethods());
+// 接口文档配置
+app.use(swagger.routes(), swagger.allowedMethods());
+// 接口文档
+app.use(
+  koaSwagger({
+    routePrefix: "/swagger", // 接口文档访问地址
+    swaggerOptions: {
+      url: "/swagger.json", // example path to json 其实就是之后swagger-jsdoc生成的文档地址
+    },
+  })
+);
 
 // parameter
 app.use(parameter(app));

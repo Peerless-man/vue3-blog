@@ -15,6 +15,8 @@ const userStore = user();
 const talkList = ref([]);
 const total = ref(0);
 const loading = ref(false);
+const scrollLoading = ref(false);
+const talkCommentRef = ref(null);
 let observe;
 let box;
 const param = reactive({
@@ -43,15 +45,21 @@ const observeBox = () => {
 };
 
 const pageGetTalkList = async () => {
-  // 第一次进入才loading
-  if (param.current == 1) {
-    loading.value = true;
-  }
-  let res = await getTalkList(param);
-  if (res.code == 0) {
-    talkList.value = param.current == 1 ? res.result.list : talkList.value.concat(res.result.list);
-    total.value = res.result.total;
+  try {
+    if (param.current == 1) {
+      loading.value = true;
+    } else {
+      scrollLoading.value = true;
+    }
+    let res = await getTalkList(param);
+    if (res.code == 0) {
+      talkList.value =
+        param.current == 1 ? res.result.list : talkList.value.concat(res.result.list);
+      total.value = res.result.total;
+    }
+  } finally {
     loading.value = false;
+    scrollLoading.value = false;
   }
 };
 
@@ -87,6 +95,10 @@ const like = async (item, index) => {
   }
 };
 
+const toggleComment = (index) => {
+  talkCommentRef.value[index].toggleExpand();
+};
+
 onMounted(async () => {
   await pageGetTalkList();
   if (talkList.value.length < total.value) {
@@ -106,17 +118,41 @@ onBeforeUnmount(() => {
     <el-card class="talk-card">
       <el-skeleton :loading="loading" style="height: 100%" animated>
         <template #template>
-          <div class="flex justify-start w-[100%] !mt-[10px]" v-for="i in 3" :key="i">
+          <div class="pc-skeleton flex justify-start w-[100%] !mt-[30px]" v-for="i in 3" :key="i">
             <SkeletonItem variant="text" width="80px" height="80px" />
             <div class="w-[70%] !ml-[10px]">
               <SkeletonItem variant="text" width="40%" height="20px" />
-              <SkeletonItem variant="image" width="80%" height="150px" top="10px" />
-              <SkeletonItem variant="text" width="60%" height="20px" top="10px" />
+              <SkeletonItem variant="image" width="40%" height="180px" top="10px" />
+              <div class="flex justify-between !w-[40%]">
+                <SkeletonItem variant="text" width="10%" height="20px" top="10px" />
+                <div class="flex w-[20%]">
+                  <SkeletonItem variant="text" width="50%" height="20px" top="10px" />
+                  <SkeletonItem variant="text" width="50%" height="20px" top="10px" left="10px" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="mobile-skeleton flex justify-start w-[100%] !mt-[30px]"
+            v-for="i in 3"
+            :key="i"
+          >
+            <SkeletonItem variant="text" width="80px" height="80px" />
+            <div class="w-[100%] !ml-[10px]">
+              <SkeletonItem variant="text" width="80%" height="20px" />
+              <SkeletonItem variant="image" width="80%" height="180px" top="10px" />
+              <div class="flex justify-between !w-[80%]">
+                <SkeletonItem variant="text" width="10%" height="20px" top="10px" />
+                <div class="flex w-[20%]">
+                  <SkeletonItem variant="text" width="50%" height="20px" top="10px" />
+                  <SkeletonItem variant="text" width="50%" height="20px" top="10px" left="10px" />
+                </div>
+              </div>
             </div>
           </div>
         </template>
         <transition-group name="scroll-list" tag="div">
-          <div class="w-[100%] talk-item-line" v-for="(talk, index) in talkList" :key="talk.id">
+          <div class="w-[100%] talk-item-line" v-for="(talk, talkIndex) in talkList" :key="talk.id">
             <div class="talk-card__item animate__animated animate__fadeIn">
               <div class="left">
                 <el-avatar class="left-avatar" :src="talk.avatar" shape="square" />
@@ -129,8 +165,7 @@ onBeforeUnmount(() => {
                     <TextOverflow
                       class="content"
                       :text="talk.content"
-                      :width="308"
-                      :maxLines="8"
+                      :maxLines="3"
                       :font-size="14"
                     >
                       <template v-slot:default="{ clickToggle, expanded }">
@@ -147,15 +182,15 @@ onBeforeUnmount(() => {
                     <div
                       class="image"
                       v-image="url"
-                      v-for="(url, index) in talk.talkImgList"
-                      :key="index"
+                      v-for="(url, imageIndex) in talk.talkImgList"
+                      :key="imageIndex"
                     >
                       <el-image
                         class="w-[100%] h-[100%]"
                         :src="url"
                         loading="lazy"
                         preview-teleported
-                        :initial-index="index"
+                        :initial-index="imageIndex"
                         fit="cover"
                         :preview-src-list="talk.talkImgList.map((v) => v)"
                       >
@@ -181,7 +216,7 @@ onBeforeUnmount(() => {
                         :src="talk.talkImgList[0]"
                         loading="lazy"
                         preview-teleported
-                        :initial-index="index"
+                        :initial-index="0"
                         fit="cover"
                         :preview-src-list="talk.talkImgList.map((v) => v)"
                       >
@@ -197,8 +232,18 @@ onBeforeUnmount(() => {
                     <div class="time">{{ returnTime(talk.createdAt) }}前</div>
                     <div>
                       <i
-                        :class="['iconfont', 'icon-icon1', talk.is_like ? 'is-like' : '']"
-                        @click="like(talk, index)"
+                        class="comment-icon iconfont icon-pinglun"
+                        @click="toggleComment(talkIndex)"
+                      >
+                      </i>
+                      <i
+                        :class="[
+                          'iconfont',
+                          'icon-icon1',
+                          '!ml-[10px]',
+                          talk.is_like ? 'is-like' : '',
+                        ]"
+                        @click="like(talk, talkIndex)"
                       >
                       </i>
                       <span :class="[talk.is_like ? 'is-like' : '', '!ml-[5px]']">{{
@@ -207,7 +252,14 @@ onBeforeUnmount(() => {
                     </div>
                   </div>
                   <div class="!mt-[10px]">
-                    <Comment class="w-[100%]" type="talk" :id="talk.id" :author-id="talk.user_id" />
+                    <Comment
+                      ref="talkCommentRef"
+                      class="w-[100%]"
+                      type="talk"
+                      :id="talk.id"
+                      :author-id="talk.user_id"
+                      :is-show-toggle="false"
+                    />
                   </div>
                 </div>
               </div>
@@ -215,7 +267,10 @@ onBeforeUnmount(() => {
           </div>
         </transition-group>
         <div class="observer">
-          {{ talkList.length >= total ? "已经到底了~" : "加载中~" }}
+          <Loading :size="32" v-if="scrollLoading" />
+          <template v-else>
+            {{ talkList.length >= total ? "已经到底了~" : "下拉加载更多～" }}
+          </template>
         </div>
       </el-skeleton>
     </el-card>
@@ -240,11 +295,16 @@ onBeforeUnmount(() => {
     margin-top: 10px;
 
     &__item {
+      max-width: 680px;
       padding: 10px;
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
     }
+  }
+
+  .like {
+    width: 220px;
   }
 
   .nick-name {
@@ -260,12 +320,22 @@ onBeforeUnmount(() => {
     letter-spacing: 1px;
   }
 
+  .comment-icon {
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
   .is-like {
     color: var(--primary);
   }
 
   .observer {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 1.2rem;
     color: var(--font-color);
     margin-top: 30px;
@@ -280,7 +350,6 @@ onBeforeUnmount(() => {
 }
 
 .btn {
-  margin-left: 3px;
   color: var(--primary);
   cursor: pointer;
 }
@@ -290,9 +359,20 @@ onBeforeUnmount(() => {
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
 }
-
+.right {
+  &-bottom-one {
+    margin-top: 10px;
+    width: 220px;
+    height: 220px;
+    display: grid;
+    place-items: center;
+  }
+}
 // pc
 @media screen and (min-width: 768px) {
+  .mobile-skeleton {
+    display: none;
+  }
   .talk-card {
     padding: 40px 50px;
   }
@@ -306,12 +386,8 @@ onBeforeUnmount(() => {
     }
   }
 
-  .like {
-    width: 368px;
-  }
-
   .right {
-    width: 368px;
+    width: 100%;
     margin-left: 10px;
 
     &-top {
@@ -333,19 +409,14 @@ onBeforeUnmount(() => {
       grid-auto-rows: 120px;
       gap: 1px;
     }
-
-    &-bottom-one {
-      margin-top: 10px;
-      width: 220px;
-      height: 220px;
-      display: grid;
-      place-items: center;
-    }
   }
 }
 
 // mobile
 @media screen and (max-width: 768px) {
+  .pc-skeleton {
+    display: none;
+  }
   .talk-card {
     padding: 40px 3px;
   }
@@ -358,11 +429,9 @@ onBeforeUnmount(() => {
       height: 40px;
     }
   }
-  .like {
-    width: 308px;
-  }
+
   .right {
-    width: 308px;
+    width: 300px;
     margin-left: 10px;
 
     &-top {
@@ -383,14 +452,6 @@ onBeforeUnmount(() => {
       grid-template-columns: 100px 100px 100px;
       grid-auto-rows: 100px;
       gap: 1px;
-    }
-
-    &-bottom-one {
-      margin-top: 10px;
-      width: 180px;
-      height: 180px;
-      display: grid;
-      place-items: center;
     }
   }
 }

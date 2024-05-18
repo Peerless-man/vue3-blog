@@ -1,15 +1,9 @@
 <script setup>
 import { defineComponent } from "vue";
-import { music } from "@/store/index";
-import { storeToRefs } from "pinia";
 
 import ProgressLine from "./components/progress-line";
 import Information from "./components/information";
 import AudioControls from "./components/audio-controls";
-
-const { getIsPaused, getCurrentSchedule, getMusicDescription, getIsToggleImg } = storeToRefs(
-  music()
-);
 
 defineComponent({
   name: "MusicControls",
@@ -20,15 +14,11 @@ defineComponent({
   <div class="music-controls">
     <div class="main">
       <div class="music-header">
-        <ProgressLine :schedule="getCurrentSchedule" />
+        <ProgressLine />
       </div>
       <div class="music-body">
         <div class="music-body__left">
-          <Information
-            :isPaused="getIsPaused"
-            :isToggleImg="getIsToggleImg"
-            :musicInfo="getMusicDescription"
-          />
+          <Information />
         </div>
         <div class="music-body__right">
           <!-- 控制音乐 -->
@@ -75,7 +65,7 @@ defineComponent({
 
 .change-color:hover {
   cursor: pointer;
-  color: #62c28a;
+  color: var(--music-main-active);
 }
 
 // mobile

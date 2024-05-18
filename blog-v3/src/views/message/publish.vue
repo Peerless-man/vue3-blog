@@ -227,7 +227,7 @@ onMounted(async () => {
       <div class="!mt-[10px] !h-[20rem]">
         <ul class="tab">
           <li v-for="item in opTabList" :key="item.key" @click="changeTab(item.key)">
-            <div :class="[item.key == activeTab ? 'active-tab' : '', 'tab-li']">
+            <div :class="[item.key == activeTab ? 'message-active-tab' : '', 'tab-li']">
               {{ item.label }}
             </div>
           </li>
@@ -297,7 +297,7 @@ onMounted(async () => {
           <el-button
             :disabled="loading"
             :loading="loading"
-            class="leave-message"
+            class="apply-button !w-[200px]"
             @click="leaveMessage"
             >{{
               loading ? "努力上传中..." : route.query.type == "edit" ? "保存" : "发布"
@@ -330,7 +330,7 @@ onMounted(async () => {
   }
 
   .nick-name {
-    color: #fff;
+    color: var(--global-white);
     margin-left: 1rem;
     letter-spacing: 1px;
     padding: 3px 8px;
@@ -354,7 +354,7 @@ onMounted(async () => {
 
   .tag {
     font-size: 12px;
-    color: #fff;
+    color: var(--global-white);
     background-color: rgba(0, 0, 0, 0.2);
     padding: 3px 8px;
     border-radius: 8px;
@@ -382,7 +382,7 @@ onMounted(async () => {
     font-weight: 600;
     margin-bottom: 1rem;
     background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 2rem;
+    border-radius: 8px;
 
     li {
       margin-right: 1rem;
@@ -393,11 +393,11 @@ onMounted(async () => {
       height: 2rem;
       line-height: 2rem;
       text-align: center;
-      border-radius: 1rem;
+      border-radius: 8px;
     }
-    .active-tab {
-      color: #fff;
-      background-color: var(--primary);
+    .message-active-tab {
+      color: var(--global-white);
+      background-image: var(--button-linear-gradient);
     }
   }
 }
@@ -418,14 +418,9 @@ onMounted(async () => {
   transform: scale(2);
 }
 .type-writer {
-  color: #000 !important;
+  color: var(--global-black);
 }
-.leave-message {
-  width: 200px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.5);
-}
+
 :deep(.el-upload--picture-card) {
   width: 280px !important;
   height: 140px !important;

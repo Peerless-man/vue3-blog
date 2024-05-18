@@ -99,6 +99,8 @@ const Article = seq.define(
     },
   },
   {
+    // 手动维护时间更新
+    timestamps: false,
     freezeTableName: true, // 强制表名不转复数
   }
 );

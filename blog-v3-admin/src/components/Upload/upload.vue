@@ -129,6 +129,7 @@ watch(
     v-if="dialogVisible"
     :url-list="uploadFileList.map(v => v.url)"
     :initial-index="previewIndex"
+    :teleported="true"
     @close="closeImgViewer"
   />
 </template>

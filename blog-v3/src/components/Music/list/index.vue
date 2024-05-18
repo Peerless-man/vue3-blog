@@ -1,21 +1,32 @@
 <script setup>
-import { defineComponent, onMounted, watch, ref, reactive, onBeforeUnmount, h } from "vue";
+import {
+  defineComponent,
+  onMounted,
+  watch,
+  ref,
+  reactive,
+  onBeforeUnmount,
+  h,
+  inject,
+  nextTick,
+} from "vue";
 
-import { music } from "@/store/index";
 import { reqToplist, reqTopDetaliList } from "@/api/music";
 import { PLAYTYPE } from "../musicTool";
-import { storeToRefs } from "pinia";
 import { ElNotification } from "element-plus";
 import SearchList from "./components/search-list.vue";
 import LyricBoard from "./components/lyric-board.vue";
 
-const { getCustomerMusicList } = storeToRefs(music());
+const musicGetters = inject("musicGetters");
+const musicSetters = inject("musicSetters");
+
+const { getCustomerMusicList } = musicGetters;
 
 const topList = ref([]);
 
 const currentMusicList = ref([]); // 当前音乐播放列表
 
-const currentTop = ref();
+const currentTop = ref(null);
 
 let observe, box;
 
@@ -31,19 +42,19 @@ const params = reactive({
   loadMore: true,
 });
 
-const musicListLoading = ref(false);
+const musicCategoryLoading = ref(false); // 音乐分类加载
+const musicListLoading = ref(false); // 音乐列表加载
+const musicScrollLoading = ref(false); // 音乐滚动加载
 
 //  获取音乐排行榜
 const reqMusicList = async () => {
-  musicListLoading.value = true;
-  params.loading = true;
+  musicCategoryLoading.value = true;
   const res = await reqToplist();
   if (res.code == 200) {
     topList.value = res.list;
-    musicListLoading.value = false;
+    musicCategoryLoading.value = false;
     currentTop.value = topList.value[3];
     await reqTopMusicList(topList.value[3].id);
-    observeBox();
   }
 };
 
@@ -55,17 +66,29 @@ const reqTopMusicList = async (id) => {
   if (!params.loadMore) {
     return;
   }
-  const res = await reqTopDetaliList(params);
-  if (res.code == 200) {
-    getFlagToMusicList(res.songs || []);
-    if (!res.songs.length) {
-      params.loadMore = false;
+  try {
+    if (params.offset == 0) {
+      musicListLoading.value = true;
+    } else {
+      musicScrollLoading.value = true;
     }
-    currentMusicList.value =
-      params.offset == 0 ? res.songs : currentMusicList.value.concat(res.songs);
-    music().setMusicList(currentMusicList.value);
+    const res = await reqTopDetaliList(params);
+    if (res.code == 200) {
+      getFlagToMusicList(res.songs || []);
+      if (!res.songs.length) {
+        params.loadMore = false;
+      }
+      currentMusicList.value =
+        params.offset == 0 ? res.songs : currentMusicList.value.concat(res.songs);
+      musicSetters.setMusicList(currentMusicList.value);
+    }
+  } finally {
+    musicListLoading.value = false;
+    musicScrollLoading.value = false;
+    nextTick(() => {
+      observeBox();
+    });
   }
-  params.loading = false;
 };
 
 // 无限加载
@@ -77,7 +100,7 @@ const observeBox = () => {
     (entries) => {
       entries.forEach(async (e) => {
         if (e.isIntersecting && e.intersectionRatio > 0) {
-          if (!params.loading) {
+          if (!musicListLoading.value) {
             loadMore();
           }
         }
@@ -90,8 +113,8 @@ const observeBox = () => {
 
 const playMusic = (item) => {
   // 设置当前音乐信息
-  music().setMusicInfo(item.id);
-  music().setPlayType(PLAYTYPE.TOP);
+  musicSetters.setMusicInfo(item.id);
+  musicSetters.setPlayType(PLAYTYPE.TOP);
 };
 
 // 切换排行榜置空数据
@@ -101,15 +124,15 @@ const clickTopMusicList = (item) => {
   params.offset = 0;
   params.loadMore = true;
   currentMusicList.value = [];
-  music().setMusicList([]);
+  musicSetters.setMusicList([]);
   reqTopMusicList();
 };
 
 // 添加歌曲
 const customerAddMusic = (item) => {
   if (isActive(item.id)) return;
-  music().setCustomerMusicList("add", item);
-  music().setPlayType(PLAYTYPE.CUSTOM);
+  musicSetters.setCustomerMusicList("add", item);
+  musicSetters.setPlayType(PLAYTYPE.CUSTOM);
   ElNotification({
     offset: 60,
     title: "提示",
@@ -161,72 +184,97 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="music-list">
-    <div class="flex justify-between items-start">
+    <div class="!max-w-[1024px] !w-[100%] flex md:justify-between justify-center items-start">
       <div class="music-list__left">
         <div class="header">分类歌单</div>
-        <el-row v-if="topList.length" class="body">
-          <el-col
-            v-loading="musicListLoading"
-            class="flex justify-center items-center overflow-auto"
-            :span="6"
-            v-for="item in topList"
-            :key="item.id"
-          >
-            <div class="top" @click="clickTopMusicList(item)">
-              <img class="top-bg" :src="item.coverImgUrl" />
-              <i class="iconfont icon-zanting play"></i>
-            </div>
-          </el-col>
+        <el-row class="body">
+          <div v-if="musicCategoryLoading" class="!w-[100%] !h-[100%] grid place-content-center">
+            <Loading :size="48" />
+          </div>
+          <template v-else>
+            <el-col
+              class="flex justify-center items-center overflow-auto"
+              :span="6"
+              v-for="item in topList"
+              :key="item.id"
+            >
+              <div class="top" @click="clickTopMusicList(item)">
+                <img class="top-bg" :src="item.coverImgUrl" />
+                <i class="iconfont icon-zanting play"></i>
+              </div>
+            </el-col>
+          </template>
         </el-row>
       </div>
       <div class="music-list__right">
-        <el-dropdown trigger="click" class="search-down">
-          <span class="iconfont icon-nav-search scale"></span>
-          <template #dropdown>
+        <div class="!w-[100%] flex items-center">
+          <span v-if="currentTop" class="top-name text-overflow" :title="currentTop.name">{{
+            currentTop.name
+          }}</span>
+          <el-popover
+            ref="elPopoverRef"
+            placement="bottom"
+            :width="330"
+            :show-arrow="false"
+            :teleported="false"
+            trigger="click"
+            @touchmove.stop.prevent
+          >
+            <template #reference>
+              <span class="iconfont icon-nav-search scale"></span>
+            </template>
             <SearchList />
-          </template>
-        </el-dropdown>
-        <span v-if="currentTop" class="top-name text-overflow" :title="currentTop.name">{{
-          currentTop.name
-        }}</span>
-        <el-row>
+          </el-popover>
+        </div>
+        <el-row style="width: 100%">
           <el-col :span="24" class="header">
             <div class="title title1">歌曲</div>
             <div class="title title2">作者</div>
             <div class="title title3">其他</div>
+            <div class="title title4">操作</div>
           </el-col>
         </el-row>
-        <el-row v-loading="params.loading" v-if="currentMusicList.length" class="body">
-          <el-col
-            class="flex justify-start items-center overflow-auto"
-            :span="24"
-            v-for="item in currentMusicList"
-            :key="item.id"
-          >
-            <div class="name" @click="playMusic(item)">
-              <span class="text-overflow" :title="item.name">{{ item.name }}</span>
-            </div>
-            <div class="author">
-              <span class="text-overflow" :title="item.ar[0].name">{{ item.ar[0].name }}</span>
-            </div>
-            <div class="other">
-              <span class="text-overflow" :title="item.alia[0]">{{ item.alia[0] }}</span>
-            </div>
-            <div class="add-music">
-              <i
-                :class="[
-                  'iconfont',
-                  'icon-tianjiadao',
-                  'change-color',
-                  item.active ? 'active' : '',
-                ]"
-                @click="customerAddMusic(item)"
-              ></i>
-            </div>
-          </el-col>
-          <div class="observe" @click="loadMore">
-            {{ params.loadMore ? "加载更多" : "已经到底了" }}
+        <el-row class="body">
+          <div v-if="musicListLoading" class="!w-[100%] !h-[100%] grid place-content-center">
+            <Loading :size="48" />
           </div>
+          <template v-else>
+            <el-col
+              class="flex justify-start items-center overflow-auto"
+              :span="24"
+              v-for="item in currentMusicList"
+              :key="item.id"
+            >
+              <div class="name" @click="playMusic(item)">
+                <span class="text-overflow" :title="item.name">{{ item.name }}</span>
+              </div>
+              <div class="author">
+                <span class="text-overflow" :title="item.ar[0].name">{{ item.ar[0].name }}</span>
+              </div>
+              <div class="other">
+                <span class="text-overflow" :title="item.alia[0]">{{ item.alia[0] }}</span>
+              </div>
+              <div class="add-music">
+                <i
+                  :class="[
+                    'iconfont',
+                    'icon-tianjiadao',
+                    'change-color',
+                    item.active ? 'active' : '',
+                  ]"
+                  @click="customerAddMusic(item)"
+                ></i>
+              </div>
+            </el-col>
+            <div class="observe" @click="loadMore">
+              <template v-if="!musicListLoading">
+                <Loading :size="24" v-if="musicScrollLoading" />
+                <template v-else>
+                  {{ params.loadMore ? "下拉/点击加载更多～" : "已经到底了" }}
+                </template>
+              </template>
+            </div>
+          </template>
         </el-row>
       </div>
     </div>
@@ -237,7 +285,6 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .music-list {
-  position: relative;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -252,25 +299,35 @@ onBeforeUnmount(() => {
 
   &__left {
     width: 50%;
-    height: calc(100vh - 250px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
+    padding-bottom: 10px;
     .header {
       padding-left: 20px;
       font-weight: 600;
       font-size: 1.2rem;
     }
     .body {
-      height: calc(100vh - 300px);
+      width: 100%;
+      height: 100%;
       overflow: auto;
     }
   }
 
   &__right {
     position: relative;
-    height: calc(100vh - 250px);
     width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     overflow: hidden;
-    padding: 0 10px;
+    padding-bottom: 10px;
     .header {
       width: 100%;
       display: flex;
@@ -279,19 +336,26 @@ onBeforeUnmount(() => {
         font-size: 1.1rem;
         &1 {
           width: 30%;
+          overflow: hidden;
         }
         &2 {
           width: 25%;
+          overflow: hidden;
         }
         &3 {
-          width: 25%;
+          overflow: hidden;
+          width: 35%;
+        }
+        &4 {
+          overflow: hidden;
+          width: 15%;
         }
       }
     }
     .body {
-      height: calc(100vh - 300px);
+      width: 100%;
+      height: 100%;
       overflow: auto;
-      padding-bottom: 20px;
     }
   }
   .top {
@@ -325,7 +389,7 @@ onBeforeUnmount(() => {
 
     .icon-zanting {
       font-size: 2rem;
-      color: #fff;
+      color: var(--global-white);
     }
   }
 
@@ -334,7 +398,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
 
     &:hover {
-      color: #62c28a;
+      color: var(--music-main-active);
     }
   }
 
@@ -350,12 +414,12 @@ onBeforeUnmount(() => {
     text-align: center;
     width: 20%;
     &:hover {
-      color: #62c28a;
+      color: var(--music-main-active);
     }
   }
 
   .active {
-    color: #62c28a;
+    color: var(--music-main-active);
   }
 
   .text-overflow {
@@ -367,20 +431,16 @@ onBeforeUnmount(() => {
   }
 
   .observe {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     width: 100%;
     color: var(--primary);
     cursor: pointer;
   }
 
-  .search-down {
-    position: absolute;
-    top: 0px;
-    left: 40%;
-    z-index: 2000;
-    .icon-nav-search {
-      font-size: 1.6rem;
-    }
+  .icon-nav-search {
+    font-size: 1.6rem;
   }
 }
 // mobile
@@ -390,12 +450,8 @@ onBeforeUnmount(() => {
   }
 
   .music-list__right {
+    position: relative;
     width: 400px;
-    height: calc(100vh - 130px);
-  }
-
-  .body {
-    height: calc(100vh - 180px) !important;
   }
 
   .search-down {

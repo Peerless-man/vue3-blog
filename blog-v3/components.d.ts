@@ -27,6 +27,8 @@ declare module '@vue/runtime-core' {
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
+    ElDescriptions: typeof import('element-plus/es')['ElDescriptions']
+    ElDescriptionsItem: typeof import('element-plus/es')['ElDescriptionsItem']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
@@ -66,11 +68,12 @@ declare module '@vue/runtime-core' {
     Layout: typeof import('./src/components/Layout/index.vue')['default']
     List: typeof import('./src/components/Music/list/index.vue')['default']
     Loading: typeof import('./src/components/Loading/Loading.vue')['default']
+    Login: typeof import('./src/components/Layout/header/login/login.vue')['default']
     LyricBoard: typeof import('./src/components/Music/list/components/lyric-board.vue')['default']
     MessageBox: typeof import('./src/components/MessageBox/message-box.vue')['default']
     MobileTopSkeleton: typeof import('./src/components/RightSide/components/skeleton/mobile-top-skeleton.vue')['default']
     Music: typeof import('./src/components/Music/index.vue')['default']
-    PageHeader: typeof import('./src/components/Header/PageHeader.vue')['default']
+    PageHeader: typeof import('./src/components/PageHeader/index.vue')['default']
     Pagination: typeof import('./src/components/Pagination/pagination.vue')['default']
     ParentItem: typeof import('./src/components/Comment/item/ParentItem.vue')['default']
     ProgressLine: typeof import('./src/components/Music/controls/components/progress-line.vue')['default']
@@ -93,8 +96,5 @@ declare module '@vue/runtime-core' {
     Tooltip: typeof import('./src/components/ToolTip/tooltip.vue')['default']
     TypeWriter: typeof import('./src/components/TypeWriter/type-writer.vue')['default']
     Upload: typeof import('./src/components/Upload/upload.vue')['default']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

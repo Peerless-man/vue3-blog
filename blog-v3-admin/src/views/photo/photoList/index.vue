@@ -21,12 +21,13 @@ const photoList = ref([]);
 const photoTotal = ref(0);
 const param = reactive({
   current: 1,
-  size: 50,
+  size: 40,
   status: 1,
   id: null
 });
 const currentAlbumName = ref(null);
 const isEdit = ref(false);
+const previewIndex = ref(0);
 
 const handleSizeChange = val => {
   param.size = val;
@@ -56,16 +57,7 @@ const cancel = () => {
   isEdit.value = false;
 };
 
-const previewShow = ref(false);
 const previewList = ref([]);
-const previewIndex = ref(0);
-const showPreview = index => {
-  previewIndex.value = index;
-  previewShow.value = true;
-};
-const closeImgViewer = () => {
-  previewShow.value = false;
-};
 
 const pageGetPhoto = async () => {
   const res = await getPhotoListByAlbumId(param);
@@ -241,7 +233,9 @@ onMounted(async () => {
             fit="cover"
             :data-src="item.url"
             :src="item.url"
-            @click="showPreview(index)"
+            :initial-index="previewIndex"
+            :preview-src-list="photoList.map(v => v.url)"
+            @click="previewIndex = index"
           />
         </div>
       </template>
@@ -250,7 +244,7 @@ onMounted(async () => {
       class="pagination"
       v-model:current-page="param.current"
       v-model:page-size="param.size"
-      :page-sizes="[50, 100, 200, 999]"
+      :page-sizes="[40, 60, 100, 200]"
       :small="true"
       :disabled="false"
       :background="false"
@@ -258,12 +252,6 @@ onMounted(async () => {
       :total="photoTotal"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-    />
-    <el-image-viewer
-      v-if="previewShow"
-      :url-list="previewList"
-      :initial-index="previewIndex"
-      @close="closeImgViewer"
     />
   </el-card>
 </template>

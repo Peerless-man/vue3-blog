@@ -19,9 +19,11 @@ export function deepClone(obj: any) {
 /**
  * 图片压缩
  * @param {*} file 图片
- * @param {*} size 文件压缩大小 实际上只压缩一次 因为有些时候用while循环想继续压缩 但是压缩不了了 压缩一次得了 不过分压缩
+ * @param {*} size 文件压缩至大小 但是可能压缩不到那么小
+ * @param {*} quality 质量
+ * @param {*} maxTime 最多压缩次数
  */
-export const imageConversion = (file, size = 800, quality = 1) => {
+export const imageConversion = (file, size = 800, quality = 1, maxTime = 3) => {
   return new Promise((resolve: any) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -40,9 +42,15 @@ export const imageConversion = (file, size = 800, quality = 1) => {
         ctx.drawImage(image, 0, 0, width, height);
         let dataURL = canvas.toDataURL(file.type, quality);
 
-        if (Math.round(dataURL.length) / 1024 > size) {
-          quality -= 0.2;
-          dataURL = canvas.toDataURL(file.type, quality);
+        // 在有限的时间内压缩
+        while (maxTime && quality > 0.2) {
+          if (Math.round(dataURL.length) / 1024 > size) {
+            maxTime--;
+            quality -= 0.2;
+            dataURL = canvas.toDataURL(file.type, quality);
+          } else {
+            break;
+          }
         }
 
         const arr = dataURL.split(",");

@@ -87,36 +87,71 @@ function gsapTransXScale(list, opacity = 0, duration = 0.6, ease = "power2.inOut
 
 // 字体动画
 function gsapTransFont(name) {
-  gsap.to(name, {
+  return gsap.to(name, {
     y: -10,
     stagger: 0.3,
   });
 }
 
-function gsapTransLyric(name, duration, reverse = false) {
+function gsapTransLyric(name, duration, reverse = false, dom) {
+  let gsapControl;
   if (!reverse) {
-    gsap.fromTo(
+    gsapControl = gsap.fromTo(
       name,
       {
-        opacity: 0,
+        scaleX: 1.1,
+        opacity: 0.5,
       },
       {
         opacity: 1,
+        scaleX: 1,
         duration,
       }
     );
   } else {
-    gsap.fromTo(
+    gsapControl = gsap.fromTo(
       name,
       {
         opacity: 1,
+        scaleX: 1,
+        filter: `blur(0px)`,
       },
       {
         opacity: 0,
+        filter: `blur(2px)`,
+        scaleX: 1.1,
         duration,
+        onComplete() {
+          if (dom) {
+            dom.style.filter = "blur(0)";
+          }
+        },
       }
     );
   }
+
+  return gsapControl;
 }
 
-export { gsapTransX, gsapTransXScale, gsapTransY, gsapTransFont, gsapTransLyric };
+function gsapTransLyricLeftToRight(name, duration) {
+  return gsap.fromTo(
+    name,
+    {
+      backgroundSize: `0% 100%`,
+    },
+    {
+      backgroundSize: `100% 100%`,
+      duration,
+      ease: "none",
+    }
+  );
+}
+
+export {
+  gsapTransX,
+  gsapTransXScale,
+  gsapTransY,
+  gsapTransFont,
+  gsapTransLyric,
+  gsapTransLyricLeftToRight,
+};

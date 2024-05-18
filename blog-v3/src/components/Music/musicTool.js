@@ -1,5 +1,58 @@
 import { reqMusicDetail, reqMusicDescription, reqMusicLyricById } from "@/api/music";
 
+export const musicKey = "blog-music-player";
+
+// 转码
+export const Base64 = {
+  encode: function (v) {
+    return window.btoa(window.encodeURIComponent(v));
+  },
+  decode: function (v) {
+    return window.decodeURIComponent(window.atob(v));
+  },
+};
+
+export const _setLocalItem = function (key, value) {
+  try {
+    if (key === "" || key === undefined) {
+      return;
+    }
+    if (key) {
+      if (value == 0) {
+        value = JSON.stringify(value);
+        localStorage.setItem(Base64.encode(key));
+        return;
+      }
+      if (value === null || value === undefined || value === "") {
+        return "";
+      }
+      // 编码
+      let enObj = JSON.stringify(value);
+      localStorage.setItem(Base64.encode(key), Base64.encode(enObj));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const _getLocalItem = function (key) {
+  try {
+    if (key === null || key === "" || key === undefined) {
+      return "";
+    }
+    if (key) {
+      let value = localStorage.getItem(Base64.encode(key));
+      if (value === null || value === undefined || value === "") {
+        return "";
+      } else {
+        value = Base64.decode(value);
+        return JSON.parse(value);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const MODELLIST = [
   "RANDOM", // 随机
   "LISTLOOP", // 列表循环
@@ -9,6 +62,11 @@ export const MODELLIST = [
 export const PLAYTYPE = {
   CUSTOM: "CUSTOM", // 播放用户添加的歌曲
   TOP: "TOP", // 当前歌曲排行榜列表歌曲
+};
+
+export const LYRICTYPE = {
+  COMMON: "COMMON",
+  SPECIAL: "SPECIAL",
 };
 
 /*

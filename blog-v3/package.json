@@ -1,11 +1,11 @@
 {
-  "name": "my-vite-app",
+  "name": "小张的个人博客",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "serve": "vite",
-    "build": "vite build",
+    "serve": "NODE_OPTIONS=--max-old-space-size=4096 vite",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "preview": "vite preview",
     "eslint": "eslint . --ext .vue,.js,.jsx --fix",
     "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\""

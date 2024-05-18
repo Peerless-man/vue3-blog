@@ -1,9 +1,8 @@
 <script setup>
-import { computed, nextTick, ref, watch, h } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { staticData, user } from "@/store/index.js";
+import { computed, nextTick, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { staticData } from "@/store/index.js";
 import { storeToRefs } from "pinia";
-import { ElNotification } from "element-plus";
 
 import { numberFormate } from "@/utils/tool";
 import { gsapTransFont } from "@/utils/transform";
@@ -13,9 +12,7 @@ import GsapCount from "@/components/GsapCount/index";
 
 const staticStore = staticData();
 const { codeTheme, previewTheme, getPageHeaderList } = storeToRefs(staticStore);
-const { getUserInfo } = storeToRefs(user());
 const route = useRoute();
-const router = useRouter();
 
 const props = defineProps({
   loading: {
@@ -68,13 +65,14 @@ const getBgCover = computed(() => {
   const bgList = getPageHeaderList.value;
   // 做一个根据路由来判断判断页面背景图片
   let url;
+  let myUrl = "http://img.mrzym.top/FvmVKfygxBKoJbFVXJwzjgAASL9S";
   if (route.path == "/article") {
-    url = props.article.article_cover || "https://mrzym.gitee.io/blogimg/cover/cute.jpg";
+    url = props.article.article_cover || myUrl;
   } else if (props.bgUrl) {
-    url = props.bgUrl || "https://mrzym.gitee.io/blogimg/cover/cute.jpg";
+    url = props.bgUrl || myUrl;
   } else {
     let index = bgList.findIndex((bg) => bg.route_name == route.name);
-    url = index == -1 ? "https://mrzym.gitee.io/blogimg/cover/cute.jpg" : bgList[index].bg_url;
+    url = index == -1 ? myUrl : bgList[index].bg_url;
   }
   // eslint-disable-next-line
   finalUrl.value = url;
@@ -83,29 +81,6 @@ const getBgCover = computed(() => {
 const getTitle = computed(() => {
   return route.query.pageTitle ? route.meta.name + " - " + route.query.pageTitle : route.meta.name;
 });
-
-const toggleAlbum = (item) => {
-  router.push({
-    path: "/photos",
-    query: {
-      id: item.id,
-      pageTitle: item.album_name,
-      bg: item.album_cover,
-    },
-  });
-};
-
-const applyLinks = () => {
-  if (getUserInfo.value.id) {
-    router.push("/link/apply");
-  } else {
-    ElNotification({
-      offset: 60,
-      title: "温馨提示",
-      message: h("div", { style: "color: #e6c081; font-weight: 600;" }, "请先登录"),
-    });
-  }
-};
 
 watch(
   () => route.path,
@@ -127,30 +102,6 @@ watch(
       <span style="display: inline-block" class="char" v-for="i in getTitle.length" :key="i">
         {{ getTitle.charAt(i - 1) }}
       </span>
-      <div class="image-list" v-if="route.path == '/photos' && photoAlbumList.length">
-        <div
-          :class="['image-box', route.query.id == item.id ? 'current' : '']"
-          v-for="item in photoAlbumList"
-          :key="item.id"
-        >
-          <el-image
-            class="image"
-            :src="item.album_cover"
-            fit="cover"
-            lazy
-            @click="toggleAlbum(item)"
-          >
-            <template #error>
-              <svg-icon name="image404" :width="4" :height="4"></svg-icon>
-            </template>
-          </el-image>
-        </div>
-      </div>
-      <div style="text-shadow: none">
-        <span class="apply-button" v-if="route.path == '/link/list'" @click="applyLinks"
-          >友链申请</span
-        >
-      </div>
     </div>
     <div v-else class="article main-article">
       <div class="loading" v-image="props.article.article_cover"></div>
@@ -260,7 +211,7 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #8a7e90;
+  background-color: var(--header-bg-color);
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -285,7 +236,7 @@ watch(
     display: block;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.4);
   }
 
   .route-font {
@@ -297,17 +248,6 @@ watch(
     z-index: 999;
     cursor: pointer;
     transition: all 0.3s;
-
-    text-shadow:
-      0 1px 0 hsl(174, 5%, 80%),
-      0 2px 0 hsl(174, 5%, 75%),
-      0 3px 0 hsl(174, 5%, 70%),
-      0 0 5px rgba(0, 0, 0, 0.05),
-      0 1px 3px rgba(0, 0, 0, 0.2),
-      0 3px 5px rgba(0, 0, 0, 0.2),
-      0 5px 10px rgba(0, 0, 0, 0.2),
-      0 10px 10px rgba(0, 0, 0, 0.2),
-      0 20px 20px rgba(0, 0, 0, 0.3);
   }
 
   .article {
@@ -318,7 +258,7 @@ watch(
     margin-top: 5rem;
     color: transparent;
     text-align: center;
-    color: #fff;
+    color: var(--global-white);
 
     .to_pointer {
       padding: 0 0.3rem;
@@ -369,8 +309,8 @@ watch(
     transition: all 0.3s;
 
     &:hover {
-      color: #fff;
-      border: 3px solid #fff;
+      color: var(--global-white);
+      border: 3px solid var(--global-white);
       transform: scale(1.1);
     }
   }
@@ -392,9 +332,9 @@ watch(
       display: block;
       padding: 0.2rem 0;
       background: transparent;
-      border: 1px solid #fff;
-      color: #fff;
-      border-radius: 20px;
+      border: 1px solid var(--global-white);
+      color: var(--global-white);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.5s;
 
@@ -408,39 +348,6 @@ watch(
       }
     }
   }
-}
-
-.image-list {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  max-width: 100vw;
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  align-items: center;
-  overflow-x: auto;
-  overflow-y: hidden;
-  &::-webkit-scrollbar {
-    display: none;
-    /* Chrome Safari */
-  }
-}
-.image-box {
-  margin: 3px;
-  transition: all 0.3s;
-  box-sizing: border-box;
-  border: 3px solid transparent;
-  border-radius: 3px;
-
-  &:hover {
-    box-shadow: 0 0 8px #fff;
-  }
-}
-.current {
-  filter: saturate(2);
-  box-shadow: 0 0 8px #fff;
 }
 
 .fadeIn {
@@ -462,29 +369,11 @@ watch(
   .main-article {
     max-width: 90%;
   }
-  .image-box {
-    width: 70px;
-    height: 50px;
-    .image {
-      width: 64px;
-      height: 44px;
-      vertical-align: top;
-    }
-  }
 }
 
 @media screen and (min-width: 768px) {
   .main-article {
     max-width: 60%;
-  }
-  .image-box {
-    width: 100px;
-    height: 70px;
-    .image {
-      width: 94px;
-      height: 64px;
-      vertical-align: top;
-    }
   }
 }
 </style>

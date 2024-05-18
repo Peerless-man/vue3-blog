@@ -1,14 +1,18 @@
-@import "./variable.scss"; //引入全局样式
-@import "./element/element.scss"; //引入全局样式
-@import "./element/dark.scss"; //引入全局样式
-@import "./element/loading.scss"; //引入全局加载样式
+@import "./variable.scss"; //引入全局自定义样式
+@import "./element/element.scss"; //引入element全局样式
+@import "./element/dark.scss"; //引入element-dark暗黑布局全局样式
+@import "./element/loading.scss"; //引入element全局加载样式
+@import "./custom.scss"; //引入自己喜欢使用的全局样式
+@import "./markdown.scss"; //引入对markdown预览的样式
+@import "./transition.scss"; //引入自定义的话
 
+//初始化样式
 html,
 body {
-  height: 100%;
-  width: 100% !important;
-  margin: 0 !important;
+  width: 100%;
+  min-height: 100vh;
   padding: 0;
+  margin: 0 !important;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -67,23 +71,17 @@ div:focus {
   }
 }
 
+// layout的背景是全局背景 当页面没有layout时 背景需要自定义
 .layout {
-  background: linear-gradient(
-    90deg,
-    #ffffff 1%,
-    #ead2ea 10.2%,
-    #e4d5ee 19.6%,
-    #d1def3 36.8%,
-    #b5dee5 62.2%,
-    #cfebf3 88.9%,
-    #ffffff 99%
-  ) !important;
+  background: var(--global-gradient) !important;
 }
+// 其他地方需要使用到的渐变色
 .gradient {
   background: rgb(255, 255, 255, 0.7);
   background: linear-gradient(120deg, #f8feff, #dffbff, #faedff, #e0eeff, #f5f5d2, #fffff9);
 }
 
+// 头部
 .header_box {
   position: fixed;
   top: 0;
@@ -97,12 +95,14 @@ div:focus {
   box-shadow: 0px -1px 3px var(--primary);
   background: rgb(255, 255, 255, 0.7);
 }
+// 主内容部分
 .main_box {
   box-sizing: border-box;
 }
 .blog_info {
   padding: 0 7.5px !important;
 }
+// 底部
 .footer_box {
   width: 100%;
   z-index: 2009;
@@ -114,122 +114,11 @@ div:focus {
   box-sizing: border-box;
 }
 
-.flex_center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.flex_r_between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.flex_r_around {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-.flex_c_center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.flex_c_between {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.flex_c_around {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-.flex_1 {
-  flex: 1;
-}
-.flex_c_start {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-}
-.flex_r_start {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.flex_wrap {
-  flex-wrap: wrap;
-}
-
-.inline_block {
-  display: inline-block;
-}
-.to_pointer {
-  transition: 0.3s ease-in-out;
-  &:hover {
-    color: var(--primary);
-    cursor: pointer;
-    &::before {
-      color: var(--primary);
-    }
-  }
-}
-.text_overflow {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.scale {
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
-  &:hover {
-    transform: scale(1.1);
-  }
-}
-
-.pad_5 {
-  padding: 5px;
-}
-
-.iconfont {
-  cursor: pointer;
-}
-
-svg {
-  cursor: pointer;
-}
-
-.apply-button {
-  display: inline-block;
-  padding: 5px 20px;
-  background-color: transparent;
-  box-sizing: border-box;
-  border-radius: 20px;
-  font-weight: 900;
-  font-size: 16px;
-  border: 3px solid #fff;
-  color: #fff;
-  transition: 0.5s;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.1);
-    color: var(--primary);
-    border: 3px solid var(--primary);
-  }
-}
-
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.8s ease;
-}
-
+// 给center_box加了一个向上移动的动画
 .center_box {
   animation: Up 0.6s ease-in-out forwards;
 }
+
 @keyframes Up {
   0% {
     transform: translateY(30px);
@@ -239,6 +128,7 @@ svg {
   }
 }
 
+// 对于整体布局的响应式调整
 // 手机
 @media screen and (max-width: 768px) {
   .home_center_box {
@@ -320,10 +210,11 @@ svg {
     padding: 0 20px;
   }
   .el-dialog {
-    width: 40% !important;
+    min-width: 30vw !important;
     margin-top: 15vh !important;
-    height: 50% !important;
+    min-height: 50vh !important;
     overflow: auto !important;
+    border-radius: 8px !important;
   }
   .mobile-affix {
     display: none;
@@ -340,10 +231,6 @@ svg {
   .mobile-bottom-card {
     display: none;
   }
-}
-
-.md-preview-v3 {
-  background: rgba(255, 255, 255, 0.3);
 }
 
 // 滚动条宽度
@@ -390,11 +277,4 @@ svg {
     transparent
   );
   border-radius: 2em;
-}
-
-.code-block::scrollbar-thumb {
-  background-color: #efbcda !important;
-}
-.code-block::-webkit-scrollbar-thumb {
-  background-color: #efbcda !important;
 }

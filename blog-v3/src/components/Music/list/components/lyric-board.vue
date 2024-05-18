@@ -1,45 +1,108 @@
 <script setup>
-import { watch, onMounted, onBeforeUnmount, nextTick, ref } from "vue";
-import { music } from "@/store";
-import { storeToRefs } from "pinia";
-import { gsapTransLyric } from "@/utils/transform";
+import { watch, onMounted, onBeforeUnmount, nextTick, ref, inject } from "vue";
+import { gsapTransLyric, gsapTransLyricLeftToRight } from "@/utils/transform";
 
 import SpecialTitle from "./special-title.vue";
+import { debounce } from "@/utils/tool";
+import useSpecial from "./useSpecial";
 
-let lyricBox, timer, timer1, timer2, timer3;
+const musicSetters = inject("musicSetters");
+const musicGetters = inject("musicGetters");
+
+const {
+  bg,
+  brightness,
+  specialTitleSize,
+  authorName,
+  specialLyricSize,
+  changeBrightness,
+  changeSpecialTitleSize,
+  changeLyricFontSize,
+  setProfessional,
+  changeAuthorSize,
+} = useSpecial();
+
+let lyricBox, timer, timer1, timer2, timer3, timer4, timer5, timer6;
+let gsapArr = [];
 
 const {
   getMusicInfo,
   getIsToggleImg,
   getMusicDescription,
   getIsPaused,
-  getCurrentLyticIndex,
+  getCurrentLyricIndex,
   getShowLyricBoard,
   getLyricType,
-} = storeToRefs(music());
+  getIsClickLyric,
+} = musicGetters;
 
 const replaceUrl = ref("");
 const fileList = ref([]);
-const brightness = ref(0.3);
+const showControl = ref(false);
+const isMobile = ref(false);
+const isScroll = ref(false);
 
-const scrollToMiddle = () => {
+const play = () => {
+  if (getIsPaused.value) {
+    // 对字体动画进行暂停
+    pauseNeedClearTransform(false);
+  } else {
+    pauseNeedClearTransform(true);
+  }
+  musicSetters.togglePlay();
+};
+
+// 上一首
+const prev = async () => {
+  musicSetters.setNext(false);
+};
+
+// 下一首
+const next = async () => {
+  musicSetters.setNext(true);
+};
+
+const lyricScroll = () => {
+  isScroll.value = true;
+
+  if (timer6) {
+    clearTimeout(timer6);
+    timer6 = null;
+  }
+  timer6 = setTimeout(() => {
+    isScroll.value = false;
+  }, 1000);
+};
+
+const scrollToMiddle = (duration = 0) => {
   nextTick(() => {
-    let current = document.getElementById("currentLyticIndex");
+    if (getIsClickLyric.value) {
+      isScroll.value = false;
+    }
+    if (isScroll.value) {
+      return;
+    }
+    if (timer) {
+      clearTimeout(timer5);
+    }
+    timer5 = setTimeout(() => {
+      let current = document.getElementById("getCurrentLyricIndex");
 
-    if (!current) return;
+      if (!current) return;
 
-    let h = current
-      ? current.offsetTop -
-        Math.round(lyricBox.clientHeight / 2) +
-        Math.round(current.offsetHeight / 2) +
-        -30
-      : 0;
+      let h = current
+        ? current.offsetTop -
+          Math.round(lyricBox.clientHeight / 2) +
+          Math.round(current.offsetHeight / 2) +
+          -30
+        : 0;
 
-    lyricBox &&
-      lyricBox.scrollTo({
-        top: h,
-        behavior: "smooth",
-      });
+      lyricBox &&
+        lyricBox.scrollTo({
+          top: h,
+          behavior: "smooth",
+        });
+    }, duration);
   });
 };
 
@@ -53,42 +116,27 @@ const fullScreen = () => {
 };
 
 const goToIndex = (index) => {
-  music().setCurrentTimeByClickLyric(index);
+  musicSetters.setCurrentTimeByClickLyric(index);
 };
 
 const toggleLyricType = (type) => {
-  music().setLyricType(type);
+  musicSetters.setLyricType(type);
 
   if (type == "COMMON") {
     nextTick(() => {
-      scrollToMiddle();
+      scrollToMiddle(300);
     });
-  } else {
-    gsapTransLyric(".special-title", 0.8);
-    animateTitle();
   }
 };
 
-const animateTitle = () => {
-  nextTick(() => {
-    if (timer3) {
-      clearTimeout(timer3);
-      timer3 = null;
-    }
-    timer3 = setTimeout(() => {
-      gsapTransLyric(".special-title", 0.8, true);
-    }, 3600);
-  });
-};
-
 const calcLyricDuration = () => {
-  const nextTime = getMusicInfo.value.lyricTimeList[getCurrentLyticIndex.value + 1];
-  const currentTime = getMusicInfo.value.lyricTimeList[getCurrentLyticIndex.value];
+  const nextTime = getMusicInfo.value.lyricTimeList[getCurrentLyricIndex.value + 1];
+  const currentTime = getMusicInfo.value.lyricTimeList[getCurrentLyricIndex.value];
 
   const duration = nextTime - currentTime;
 
-  const fromDuration = duration >= 1500 ? 1.2 : 0;
-  const leaveDuration = duration >= 1500 ? 0.3 : 0;
+  const fromDuration = duration >= 1000 ? 0.8 : duration >= 1500 ? 1.2 : 0;
+  const leaveDuration = duration >= 1000 ? 0.4 : duration > 1500 ? 0.6 : 0;
 
   return {
     duration,
@@ -98,23 +146,29 @@ const calcLyricDuration = () => {
 };
 
 const animateSpecial = () => {
+  if (getIsPaused.value) return;
+  gsapArr = [];
   const { duration, fromDuration, leaveDuration } = calcLyricDuration();
 
-  if (!duration || duration < 1500) {
+  if (!duration || duration < 1000) {
     document.querySelector(".special-lyric").style.opacity = 1;
     if (timer) {
       clearTimeout(timer);
     }
-    timer = setTimeout(() => {
-      document.querySelector(".special-lyric").style.opacity = 0;
-    }, duration - 200);
+    timer = setTimeout(
+      () => {
+        document.querySelector(".special-lyric").style.opacity = 0;
+      },
+      duration > 500 ? duration - 200 : duration
+    );
   } else {
     if (timer1) {
       clearTimeout(timer1);
       timer1 = null;
     }
     timer1 = setTimeout(() => {
-      gsapTransLyric(".special-lyric", fromDuration);
+      let g = gsapTransLyric(".special-lyric", fromDuration);
+      gsapArr.push(g);
     });
     if (timer2) {
       clearTimeout(timer2);
@@ -122,31 +176,88 @@ const animateSpecial = () => {
     }
     timer2 = setTimeout(
       () => {
-        gsapTransLyric(".special-lyric", leaveDuration, true);
+        if (getIsPaused.value) return;
+        gsapTransLyric(
+          ".special-lyric",
+          leaveDuration,
+          true,
+          document.querySelector(".special-lyric")
+        );
       },
       duration - leaveDuration * 1000
     );
+
+    if (timer3) {
+      clearTimeout(timer3);
+      timer3 = null;
+    }
+    timer3 = setTimeout(() => {
+      let calcDuration = duration - 500;
+      let g = gsapTransLyricLeftToRight(".special-lyric", calcDuration / 1000);
+      gsapArr.push(g);
+    });
   }
 };
 
 const replaceImage = (file) => {
   replaceUrl.value = URL.createObjectURL(file.raw);
 };
+const closeBoard = () => {
+  musicSetters.setShowLyricBoard(false);
+};
 
-const changeBrightness = (flag) => {
-  if (flag) {
-    if (brightness.value < 1) {
-      brightness.value += 0.1;
-    }
+const toggleDisc = () => {
+  musicSetters.setIsShow();
+};
+
+const resize = debounce(() => {
+  // 当前视口宽度
+  let w = document.documentElement.clientWidth || document.body.clientWidth;
+  if (w > "798") {
+    isMobile.value = false;
   } else {
-    if (brightness.value > 0.1) {
-      brightness.value -= 0.1;
-    }
+    isMobile.value = true;
+  }
+}, 50);
+
+// 鼠标进来显示 控制
+const mouseEnter = () => {
+  if (timer4) {
+    clearTimeout(timer4);
+    timer4 = null;
+  }
+  showControl.value = true;
+};
+// 鼠标移出隐藏 控制
+const mouseLeave = () => {
+  if (timer4) {
+    clearTimeout(timer4);
+    timer4 = null;
+  }
+
+  timer4 = setTimeout(() => {
+    showControl.value = false;
+  }, 2000);
+};
+
+const toSetProfessional = () => {
+  setProfessional();
+};
+
+const pauseNeedClearTransform = (isStop) => {
+  if (isStop) {
+    gsapArr.forEach((v) => {
+      v && v.pause();
+    });
+  } else {
+    gsapArr.forEach((v) => {
+      v && v.play();
+    });
   }
 };
 
 watch(
-  () => getCurrentLyticIndex.value,
+  () => getCurrentLyricIndex.value,
   () => {
     if (getLyricType.value == "COMMON") {
       scrollToMiddle();
@@ -163,43 +274,18 @@ watch(
   (newV) => {
     if (newV) {
       nextTick(() => {
-        scrollToMiddle();
+        scrollToMiddle(300);
       });
+    } else {
+      showControl.value = false;
     }
-  }
-);
-watch(
-  () => getMusicInfo.value.id,
-  (newV) => {
-    if (getLyricType.value == "SPECIAL") {
-      if (newV) {
-        gsapTransLyric(".special-title", 0.8);
-        animateTitle();
-      }
-    }
-  }
-);
-
-watch(
-  () => getIsPaused.value,
-  (newV) => {
-    if (getLyricType.value == "SPECIAL") {
-      if (newV) {
-        gsapTransLyric(".special-title", 0.5);
-        clearTimeout(timer2);
-        timer2 = null;
-      } else {
-        animateTitle();
-      }
-    }
-  },
-  {
-    immediate: true,
   }
 );
 
 onMounted(() => {
   lyricBox = document.getElementById("lyricBox");
+
+  window.addEventListener("resize", resize);
 });
 
 onBeforeUnmount(() => {
@@ -207,10 +293,15 @@ onBeforeUnmount(() => {
   clearTimeout(timer1);
   clearTimeout(timer2);
   clearTimeout(timer3);
+  clearTimeout(timer4);
+  clearTimeout(timer5);
   timer = null;
   timer1 = null;
   timer2 = null;
   timer3 = null;
+  timer4 = null;
+  timer5 = null;
+  window.removeEventListener("resize", resize);
 });
 </script>
 
@@ -218,8 +309,11 @@ onBeforeUnmount(() => {
   <div
     :class="['lyric-mask', getShowLyricBoard ? 'lyric-mask-show' : 'lyric-mask-hide']"
     :style="{
+      background: replaceUrl ? '' : bg ? '#000' : '',
       backgroundImage:
-        getLyricType == 'SPECIAL' ? `url(${replaceUrl || getMusicDescription.al.picUrl})` : '',
+        getLyricType == 'SPECIAL'
+          ? `url(${replaceUrl || bg || getMusicDescription.al.picUrl})`
+          : '',
     }"
   >
     <div
@@ -227,26 +321,6 @@ onBeforeUnmount(() => {
       class="special-mask"
       :style="{ backgroundColor: `rgba(0,0,0, ${brightness})` }"
     ></div>
-    <div class="toggle-type">
-      <span class="type-btn mr-[10px]" v-show="getLyricType == 'SPECIAL'">
-        <el-upload
-          v-model:file-list="fileList"
-          action="#"
-          :multiple="false"
-          :auto-upload="false"
-          :show-file-list="false"
-          :on-change="replaceImage"
-        >
-          ReplaceBg
-        </el-upload>
-      </span>
-      <span class="type-btn" v-show="getLyricType == 'SPECIAL'" @click="toggleLyricType('COMMON')"
-        >Normal</span
-      >
-      <span class="type-btn" v-show="getLyricType == 'COMMON'" @click="toggleLyricType('SPECIAL')"
-        >Special</span
-      >
-    </div>
     <div
       v-show="getLyricType == 'COMMON'"
       class="!w-[100%] !h-[100%] flex justify-between items-center"
@@ -269,7 +343,8 @@ onBeforeUnmount(() => {
           />
         </div>
       </div>
-      <div id="lyricBox" class="right">
+
+      <div id="lyricBox" class="right" @scroll="lyricScroll">
         <div class="!p-[10px]">
           <div>
             <div class="text-2xl leading-loose text-center">
@@ -277,8 +352,8 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <div
-            :id="getCurrentLyticIndex == index ? 'currentLyticIndex' : ''"
-            :class="['lyric-word', getCurrentLyticIndex == index ? 'current' : '']"
+            :id="getCurrentLyricIndex == index ? 'getCurrentLyricIndex' : ''"
+            :class="['lyric-word', getCurrentLyricIndex == index ? 'current' : '']"
             v-for="(item, index) in getMusicInfo.lyricList"
             :key="index"
             @click="goToIndex(index)"
@@ -293,17 +368,89 @@ onBeforeUnmount(() => {
       class="special !w-[100%] !h-[100%] flex flex-col justify-center items-center"
     >
       <div class="special-title">
-        <SpecialTitle :title="`《 ${getMusicDescription?.name} 》`" @click="fullScreen" />
+        <div class="flex items-center justify-center">
+          <span class="small-action" @click="changeSpecialTitleSize(false)"></span>
+          <SpecialTitle
+            :size="specialTitleSize"
+            :title="getMusicDescription?.name"
+            :is-special="!!bg"
+            @click="fullScreen"
+          />
+          <span class="small-action" @click="changeSpecialTitleSize(true)"></span>
+        </div>
 
-        <div class="author text-2xl">
-          <span class="brightness" @click="changeBrightness(false)"></span> --
-          {{ getMusicDescription?.ar[0]?.name }}
-          <span class="brightness" @click="changeBrightness(true)"></span>
+        <div
+          class="author"
+          :style="{ fontSize: authorName + 'rem', fontWeight: !!bg ? '300' : '' }"
+        >
+          <span class="small-action" @click="changeAuthorSize(false)"></span>
+          <span @click="changeBrightness(false)">{{ getMusicDescription?.ar[0]?.name }}</span>
+          <span class="small-action" @click="changeAuthorSize(true)"></span>
         </div>
       </div>
-      <span class="special-lyric text-3xl">
-        {{ getMusicInfo.lyricList[getCurrentLyticIndex] }}
-      </span>
+      <div class="flex justify-center items-start">
+        <span class="small-action" @click="changeLyricFontSize(false)"></span>
+        <span
+          class="special-lyric"
+          :style="{ fontSize: specialLyricSize + 'rem', fontWeight: !!bg ? '300' : '' }"
+        >
+          {{ getMusicInfo.lyricList[getCurrentLyricIndex] }}
+        </span>
+        <span class="small-action" @click="changeLyricFontSize(true)"></span>
+      </div>
+    </div>
+
+    <div class="bottom-control" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
+      <div
+        :class="[
+          'control',
+          getLyricType == 'COMMON' || isMobile || getIsPaused || showControl
+            ? 'show-control'
+            : 'hide-control',
+        ]"
+      >
+        <div class="close-board">
+          <i class="iconfont icon-arrowdown change-color mr-[10px]" @click="closeBoard"></i>
+          <i
+            v-show="getLyricType == 'SPECIAL'"
+            class="iconfont icon-paper change-color"
+            @click="toSetProfessional"
+          ></i>
+        </div>
+        <div class="control-group">
+          <i class="iconfont icon-shangyiqu change-color" @click="prev"></i>
+          <i class="iconfont icon-zanting change-color" v-if="getIsPaused" @click="play"></i>
+          <i class="iconfont icon-bofangzhong change-color" v-else @click="play"></i>
+          <i class="iconfont icon-xiayiqu change-color" @click="next"></i>
+        </div>
+        <div class="toggle-type">
+          <span class="type-btn mr-[10px]" v-show="getLyricType == 'SPECIAL'">
+            <el-upload
+              v-model:file-list="fileList"
+              action="#"
+              :multiple="false"
+              :auto-upload="false"
+              :show-file-list="false"
+              :on-change="replaceImage"
+            >
+              <i class="iconfont icon-icon-test2"></i>
+            </el-upload>
+          </span>
+          <span
+            class="type-btn mr-[10px]"
+            v-show="getLyricType == 'SPECIAL'"
+            @click="toggleLyricType('COMMON')"
+            ><i class="iconfont icon-icon-test1"
+          /></span>
+          <span
+            class="type-btn mr-[10px]"
+            v-show="getLyricType == 'COMMON'"
+            @click="toggleLyricType('SPECIAL')"
+            ><i class="iconfont icon-icon-test"
+          /></span>
+          <i class="iconfont icon-off-search change-color" @click="toggleDisc"></i>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -314,10 +461,10 @@ onBeforeUnmount(() => {
   top: 0px;
   left: 0;
   right: 0;
-  bottom: -5px;
+  bottom: 0;
   z-index: 2000;
-  padding-top: 35px;
-  background-color: #fff;
+  padding: 35px 0;
+  background-color: var(--global-white);
   overflow: hidden;
   display: none;
   background-position: center center;
@@ -331,23 +478,6 @@ onBeforeUnmount(() => {
     bottom: 0;
     right: 0;
     z-index: 1;
-  }
-
-  .toggle-type {
-    position: absolute;
-    top: 10px;
-    right: 60px;
-    z-index: 1;
-    display: flex;
-
-    .type-btn {
-      cursor: pointer;
-      color: #62c28a;
-
-      &:hover {
-        color: #62c28a;
-      }
-    }
   }
 
   .left {
@@ -375,40 +505,123 @@ onBeforeUnmount(() => {
 }
 .special {
   &-title {
-    color: #fff;
+    text-align: center;
+    color: var(--global-white);
     cursor: pointer;
     z-index: 2;
-    height: 180px;
+    min-height: 150px;
+    margin-bottom: 20px;
+  }
+
+  &-lyric {
+    color: var(--global-white);
+    text-align: center;
+    z-index: 2;
+    min-height: 80px;
+    // prettier-ignore
+    background: #aaaaaa -webkit-linear-gradient(left, #fff, #fff) no-repeat 0 0;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-size: 0% 100%;
   }
 
   .author {
-    line-height: 2.8;
-    color: #fff;
-    text-shadow: 0px 0px 5px #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 2.2;
+    color: var(--global-white);
     cursor: pointer;
     text-align: center;
   }
 
-  .brightness {
+  .small-action {
+    z-index: 1;
     cursor: pointer;
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.iconfont {
+  font-size: 18px;
+}
+
+.bottom-control {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 80px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .control {
+    width: 100%;
+    margin: 0 10px;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--shadow-mask-bg);
+    border-radius: 60px;
+
+    &-group {
+      width: 15%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
   }
 
-  .special-lyric {
-    color: #fff;
-    text-align: center;
-    z-index: 2;
-    font-smooth: never;
-    height: 60px;
-    line-height: 60px;
-    text-shadow: 0px 0px 5px #ffffff;
+  .close-board {
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .toggle-type {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    .type-btn {
+      cursor: pointer;
+      color: var(--global-white);
+
+      &:hover {
+        color: var(--music-main-active);
+      }
+    }
+  }
+
+  .iconfont {
+    font-size: 1.8rem;
+    color: var(--global-white);
+  }
+
+  .icon-zanting,
+  .icon-bofangzhong {
+    font-size: 2.8rem;
+  }
+  .change-color:hover {
+    cursor: pointer;
+    color: var(--music-main-active);
   }
 }
 
 .lyric-mask-show {
-  display: block;
+  display: flex;
   animation: showBoard 0.3s ease-in-out forwards;
 }
 .lyric-mask-hide {
@@ -430,6 +643,41 @@ onBeforeUnmount(() => {
   }
   100% {
     top: 100%;
+    display: none;
+  }
+}
+
+.show-control {
+  display: flex;
+  animation: showControl 0.6s ease-in-out forwards;
+}
+
+.hide-control {
+  animation: hideControl 0.6s ease-in-out forwards;
+}
+
+@keyframes showControl {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hideControl {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+    display: none;
   }
 }
 
@@ -481,7 +729,7 @@ onBeforeUnmount(() => {
   opacity: 0.5;
 }
 .current {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
   opacity: 1;
 }
@@ -497,15 +745,16 @@ onBeforeUnmount(() => {
     }
   }
 
-  .toggle-type {
-    top: 60px !important;
+  .control-group {
+    width: 30% !important;
   }
-}
 
-:fullscreen {
-  /* 代码 */
+  .close-board {
+    left: 30px !important;
+  }
+
   .toggle-type {
-    display: none !important;
+    right: 30px !important;
   }
 }
 </style>

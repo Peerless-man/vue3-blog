@@ -7,6 +7,7 @@ import { ElNotification } from "element-plus";
 import MessageBox from "@/components/MessageBox/message-box.vue";
 import { _setLocalItem } from "@/utils/tool";
 import SwitchTheme from "@/components/SwitchTheme/index.vue";
+import Login from "./login/login.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -32,11 +33,10 @@ const handleSelect = async (val, type) => {
       title: "提示",
       message: h("div", { style: "color: #7ec050; font-weight: 600;" }, "退出成功"),
     });
+  } else if (val == "/login") {
+    userStore.setShowLogin(true);
   } else {
     router.push(val);
-    if (val == "/login") {
-      _setLocalItem("blogLastRouter", route.fullPath);
-    }
   }
   if (type == "mobile") {
     headerState.drawerShow = false;
@@ -50,7 +50,7 @@ const handleClose = () => {
 
 // 去登录
 const toLogin = () => {
-  router.push("/login");
+  userStore.setShowLogin(true);
   headerState.drawerShow = false;
   _setLocalItem("blogLastRouter", route.fullPath);
 };
@@ -71,8 +71,7 @@ const logOut = () => {
 
 // 顶部导航固定
 const scroll = () => {
-  let scrollTop =
-    window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+  let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   const { startScrollTop } = headerState;
   if (scrollTop <= 50) {
     headerState.headerClass = "fixed-header";
@@ -151,9 +150,6 @@ onMounted(() => {
               >
             </el-sub-menu>
           </div>
-          <!-- <el-sub-menu index="/menu">
-            <template #title><i class="iconfont icon-menu21"></i> 菜单</template>
-          </el-sub-menu> -->
         </el-menu>
         <SwitchTheme />
       </div>
@@ -235,6 +231,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <Login />
 </template>
 
 <style lang="scss" scoped>

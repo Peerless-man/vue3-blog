@@ -9,12 +9,13 @@ export const homeGetStatistic = () => {
   });
 };
 
-/** 一言api */
-export const getSentence = (ColaKey) => {
+/** 获取ColaKey */
+export const getKey = () => {
   return new Promise((resolve, reject) => {
     http
-      .post("https://luckycola.com.cn/tools/yiyan", {
-        ColaKey,
+      .post("https://luckycola.com.cn/ai/getColaKey", {
+        uid: "xIlyH01695893781527LY3zhJGJ0n",
+        appKey: "651549153295914ff09985c1",
       })
       .then((res) => {
         resolve(res);
@@ -22,12 +23,12 @@ export const getSentence = (ColaKey) => {
   });
 };
 
-export const getKey = () => {
+/** 一言api 认证ColaKey成功后获取句子 */
+export const getSentence = (ColaKey) => {
   return new Promise((resolve, reject) => {
     http
-      .post("https://luckycola.com.cn/ai/getColaKey", {
-        uid: "xIlyH01695893781527LY3zhJGJ0n",
-        appKey: "651549153295914ff09985c1",
+      .post("https://luckycola.com.cn/tools/yiyan", {
+        ColaKey,
       })
       .then((res) => {
         resolve(res);

@@ -27,18 +27,17 @@ const param = reactive({
 const articleList = ref([]);
 const articleTotal = ref();
 
-const getHomeArticleList = async (type) => {
-  param.loading = true;
-  type == "init" ? "" : (param.loading = true);
-  let res = await homeGetArticleList(param.current, param.size);
-
-  if (res.code == 0) {
-    type == "init" ? "" : (param.loading = false);
-    const { list, total } = res.result;
-    articleList.value = list;
-    articleTotal.value = total;
+const getHomeArticleList = async () => {
+  try {
+    let res = await homeGetArticleList(param.current, param.size);
+    if (res.code == 0) {
+      const { list, total } = res.result;
+      articleList.value = list;
+      articleTotal.value = total;
+    }
+  } finally {
+    param.loading = false;
   }
-  param.loading = false;
 };
 
 const pagination = (page) => {
@@ -47,21 +46,23 @@ const pagination = (page) => {
 };
 
 /** 网站右侧 */
-const rightSizeLoading = ref(true);
+const rightSizeLoading = ref(false);
 const runtime = ref(0);
 let configDetail = ref({});
 let tags = ref([]);
 
 // 获取网站详细信息
 const getConfigDetail = async () => {
-  rightSizeLoading.value = true;
-  let res = await homeGetConfig();
-  if (res.code == 0 && typeof res.result != "string") {
-    configDetail.value = res.result;
-    userStore.setBlogAvatar(res.result.blog_avatar);
-    calcRuntimeDays(configDetail.value.createdAt);
+  try {
+    let res = await homeGetConfig();
+    if (res.code == 0 && typeof res.result != "string") {
+      configDetail.value = res.result;
+      userStore.setBlogAvatar(res.result.blog_avatar);
+      calcRuntimeDays(configDetail.value.createdAt);
+    }
+  } finally {
+    rightSizeLoading.value = false;
   }
-  rightSizeLoading.value = false;
 };
 // 获取文章数、分类数、标签数
 const getStatistic = async () => {
@@ -94,6 +95,8 @@ const calcRuntimeDays = (time) => {
 };
 
 const init = async () => {
+  param.loading = true;
+  rightSizeLoading.value = true;
   await getHomeArticleList("init");
   await getConfigDetail();
   await getStatistic();
@@ -103,7 +106,7 @@ const init = async () => {
 const observeMobileBox = () => {
   nextTick(() => {
     gsapTransY([".mobile-top-card", ".mobile-bottom-card"], -30, 0.5, "bounce.in");
-    gsapTransY([".mobile-bottom-card"], 50, 0.6, "none");
+    gsapTransY([".mobile-bottom-card"], 30, 0.6, "none");
   });
 };
 

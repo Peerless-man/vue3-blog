@@ -39,23 +39,16 @@ export const reqMusicDescription = (id) => {
 };
 
 // 搜索
-export const reqSearch = (keyWords) => {
-  return new Promise((resolve, reject) => {
-    http.get(`/wapi/search/suggest?keywords=${keyWords}`, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-// 根据歌手搜索热门歌曲
-export const reqSearchSingerHot = ({ id, limit, offset }) => {
+export const reqSearch = (keyWords, offset, limit) => {
   return new Promise((resolve, reject) => {
     http
-      .get(`/wapi/artist/top/song?id=${id}&offset=${offset}&limit=${limit}&order=hot`, {})
+      .get(`/wapi/search?keywords=${keyWords}&offset=${offset}&limit=${limit}`, {})
       .then((res) => {
         resolve(res);
       });
   });
 };
+
 // 根据歌曲id获取歌词
 export const reqMusicLyricById = (id) => {
   return new Promise((resolve, reject) => {

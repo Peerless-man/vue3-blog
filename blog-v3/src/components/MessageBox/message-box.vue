@@ -22,6 +22,7 @@ const props = defineProps({
 });
 const drawerShow = ref(false);
 const messageList = ref([]);
+const loadMore = ref(false);
 
 const params = reactive({
   current: 1,
@@ -104,19 +105,26 @@ const getMore = () => {
 };
 
 const getMessageList = async () => {
-  redTotal.value = 0;
-  params.userId = props.userId;
-  const res = await getNotifylist(params);
-  if (res.code == 0) {
-    const { list, total } = res.result;
-    messageList.value = params.current == 1 ? list : messageList.value.concat(list);
-    messageTotal.value = total;
-    Array.isArray(messageList.value) &&
-      messageList.value.forEach((v) => {
-        if (v.isView == 1) {
-          redTotal.value++;
-        }
-      });
+  try {
+    redTotal.value = 0;
+    params.userId = props.userId;
+    if (params.current > 1) {
+      loadMore.value = true;
+    }
+    const res = await getNotifylist(params);
+    if (res.code == 0) {
+      const { list, total } = res.result;
+      messageList.value = params.current == 1 ? list : messageList.value.concat(list);
+      messageTotal.value = total;
+      Array.isArray(messageList.value) &&
+        messageList.value.forEach((v) => {
+          if (v.isView == 1) {
+            redTotal.value++;
+          }
+        });
+    }
+  } finally {
+    loadMore.value = false;
   }
 };
 
@@ -169,13 +177,10 @@ onMounted(async () => {
         </div>
       </el-card>
       <div class="observer" @click="getMore">
-        {{
-          !messageList.length
-            ? "空空如也"
-            : messageList.length >= messageTotal
-            ? "已经到底啦"
-            : "加载更多"
-        }}
+        <Loading :size="32" v-if="loadMore" />
+        <template v-else>
+          {{ messageList.length >= messageTotal ? "已经到底啦" : "点击加载更多～" }}
+        </template>
       </div>
     </el-drawer>
   </div>
@@ -220,7 +225,9 @@ onMounted(async () => {
 }
 
 .observer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1rem;
   color: var(--primary);
   margin-top: 8px;

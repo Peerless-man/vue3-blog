@@ -5,6 +5,11 @@ export const routerList = [
     disabled: false
   },
   {
+    label: "文章列表",
+    value: "ArticleList",
+    disabled: false
+  },
+  {
     label: "前端",
     value: "Front",
     disabled: false
@@ -25,16 +30,6 @@ export const routerList = [
     disabled: false
   },
   {
-    label: "申请友链",
-    value: "LinkApply",
-    disabled: false
-  },
-  {
-    label: "修改友链",
-    value: "LinkUpdate",
-    disabled: false
-  },
-  {
     label: "分类",
     value: "Category",
     disabled: false
@@ -52,17 +47,6 @@ export const routerList = [
   {
     label: "说说",
     value: "Talk",
-    disabled: false
-  },
-  {
-    label: "登录",
-    value: "Login",
-    disabled: false
-  },
-
-  {
-    label: "注册",
-    value: "Register",
     disabled: false
   },
   {

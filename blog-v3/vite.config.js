@@ -73,20 +73,21 @@ export default defineConfig({
       overlay: false,
     },
     proxy: {
-      //匹配规则
+      // 本地后端代理
       "/api": {
         //要访问的跨域的域名
         target: "http://localhost:8888",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      // minio 代理
       "/blog-images": {
         target: "http://mrzym.top:9000/blog-images",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/blog-images/, ""),
       },
       "/wapi": {
-        //要访问的跨域的域名
+        // 网易云的音乐代理
         target: "http://mrzym.top:3000",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/wapi/, ""),

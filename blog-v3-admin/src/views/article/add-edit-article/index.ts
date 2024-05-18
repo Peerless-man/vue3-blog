@@ -237,10 +237,10 @@ export function useArticle() {
         let res;
         if (!finalArticle.id) {
           // 新增
-          res = await addArticle({ article: finalArticle });
+          res = await addArticle(finalArticle);
         } else {
           // 编辑
-          res = await editArticle({ article: finalArticle });
+          res = await editArticle(finalArticle);
         }
         if (res.code == 0) {
           message(res.message, { type: "success" });

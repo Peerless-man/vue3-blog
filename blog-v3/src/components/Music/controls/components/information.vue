@@ -5,49 +5,36 @@
  -->
 
 <script setup>
-import { defineComponent } from "vue";
-import { music } from "@/store/index";
-import { storeToRefs } from "pinia";
+import { defineComponent, inject } from "vue";
+
+const musicGetters = inject("musicGetters");
+const musicSetters = inject("musicSetters");
 
 defineComponent({
   name: "Information",
 });
 
-const { getShowLyricBoard } = storeToRefs(music());
-
-defineProps({
-  // 当前播放的音乐
-  musicInfo: {
-    type: Object,
-    default: () => {},
-  },
-  // 是否正在切换图片
-  isToggleImg: {
-    type: Boolean,
-    default: false,
-  },
-  // 是否正在暂停
-  isPaused: {
-    type: Boolean,
-    default: false,
-  },
-});
+const { getShowLyricBoard, getMusicDescription, getIsToggleImg, getIsPaused } = musicGetters;
 </script>
 
 <template>
   <!-- 唱片展示 -->
   <div class="music-info">
     <img
-      :class="['music-img', isToggleImg ? '' : 'disc-rotate', isPaused ? 'paused' : 'running']"
-      @click="music().setShowLyricBoard(!getShowLyricBoard)"
-      :src="musicInfo.al.picUrl"
+      :class="[
+        'music-img',
+        getIsToggleImg ? '' : 'disc-rotate',
+        getIsPaused ? 'paused' : 'running',
+      ]"
+      @click="musicSetters.setShowLyricBoard(!getShowLyricBoard)"
+      :src="getMusicDescription.al.picUrl"
     />
     <div class="music-desc">
       <div class="music-name">
-        {{ musicInfo.name }}
+        {{ getMusicDescription.name }}
       </div>
       <div class="author-name">
-        {{ musicInfo.ar[0].name }}
+        {{ getMusicDescription.ar[0].name }}
       </div>
     </div>
   </div>

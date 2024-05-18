@@ -152,7 +152,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .message {
   .nick-name {
-    color: #fff;
+    color: var(--global-white);
     margin-left: 1rem;
     letter-spacing: 1px;
     padding: 3px 8px;
@@ -168,7 +168,7 @@ onMounted(() => {
 
   .time {
     font-size: 12px;
-    color: #fff;
+    color: var(--global-white);
     letter-spacing: 1px;
     margin-right: 10px;
   }
@@ -202,7 +202,7 @@ onMounted(() => {
   align-items: center;
 }
 .index-tag {
-  color: #fff;
+  color: var(--global-white);
   font-size: 12px;
 }
 
@@ -214,7 +214,7 @@ onMounted(() => {
   padding: 8px;
 }
 .option {
-  color: #fff;
+  color: var(--global-white);
   padding: 1px 5px;
   border-radius: 8px;
   background-color: rgba(0, 0, 0, 0.2);

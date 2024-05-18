@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .type-writer {
-  color: #fffcec;
+  color: var(--global-white);
   font-size: 1em;
   cursor: pointer;
   text-align: center;

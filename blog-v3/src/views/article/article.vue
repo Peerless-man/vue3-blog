@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, reactive, h } from "vue";
+import { ref, watch, reactive, h, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 import { staticData, user } from "@/store/index.js";
@@ -19,12 +19,16 @@ import { addLike, cancelLike, getIsLikeByIdAndType } from "@/api/like";
 
 import Comment from "@/components/Comment/Comment.vue";
 import Tooltip from "@/components/ToolTip/tooltip.vue";
-import PageHeader from "@/components/Header/PageHeader.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 import GsapCount from "@/components/GsapCount/index";
 
 const MdCatalog = MdEditor.MdCatalog;
 let setUpTimes = null;
 let lastArticleId = null;
+let comment = null,
+  observe = null; // 用于监听评论是否出现在可视区域内
+const commentRef = ref(null);
+const commentIsOpen = ref(false);
 
 const router = useRouter();
 const route = useRoute();
@@ -138,6 +142,30 @@ const init = async (id) => {
   await getArticleDetails(id);
   await getRecommendArticle(id);
   loading.value = false;
+
+  nextTick(() => {
+    commentIsOpen.value = false;
+    observeBox();
+  });
+};
+
+// 无限加载
+const observeBox = () => {
+  // 获取要监听的元素
+  comment = document.querySelector(".comment-box");
+
+  observe = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(async (e) => {
+        if (e.isIntersecting && e.intersectionRatio > 0 && !commentIsOpen.value) {
+          commentRef.value.toggleExpand();
+          commentIsOpen.value = true;
+        }
+      });
+    },
+    { threshold: [1] }
+  );
+  comment && observe.observe(comment);
 };
 watch(
   () => route,
@@ -290,8 +318,9 @@ watch(
               </el-col>
             </el-row>
           </div>
-          <div class="!p-[2rem]">
+          <div class="!p-[2rem] comment-box">
             <Comment
+              ref="commentRef"
               class="w-[100%]"
               type="article"
               :id="route.query.id - 0"
@@ -438,7 +467,7 @@ watch(
     width: 50%;
     height: 100%;
     overflow: hidden;
-    color: #fff;
+    color: var(--global-white);
     transition: scale 0.5s;
     cursor: pointer;
 
@@ -447,7 +476,7 @@ watch(
         scale: 1.2;
       }
       .recommend-box-item {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: var(--shadow-mask-bg);
       }
     }
 

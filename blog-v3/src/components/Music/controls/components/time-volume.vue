@@ -4,40 +4,29 @@
 * @Description: 展示音量、进度等 后续可能加随机播放等
 -->
 <script setup>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, inject } from "vue";
 
-import { music } from "@/store/index";
-import { storeToRefs } from "pinia";
 import { MODELLIST } from "@/utils/enum";
 
 import CustomMusicList from "../../list/components/custom-music-list.vue";
+import { calcMusicTime } from "../../musicTool";
 
-const { getPlayModel, getVolume } = storeToRefs(music());
+const musicGetters = inject("musicGetters");
+const musicSetters = inject("musicSetters");
+
+const { getPlayModel, getVolume, getCurrentTime, getDuration } = musicGetters;
 
 defineComponent({
   name: "TimeVolume",
 });
 
-const playModel = {
+const myPlayModel = {
   RANDOM: "icon-suijibofang",
   LISTLOOP: "icon-liebiaoxunhuan",
   SINGLECYCLE: "icon-danquxunhuan",
 };
 
-defineEmits(["update:volume"]);
-
-defineProps({
-  // 当前播放时长
-  currentTime: {
-    type: String,
-    default: "00:00",
-  },
-  // 总的播放时长
-  duration: {
-    type: String,
-    default: "00:00",
-  },
-});
+defineEmits(["update:getVolume"]);
 
 const currentVolume = ref(0);
 const elPopoverRef = ref();
@@ -51,7 +40,7 @@ const changeModel = () => {
       index = index + 1;
     }
   }
-  music().setPlayModel(MODELLIST[index]);
+  musicSetters.setPlayModel(MODELLIST[index]);
 };
 
 // 手动关闭popover
@@ -74,17 +63,17 @@ watch(
   () => currentVolume.value,
   () => {
     // 修改音乐大小 外面会根据音乐大小去调节音乐播放器的声音大小
-    music().setVolume(currentVolume.value);
+    musicSetters.setVolume(currentVolume.value);
   }
 );
 </script>
 
 <template>
-  <div class="time-volume">
+  <div class="time-getVolume">
     <!-- 音乐模式 -->
-    <i :class="['change-color', 'iconfont', playModel[getPlayModel]]" @click="changeModel"></i>
+    <i :class="['change-color', 'iconfont', myPlayModel[getPlayModel]]" @click="changeModel"></i>
     <!-- 时间显示 -->
-    <span class="time">{{ currentTime }} / {{ duration }}</span>
+    <span class="time">{{ calcMusicTime(getCurrentTime) }} / {{ calcMusicTime(getDuration) }}</span>
     <!-- 音量调节 -->
     <el-popover placement="top" trigger="click" :width="42">
       <template #reference>
@@ -98,7 +87,7 @@ watch(
     <el-popover
       ref="elPopoverRef"
       placement="top"
-      :width="400"
+      :width="350"
       :show-arrow="false"
       :teleported="false"
       trigger="click"
@@ -116,7 +105,7 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-.time-volume {
+.time-getVolume {
   position: relative;
   width: 120px;
   display: flex;
@@ -127,7 +116,7 @@ watch(
     font-size: 1rem;
   }
 }
-.volume {
+.getVolume {
   position: absolute;
   top: -22px;
   right: -8px;
@@ -138,7 +127,7 @@ watch(
 
 .change-color:hover {
   cursor: pointer;
-  color: #62c28a;
+  color: var(--music-main-active);
 }
 
 .pop {
@@ -167,13 +156,13 @@ watch(
 }
 
 :deep(.el-slider__bar) {
-  background-color: #62bf82;
+  background-color: var(--music-main-active);
 }
 
 :deep(.el-slider__button) {
   width: 8px;
   height: 8px;
-  border: solid 2px #62bf82;
+  border: solid 2px var(--music-main-active);
 }
 :deep(.el-slider__runway) {
   margin: 6px 16px 4px 16px !important;

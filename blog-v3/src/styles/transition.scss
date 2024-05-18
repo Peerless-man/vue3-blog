@@ -1,0 +1,31 @@
+// 进入前
+.component-enter-from,
+.component-leave-to {
+  opacity: 0;
+}
+.component-enter-to,
+.component-leave-from {
+  opacity: 1;
+}
+
+// 设置进入和离开过程中的动画时长0.5s
+.component-enter-active,
+.component-leave-active {
+  transition: all 0.6s;
+}
+
+// 进入前
+.main-enter-from,
+.main-leave-to {
+  transform: translateX(-10px);
+}
+.main-enter-to,
+.main-leave-from {
+  transform: translateX(0);
+}
+
+// 设置进入和离开过程中的动画时长0.5s
+.main-enter-active,
+.main-leave-active {
+  transition: all 0.6s;
+}

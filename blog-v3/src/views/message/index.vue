@@ -35,6 +35,7 @@ const { getUserInfo } = storeToRefs(userStore);
 const messageList = ref([]);
 const total = ref(0);
 const loading = ref(false);
+const scrollLoading = ref(false);
 let observe;
 let box;
 const param = reactive({
@@ -58,7 +59,6 @@ const changeTab = (key, label) => {
     param.tag = "";
   }
   param.current = 1;
-
   pageGetMessageList();
 };
 
@@ -84,27 +84,27 @@ const observeBox = () => {
 const pageGetMessageList = async () => {
   if (param.current == 1) {
     loading.value = true;
+  } else {
+    scrollLoading.value = true;
   }
-  let res = await getMessageList(param);
-  if (res.code == 0) {
-    const { list } = res.result;
-    messageList.value =
-      param.current == 1 ? res.result.list : messageList.value.concat(res.result.list);
-    let classList = res.result.list.map((item, index) => {
-      return ".message" + (messageList.value.length - list.length + index);
-    });
-    total.value = res.result.total;
-    if (messageList.value.length < total.value) {
-      observeBox();
-    } else {
-      observe && observe.unobserve(box);
-      observe = null;
+  try {
+    let res = await getMessageList(param);
+    if (res.code == 0) {
+      const { list } = res.result;
+      messageList.value =
+        param.current == 1 ? res.result.list : messageList.value.concat(res.result.list);
+      let classList = res.result.list.map((item, index) => {
+        return ".message" + (messageList.value.length - list.length + index);
+      });
+      total.value = res.result.total;
+      nextTick(() => {
+        gsapTransXScale(classList, 0, 1.2);
+      });
     }
-    nextTick(() => {
-      gsapTransXScale(classList, 0, 1.2);
-    });
+  } finally {
+    loading.value = false;
+    scrollLoading.value = false;
   }
-  loading.value = false;
 };
 
 const like = async (item, index) => {
@@ -204,11 +204,11 @@ const getHotMessageTag = async () => {
     tabList.value.unshift({ key: 0, label: "全部" });
   }
 };
-const mouseDown = () => {
+const showSearchInput = () => {
   showSearch.value = true;
 };
 
-const mouseLeave = () => {
+const hideSearchInput = () => {
   showSearch.value = false;
 };
 
@@ -221,6 +221,7 @@ onMounted(async () => {
   _removeLocalItem("message-refresh");
   await getHotMessageTag();
   await pageGetMessageList();
+  observeBox();
 });
 
 onActivated(async () => {
@@ -247,60 +248,56 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="message !min-h-[60vh]">
-    <div class="publish-pc">
-      <el-popover placement="top-start" :width="110" trigger="hover" content="点我去发表留言">
-        <template #reference>
-          <svg-icon name="publish" :width="4" :height="4" @click="addMessage"></svg-icon>
-        </template>
-      </el-popover>
-    </div>
-    <div class="publish-mobile">
-      <el-popover placement="top-start" :width="110" trigger="hover" content="点我去发表留言">
-        <template #reference>
-          <svg-icon name="publish" :width="3" :height="3" @click="addMessage"></svg-icon>
-        </template>
-      </el-popover>
-    </div>
+  <div class="message !min-h-[60vh]" @click="hideSearchInput">
     <div class="message-header">
       <div class="message-title">留言板</div>
       <div class="flex items-center !h-[5rem]">
         <TypeWriter size="1.2rem" :typeList="['生活原本沉闷，但跑起来就会有风!']"></TypeWriter>
       </div>
+      <div class="flex items-center">
+        <span class="apply-button !mr-[20px]" @click="addMessage">一定要留下点什么～</span>
+        <el-popover placement="top-start" :width="110" trigger="hover" content="点我去发表留言">
+          <template #reference>
+            <svg-icon name="publish" :width="2" :height="2" @click="addMessage"></svg-icon>
+          </template>
+        </el-popover>
+      </div>
     </div>
     <div class="message-body center_box">
-      <div class="search-tab" @mousedown="mouseDown" @mouseleave="mouseLeave">
-        <ul class="tab">
-          <li v-for="item in tabList" :key="item.key" @click="changeTab(item.key, item.label)">
-            <div :class="[item.key == activeTab ? 'active-tab' : '', 'tab-li']">
-              {{ item.label }}
-            </div>
-          </li>
-          <Transition
-            :duration="{ enter: 0, leave: 500 }"
-            enter-active-class="animate__animated animate__fadeIn"
-            leave-active-class="animate__animated animate__fadeOut"
-          >
-            <div v-if="showSearch" class="flex justify-center items-center">
-              <el-input
-                :prefix-icon="Search"
-                class="search"
-                v-model="searchTag"
-                placeholder="搜索留言内容"
-                @change="changeSearch"
-                clearable
-              ></el-input>
-            </div>
-          </Transition>
-        </ul>
-      </div>
-      <el-skeleton :loading="loading" style="height: 100%" animated>
-        <template #template>
-          <div class="loading">
-            <div class="coffee_cup"></div>
+      <el-row class="row-height" :gutter="16">
+        <el-col :span="24">
+          <div class="search-tab" @click.stop="showSearchInput">
+            <ul class="tab">
+              <li v-for="item in tabList" :key="item.key" @click="changeTab(item.key, item.label)">
+                <div :class="[item.key == activeTab ? 'message-active-tab' : '', 'tab-li']">
+                  {{ item.label }}
+                </div>
+              </li>
+            </ul>
+            <Transition
+              :duration="{ enter: 0, leave: 500 }"
+              enter-active-class="animate__animated animate__fadeIn"
+              leave-active-class="animate__animated animate__fadeOut"
+            >
+              <div v-if="showSearch" class="!py-[5px] flex justify-center items-center">
+                <el-input
+                  :prefix-icon="Search"
+                  class="search"
+                  v-model="searchTag"
+                  placeholder="搜索留言内容"
+                  @change="changeSearch"
+                  clearable
+                ></el-input>
+              </div>
+            </Transition>
           </div>
-        </template>
-        <el-row class="row-height" :gutter="16">
+        </el-col>
+        <el-skeleton :loading="loading" style="height: 100%" animated>
+          <template #template>
+            <div class="loading">
+              <div class="coffee_cup"></div>
+            </div>
+          </template>
           <el-col
             :class="'message' + index"
             :xs="24"
@@ -388,16 +385,13 @@ onBeforeUnmount(() => {
               </div>
             </el-card>
           </el-col>
-        </el-row>
-      </el-skeleton>
+        </el-skeleton>
+      </el-row>
       <div class="observer">
-        {{
-          total == 0
-            ? "这片土地需要你来开辟"
-            : messageList.length >= total
-            ? "已经到底了~"
-            : "加载中~"
-        }}
+        <Loading :size="32" v-if="scrollLoading" />
+        <template v-else>
+          {{ messageList.length >= total ? "已经到底了~" : "下拉加载更多～" }}
+        </template>
       </div>
     </div>
   </div>
@@ -420,14 +414,14 @@ onBeforeUnmount(() => {
   .message-title {
     font-size: 2.4rem;
     font-weight: 600;
-    color: #000;
+    color: var(--global-black);
   }
   .type-writer {
-    color: #000;
+    color: var(--global-black);
   }
 
   .space {
-    color: #000;
+    color: var(--global-black);
   }
 
   &-body {
@@ -435,9 +429,8 @@ onBeforeUnmount(() => {
     .search-tab {
       width: 100%;
       min-height: 3rem;
-      background-color: rgba(0, 0, 0, 0.2);
-      margin-bottom: 1rem;
-      border-radius: 2rem;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
     }
     .tab {
       width: 100%;
@@ -460,11 +453,11 @@ onBeforeUnmount(() => {
         line-height: 2rem;
         text-align: center;
         padding: 0 0.6rem;
-        border-radius: 1rem;
+        border-radius: 8px;
       }
-      .active-tab {
-        color: #fff;
-        background-color: var(--primary);
+      .message-active-tab {
+        color: var(--global-white);
+        background-image: var(--button-linear-gradient);
       }
     }
 
@@ -486,7 +479,7 @@ onBeforeUnmount(() => {
     }
 
     .nick-name {
-      color: #fff;
+      color: var(--global-white);
       margin-left: 1rem;
       letter-spacing: 1px;
       padding: 3px 8px;
@@ -502,27 +495,27 @@ onBeforeUnmount(() => {
 
     .time {
       font-size: 12px;
-      color: #fff;
+      color: var(--global-white);
       letter-spacing: 1px;
       margin-right: 10px;
     }
 
     .message-comment {
       font-size: 12px;
-      color: #fff;
+      color: var(--global-white);
       letter-spacing: 1px;
       padding: 3px 8px;
     }
 
     .option-top {
-      color: #fff;
+      color: var(--global-white);
       padding: 3px 8px;
       border-radius: 8px;
       background-color: rgba(0, 0, 0, 0.2);
     }
 
     .option {
-      color: #fff;
+      color: var(--global-white);
       padding: 1px 8px;
       border-radius: 8px;
       background-color: rgba(0, 0, 0, 0.2);
@@ -550,7 +543,7 @@ onBeforeUnmount(() => {
     }
     .index-tag {
       font-size: 12px;
-      color: #fff;
+      color: var(--global-white);
     }
 
     .bottom {
@@ -569,7 +562,9 @@ onBeforeUnmount(() => {
   }
 }
 .observer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 1.2rem;
   color: var(--font-color);
   margin-top: 30px;
@@ -606,12 +601,7 @@ onBeforeUnmount(() => {
   }
 
   .publish-pc {
-    position: fixed;
-    top: 150px;
-    right: 50px;
-    z-index: 3001;
     cursor: pointer;
-    border: none;
   }
 
   .publish-mobile {
@@ -637,16 +627,18 @@ onBeforeUnmount(() => {
   }
 
   .publish-mobile {
-    position: fixed;
-    top: 150px;
-    right: 10px;
-    z-index: 3001;
     cursor: pointer;
     border: none;
   }
 
   .publish-pc {
     display: none;
+  }
+
+  .tab {
+    li {
+      margin-right: 0 !important;
+    }
   }
 }
 </style>

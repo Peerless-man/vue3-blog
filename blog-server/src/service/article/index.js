@@ -43,8 +43,8 @@ class ArticleService {
     let res;
     try {
       // 判断当前分类是否存在，若是存在，则会有分类id
-
-      res = await Article.create(article);
+      let date = new Date(); // model 里 屏蔽了创建时间和修改时间的自动修改 在这里需要手动创建
+      res = await Article.create({ createdAt: date, updatedAt: date, ...article });
     } catch (err) {
       console.error(err);
     }
@@ -59,6 +59,8 @@ class ArticleService {
   async updateArticle(article) {
     let res;
     try {
+      // 修改了文章信息 手动更新文章
+      article.updatedAt = new Date();
       res = await Article.update(article, {
         where: {
           id: article.id,

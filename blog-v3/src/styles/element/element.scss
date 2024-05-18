@@ -32,7 +32,9 @@
     font-size: 1.6rem;
   }
 }
-
+.el-drawer__header {
+  margin-bottom: 0 !important;
+}
 .el-menu {
   border-right: none;
   background: transparent;
@@ -110,16 +112,7 @@
 
 .el-avatar {
   transition: ease-in-out 1s;
-  background: (
-    90deg,
-    #ffffff 1%,
-    #ead2ea 10.2%,
-    #e4d5ee 19.6%,
-    #d1def3 36.8%,
-    #b5dee5 62.2%,
-    #cfebf3 88.9%,
-    #ffffff 99%
-  ) !important;
+  background-image: var(--button-linear-gradient);
 }
 
 .el-avatar:hover {
@@ -217,6 +210,7 @@
 
 .el-form-item {
   padding: 15px 0;
+  margin-bottom: 3px;
 }
 
 .el-form-item__label {
@@ -231,6 +225,10 @@
 .el-textarea__inner::placeholder {
   font-size: 16px;
   font-weight: 700;
+}
+
+.el-descriptions__body {
+  background-color: transparent !important;
 }
 
 input::-webkit-input-placeholder {

@@ -4,52 +4,103 @@
 * @Description: 播放器首页
 -->
 <script setup>
+import { defineComponent, ref, watch, provide, onBeforeUnmount } from "vue";
+
 import MusicList from "./list/index.vue";
 import MusicControl from "./controls/index.vue";
-import { defineComponent, ref } from "vue";
 import blogAvatar from "@/assets/img/blogAvatar.png";
+import useMusic from "./useMusic.js";
 
-import { music } from "@/store/index";
-import { storeToRefs } from "pinia";
-
-const { getIsShow, getShowLyricBoard, getIsPaused, getIsToggleImg, getMusicDescription } =
-  storeToRefs(music());
+import { useRoute } from "vue-router";
 
 defineComponent({
   name: "MusicPlayer",
 });
 
+const { musicGetters, musicSetters, removeAudio, saveMusicInfo } = useMusic();
+
+provide("musicSetters", musicSetters);
+provide("musicGetters", musicGetters);
+
+const {
+  getIsShowMusicPlayer,
+  getShowLyricBoard,
+  getIsPaused,
+  getIsToggleImg,
+  getMusicDescription,
+} = musicGetters;
+const { setIsShow, togglePlay, setShowLyricBoard, setLyricType } = musicSetters;
+
+const route = useRoute();
+
 // 页面初始化播放器隐藏的时候不要做动画
 const clickFlag = ref(false);
 
 const toggleDisc = () => {
-  music().setIsShow();
+  // setIsShow();
+  setIsShow();
   if (!clickFlag.value) {
     clickFlag.value = true;
   }
 };
 
-const closeBoard = () => {
-  music().setShowLyricBoard(false);
+const playMusic = () => {
+  togglePlay();
 };
 
-const playMusic = () => {
-  music().togglePlay();
-};
+watch(
+  () => route.query.showSpecial,
+  (newV) => {
+    if (newV) {
+      setIsShow(true);
+      setShowLyricBoard(true);
+      setLyricType("SPECIAL");
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+
+// 在弹出遮罩层的时候 让body不能滚动
+watch(
+  () => getIsShowMusicPlayer.value,
+  (newV) => {
+    if (newV) {
+      document.documentElement.style.overflowY = "hidden";
+    } else {
+      document.documentElement.style.overflowY = "visible";
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+
+onBeforeUnmount(() => {
+  removeAudio();
+});
+// 用户关闭浏览器前保存信息
+window.addEventListener("beforeunload", () => {
+  saveMusicInfo();
+});
 </script>
 
 <template>
   <div
-    :class="['music', getIsShow ? 'show-music' : '', !getIsShow && clickFlag ? 'hide-music' : '']"
+    :class="[
+      'music',
+      getIsShowMusicPlayer ? 'show-music' : '',
+      !getIsShowMusicPlayer && clickFlag ? 'hide-music' : '',
+    ]"
   >
     <div class="flex justify-center items-center !w-[100%] !h-[100%]">
       <div class="music-box flex flex-col justify-center items-center">
         <i
-          v-if="getShowLyricBoard"
-          class="close-board iconfont icon-arrowdown"
-          @click="closeBoard"
+          v-if="!getShowLyricBoard"
+          class="iconfont icon-off-search dark-close change-color"
+          @click="toggleDisc"
         ></i>
-        <i class="iconfont icon-off-search change-color" @click="toggleDisc"></i>
         <!-- 播放器列表 -->
         <MusicList class="list" />
         <!-- 播放器控制器 -->
@@ -57,7 +108,7 @@ const playMusic = () => {
       </div>
     </div>
   </div>
-  <div v-if="!getIsShow" :class="['music-disc', getIsPaused ? 'music-left' : '']">
+  <div v-if="!getIsShowMusicPlayer" :class="['music-disc', getIsPaused ? 'music-left' : '']">
     <img
       @click="toggleDisc"
       :class="['music-img', getIsToggleImg ? '' : 'disc-rotate', getIsPaused ? 'paused' : '']"
@@ -88,51 +139,51 @@ const playMusic = () => {
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
+  background-color: var(--shadow-mask-bg);
+  z-index: 2002;
   opacity: 0;
   display: none;
 
   &-box {
     position: relative;
     width: 100%;
-    max-width: 1080px;
-    background-color: #fff;
+    max-width: 1024px;
+    background-color: var(--global-white);
     overflow: hidden;
   }
 
   .list {
-    max-width: 1080px;
+    max-width: 1024px;
     height: 100%;
     padding-top: 30px;
     overflow: hidden;
   }
 
   .control {
-    max-width: 1080px;
+    max-width: 1024px;
   }
 }
 .icon-off-search {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   font-size: 1.4rem;
   z-index: 2001;
-  color: #62c28a;
+  background-color: var(--shadow-button-bg);
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .close-board {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   cursor: pointer;
   font-size: 1.4rem;
   z-index: 2001;
-  color: #62c28a;
-
-  &:hover {
-    color: #62c28a;
-  }
+  padding: 10px;
+  border-radius: 20px;
+  background-color: var(--shadow-button-bg);
 }
 
 .show-music {
@@ -148,7 +199,7 @@ const playMusic = () => {
   position: fixed;
   left: 0;
   box-sizing: border-box;
-  background-color: #fafafa;
+  background-color: var(--global-shadow-white);
   display: flex;
   align-items: center;
   z-index: 2002;
@@ -175,7 +226,7 @@ const playMusic = () => {
 
 .change-color:hover {
   cursor: pointer;
-  color: #62c28a;
+  color: var(--music-main-active);
 }
 
 .disc-rotate {
@@ -185,7 +236,6 @@ const playMusic = () => {
 .paused {
   animation-play-state: paused;
 }
-
 // pc
 @media screen and (min-width: 768px) {
   .music-disc {
@@ -213,8 +263,11 @@ const playMusic = () => {
   }
 
   .music-box {
+    height: 100%;
+    max-height: 580px;
+    position: relative;
     padding: 0;
-    border-radius: 20px;
+    border-radius: 12px;
   }
 
   .music-left {
@@ -246,10 +299,10 @@ const playMusic = () => {
   }
 
   .icon-off-search {
-    top: 60px;
+    top: 5px;
   }
   .close-board {
-    top: 60px;
+    top: 35px;
   }
 }
 

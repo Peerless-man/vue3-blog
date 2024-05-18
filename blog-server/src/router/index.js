@@ -8,7 +8,6 @@
 
 const fs = require("fs"); // 文件模块
 const Router = require("koa-router");
-const { swaggerJson } = require("../utils/swagger");
 
 const router = new Router();
 
@@ -22,11 +21,6 @@ fs.readdirSync(__dirname).forEach((file) => {
 // 随便写的一个欢迎
 router.get("/", (ctx, next) => {
   ctx.body = "欢迎 这是后台server首页";
-});
-
-router.get("/swagger.json", async function (ctx) {
-  ctx.set("Content-Type", "application/json");
-  ctx.body = swaggerJson;
 });
 
 module.exports = router;

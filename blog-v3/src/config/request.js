@@ -75,7 +75,7 @@ http.interceptors.response.use(
         // eslint-disable-next-line no-case-declarations
         const userStore = user();
         userStore.clearUserInfo();
-        router.push("/login");
+        userStore.setShowLogin(true);
         break;
       case "403":
         // 403 表示权限不足

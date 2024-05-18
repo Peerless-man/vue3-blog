@@ -154,7 +154,7 @@ const updatePassword = async () => {
           Object.assign(pwdForm, primaryPwdForm);
           // 重新登录
           userStore.clearUserInfo();
-          router.push("/login");
+          router.push("/");
         } else {
           ElNotification({
             offset: 60,
@@ -298,10 +298,7 @@ onMounted(async () => {
 }
 
 .cancel {
-  &:hover {
-    color: rgb(224, 114, 114);
-    border: 3px solid rgb(224, 114, 114);
-  }
+  color: rgb(255, 118, 118);
 }
 
 :deep(.el-form-item) {

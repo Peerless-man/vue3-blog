@@ -1,4 +1,5 @@
 html.dark {
+  // --------- element start --------  //
   .el-card {
     background: rgba(29, 30, 31, 0.3);
   }
@@ -15,18 +16,30 @@ html.dark {
       color: var(--dark-font-color);
     }
   }
+  .el-popper.is-light {
+    border: none !important;
+    font-weight: 600 !important;
+    color: var(--global-white) !important;
+    background: var(--dark-global-gradient) !important;
+    z-index: 9999 !important;
+  }
+
+  .el-avatar {
+    background-image: var(--dark-button-linear-gradient);
+  }
+
+  .el-slider__runway {
+    background-color: var(--global-shadow-white);
+  }
+
+  .el-loading-mask {
+    background: transparent;
+  }
+
+  // --------- element end --------  //
 
   .layout {
-    background: linear-gradient(
-      90deg,
-      #413939 1%,
-      #483e48 10.2%,
-      #4b4552 19.6%,
-      #3a3a45 36.8%,
-      #364040 62.2%,
-      #3b4146 88.9%,
-      #4a4242 99%
-    ) !important;
+    background: var(--dark-global-gradient) !important;
   }
 
   .info-avatar {
@@ -41,6 +54,15 @@ html.dark {
 
   .photoList-card {
     background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .album-current {
+    box-shadow: 0 0 8px var(--global-white) !important;
+  }
+
+  .common-menu__label,
+  .common-menu__value {
+    color: var(--dark-font-color);
   }
 
   .right-side .info-card {
@@ -67,61 +89,34 @@ html.dark {
     }
   }
 
-  .el-popper.is-light {
-    border: none !important;
-    font-weight: 600 !important;
-    color: #fff !important;
-    background: linear-gradient(
-      90deg,
-      #413939 1%,
-      #483e48 10.2%,
-      #4b4552 19.6%,
-      #3a3a45 36.8%,
-      #364040 62.2%,
-      #3b4146 88.9%,
-      #4a4242 99%
-    ) !important;
-    z-index: 9999 !important;
-  }
-
   .svg-icon {
-    color: #fff;
+    color: var(--global-white);
   }
 
   .tooltip-text-overflow {
     color: #a7a7a7 !important;
   }
 
-  .article-info-inner {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
   .route-font {
     color: #a7a7a7;
   }
 
-  .common-menu__label,
-  .common-menu__value {
-    color: var(--dark-font-color);
-  }
-
   .page-header::before {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
   }
 
   .page-header .toggle-theme .theme-card-dropdown {
     color: var(--dark-font-color);
     border: 1px solid var(--dark-font-color);
   }
-
+  // 文章
   .page-header .article,
   .recommend-box {
     color: var(--dark-font-color);
   }
-
-  // 文章
   .article-info-inner {
     color: var(--dark-font-color);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   /* 滚动条滑块 */
@@ -145,25 +140,33 @@ html.dark {
     border-radius: 2em;
   }
 
-  .code-block::scrollbar-thumb {
-    background-color: #69696b !important;
-  }
-  .code-block::-webkit-scrollbar-thumb {
-    background-color: #69696b !important;
+  .gradient {
+    background: var(--dark-global-gradient);
   }
 
-  .gradient {
-    background: linear-gradient(120deg, #d5d8d8, #cfe5ea, #e4d1ec, #d1e0f5, #e8e8c5, #f1f1e2);
+  .leave-message,
+  .apply-link {
+    color: var(--global-white);
+  }
+  .message-active-tab {
+    background-image: var(--dark-button-linear-gradient) !important;
+  }
+  .search-tab {
+    background-color: rgba(0, 0, 0, 0.2);
   }
 
   .apply-button {
-    background-color: transparent;
+    background-image: var(--dark-button-linear-gradient);
+  }
+  .apply-button::before {
+    background-image: var(--dark-button-linear-gradient-h);
   }
 
   .login-register-bg {
     background-color: transparent;
   }
 
+  // md 文档
   .mk-cute-theme {
     color: var(--dark-font-color) !important;
   }
@@ -198,6 +201,14 @@ html.dark {
   .md-preview-v3 {
     background: rgba(0, 0, 0, 0.1);
   }
+
+  .code-block::scrollbar-thumb {
+    background-color: #69696b !important;
+  }
+  .code-block::-webkit-scrollbar-thumb {
+    background-color: #69696b !important;
+  }
+
   .grey {
     color: #57616f !important;
   }
@@ -211,28 +222,11 @@ html.dark {
   }
 
   .talk-item-line {
-    border-bottom: 1px solid #676767;
+    border-bottom: 1px solid var(--dark-font-color);
   }
 
   .message-item-line {
-    border-bottom: 1px solid #676767;
-  }
-
-  .el-avatar {
-    background: linear-gradient(
-      90deg,
-      #584f4f 1%,
-      #605360 10.2%,
-      #685f71 19.6%,
-      #5e5e71 36.8%,
-      #526161 62.2%,
-      #5d666e 88.9%,
-      #726262 99%
-    ) !important;
-  }
-
-  .avatar-font {
-    color: var(--primary);
+    border-bottom: 1px solid var(--dark-font-color);
   }
 
   .category-item .left .bottom {
@@ -242,135 +236,119 @@ html.dark {
     background: rgba(0, 0, 0, 0.1);
   }
 
-  .el-collapse-item__header {
-    padding: 0 10px;
-    background: linear-gradient(
-      90deg,
-      #483e48 10.2%,
-      #4b4552 19.6%,
-      #3a3a45 36.8%,
-      #364040 62.2%,
-      #3b4146 88.9%
-    ) !important;
-  }
-
-  .el-collapse-item__content {
-    background: linear-gradient(
-      90deg,
-      #483e48 10.2%,
-      #4b4552 19.6%,
-      #3a3a45 36.8%,
-      #364040 62.2%,
-      #3b4146 88.9%
-    ) !important;
-  }
-  .apply-button {
-    color: var(--dark-font-color);
-    border: 3px solid var(--dark-font-color);
-  }
-
+  // 音乐 ------ start --------- //
   .music {
     background-color: rgba(255, 255, 255, 0.1);
   }
 
   .music-box {
-    background-color: #101827;
+    background-color: var(--music-main-bg);
   }
 
   .music-controls {
-    background-color: #101827;
+    background-color: var(--music-main-bg);
   }
 
   .lyric-mask {
-    background-color: #101827;
+    background-color: var(--music-main-bg);
   }
 
-  .el-slider__runway {
-    background-color: #fafafa;
+  .dark-close {
+    background-color: var(--shadow-mask-bg);
   }
 
   .music-disc {
     background: rgba(0, 0, 0, 0.7);
   }
 
+  // 音乐 ------ end --------- //
+
   .info {
-    color: #fff;
+    color: var(--global-white);
   }
 
   .coffee_cup {
-    border: 2px #fafafa solid;
+    border: 2px var(--global-shadow-white) solid;
     background-color: rgb(87, 86, 86);
   }
   .coffee_cup:after {
-    border: 2px #fafafa solid;
+    border: 2px var(--global-shadow-white) solid;
     border-left: none;
     border-radius: 0px 20px 20px 0px;
   }
   .coffee_cup:before {
-    background-color: #fafafa;
+    background-color: var(--global-shadow-white);
     box-shadow:
-      5px 0px 0px 0px #fafafa,
-      5px -7px 0px 0px #fafafa,
-      10px 0px 0px 0px #fafafa;
+      5px 0px 0px 0px var(--global-shadow-white),
+      5px -7px 0px 0px var(--global-shadow-white),
+      10px 0px 0px 0px var(--global-shadow-white);
+  }
+
+  .comment {
+    color: var(--dark-font-color);
   }
 
   .message {
     .nick-name {
-      color: #000;
+      color: var(--global-black);
       background-color: rgba(255, 255, 255, 0.2);
     }
 
     .left {
-      color: #000;
+      color: var(--global-black);
       background-color: rgba(255, 255, 255, 0.2);
     }
 
     .option-top {
-      color: #000;
+      color: var(--global-black);
       background-color: rgba(255, 255, 255, 0.2);
     }
     .time {
-      color: #000;
+      color: var(--global-black);
     }
 
     .message-comment {
-      color: #000;
+      color: var(--global-black);
     }
 
     .option {
-      color: #000;
+      color: var(--global-black);
       background-color: rgba(255, 255, 255, 0.3);
     }
 
     .tag {
-      color: #000;
+      color: var(--global-black);
       background-color: rgba(255, 255, 255, 0.3);
     }
     .index-tag {
-      color: #000;
+      color: var(--global-black);
     }
   }
 
   .message {
     .message-title,
     .type-writer {
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--shadow-button-bg);
     }
   }
 
   .tab-li {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--shadow-button-bg);
   }
 
   .input-inputText {
-    color: #fff;
+    color: var(--global-white);
     background-color: rgba(29, 30, 31, 0.3);
   }
   .observer {
-    color: #676767;
+    color: var(--dark-font-color);
   }
 
-  .ip {
-    color: #fff;
+  .text-ellipsis {
+    color: var(--dark-font-color);
+  }
+
+  .link-skeleton {
+    background-color: rgba(0, 0, 0, 0.2);
   }
 }

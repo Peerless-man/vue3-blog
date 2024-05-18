@@ -102,7 +102,6 @@ const goToArticle = (id) => {
         class="my-search-dialog"
         :before-close="handleClose"
         :close-on-click-modal="false"
-        :lock-scroll="false"
         :append-to-body="true"
       >
         <el-input
@@ -119,17 +118,22 @@ const goToArticle = (id) => {
             <div class="hot-box">
               <div class="hot-box__search">
                 <div class="history">
-                  <div v-if="searchResult.length">
+                  <div class="search-result-box" v-if="searchResult.length">
                     <div
+                      class="!mt-[5px]"
                       v-for="(article, index) in searchResult"
                       :key="index"
                       @click="goToArticle(article.id)"
                     >
-                      <div class="text_overflow title">{{ article.article_title }}</div>
-                      <span class="text_overflow content highlight">{{
-                        article.highlight_content
-                      }}</span>
-                      <span class="text_overflow content">{{ article.rest_content }}</span>
+                      <div class="text_overflow title cursor-pointer">
+                        {{ article.article_title }}
+                      </div>
+                      <div class="flex items-center">
+                        <span class="text_overflow content highlight">{{
+                          article.highlight_content
+                        }}</span>
+                        <span class="text_overflow content">{{ article.rest_content }}</span>
+                      </div>
                     </div>
                   </div>
                   <div v-else>
@@ -197,8 +201,7 @@ const goToArticle = (id) => {
 }
 .search-main__box {
   margin-top: 10px;
-  height: 100%;
-  overflow: auto;
+  overflow: hidden;
   .empty {
     width: 100%;
     height: 100%;
@@ -207,7 +210,10 @@ const goToArticle = (id) => {
     align-items: center;
   }
 }
-
+.search-result-box {
+  max-height: 250px;
+  overflow: auto;
+}
 .search-input {
   height: 35px;
   border-radius: 8px;

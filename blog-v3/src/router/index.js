@@ -4,9 +4,6 @@ import "nprogress/nprogress.css";
 import { createRouter, createWebHashHistory } from "vue-router";
 import Layout from "@/components/Layout/index.vue";
 import navPage from "@/views/index.vue";
-import { h } from "vue";
-import { user } from "@/store/index";
-import { ElNotification } from "element-plus";
 
 const routes = [
   {
@@ -113,22 +110,6 @@ const routes = [
             },
             component: () => import("@/views/links/link-list.vue"),
           },
-          {
-            path: "apply",
-            name: "LinkApply",
-            meta: {
-              name: "友链申请",
-            },
-            component: () => import("@/views/links/link-apply.vue"),
-          },
-          {
-            path: "update",
-            name: "LinkUpdate",
-            meta: {
-              name: "友链修改",
-            },
-            component: () => import("@/views/links/link-apply.vue"),
-          },
         ],
       },
       {
@@ -178,8 +159,6 @@ const routes = [
         meta: {
           name: "留言",
         },
-        // component: () => import("@/views/message/index.vue"),
-
         children: [
           {
             path: "list",
@@ -210,23 +189,6 @@ const routes = [
       },
     ],
   },
-
-  {
-    path: "/login",
-    name: "Login",
-    meta: {
-      name: "用户登录",
-    },
-    component: () => import("@/views/user/login-register.vue"),
-  },
-  {
-    path: "/register",
-    name: "Register",
-    meta: {
-      name: "用户注册",
-    },
-    component: () => import("@/views/user/login-register.vue"),
-  },
   {
     path: "/:pathMatch(.*)*",
     name: "404",
@@ -244,23 +206,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  if (to.path == "/register" || to.path == "/login") {
-    if (user().getUserInfo.id) {
-      next("/home");
-      ElNotification({
-        offset: 60,
-        title: "温馨提示",
-        message: h("div", { style: "color: #e6c081; font-weight: 600;" }, "请先退出登录"),
-      });
-      return;
-    }
-  }
   next();
 });
 
+// 不滚动到顶部的路由名单
+const whiteList = ["/message/list"];
+
 router.afterEach((to) => {
   // 切换就滚动到顶部
-  if (to.path !== "/message/list") {
+  if (!whiteList.includes(to.path)) {
     window.scrollTo({
       top: 0,
       behavior: "smooth",

@@ -236,18 +236,4 @@ onMounted(() => {
     background: rgba(255, 255, 255, 0);
   }
 }
-
-:deep(.el-avatar) {
-  color: var(--font-color);
-  background: linear-gradient(
-    90deg,
-    #dfd2d2 1%,
-    #ead2ea 10.2%,
-    #e4d5ee 19.6%,
-    #d1def3 36.8%,
-    #b5dee5 62.2%,
-    #cfebf3 88.9%,
-    #dde7ea 99%
-  ) !important;
-}
 </style>

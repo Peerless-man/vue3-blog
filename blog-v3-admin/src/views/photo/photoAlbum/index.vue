@@ -192,7 +192,7 @@ onMounted(() => {
       >
         <div class="album-card">
           <div class="flex_r_b pad5">
-            <div class="album-title">
+            <div class="album-title" @click="operate('photos', item)">
               <span :title="item.album_name">{{ item.album_name }}</span>
             </div>
             <div class="operate flex_r_b">

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, h, watch } from "vue";
 import { user } from "@/store/index";
-import router from "@/router";
 import { useRoute } from "vue-router";
 
 import { addComment, frontGetCommentTotal } from "@/api/comment";
@@ -35,6 +34,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isShowToggle: {
+    type: Boolean,
+    default: true,
+  },
 });
 const activeOrder = ref("hot"); // 排序 最新还是最热 最热 hot
 
@@ -60,7 +63,7 @@ const changeOrder = (type) => {
 
 const toLogin = () => {
   if (userStore.getUserInfo.id) return;
-  router.push("/login");
+  userStore.setShowLogin(true);
   _setLocalItem("blogLastRouter", route.fullPath);
 };
 
@@ -74,13 +77,13 @@ const publish = async () => {
     return;
   }
   const data = {
-    from_id: userStore.getUserInfo.id,
-    from_avatar: userStore.getUserInfo.avatar,
-    from_name: userStore.getUserInfo.nick_name,
-    content: commentText.value,
-    for_id: props.id,
-    type: 0,
-    author_id: props.authorId,
+    from_id: userStore.getUserInfo.id, // 谁发的
+    from_avatar: userStore.getUserInfo.avatar, // 头像
+    from_name: userStore.getUserInfo.nick_name, // 用户名
+    content: commentText.value, // 内容
+    for_id: props.id, // 是那一篇文章/说说的评论
+    type: 0, // 判断是文章还是啥 下面switch判断
+    author_id: props.authorId, // 作者的id 用于消息推送
   };
   switch (props.type) {
     // 文章
@@ -121,7 +124,7 @@ const publish = async () => {
   }
 };
 
-// 获取主评论条数
+// 获取评论条数
 const getTotal = (val) => {
   total.value = val;
 };
@@ -162,13 +165,19 @@ watch(
 onMounted(() => {
   getCommentTotal();
 });
+
+defineExpose({
+  toggleExpand,
+});
 </script>
 
 <template>
   <div class="comment">
     <div class="comment-header">
       <div class="flex justify-start items-center">
-        <span v-if="total" class="total-value"> 评论 {{ numberFormate(total) }} </span>
+        <span v-if="total" class="total-value" @click="toggleExpand">
+          评论 {{ numberFormate(total) }}
+        </span>
         <div v-if="total && isExpand" class="flex items-center">
           <span
             :class="['comment-tab', activeOrder == 'hot' ? 'active-order' : '']"
@@ -183,44 +192,48 @@ onMounted(() => {
           >
         </div>
       </div>
-      <span v-if="total" class="more" @click="toggleExpand">
-        {{ isExpand ? "收起" : "查看更多" }}</span
-      >
-      <span v-else class="more" @click="toggleExpand">
-        {{ isExpand ? "取消发布" : "求评论呀~" }}
-      </span>
+      <template v-if="isShowToggle">
+        <span v-if="total" class="more" @click="toggleExpand">
+          {{ isExpand ? "收起" : "查看更多" }}</span
+        >
+        <span v-else class="more" @click="toggleExpand">
+          {{ isExpand ? "取消发布" : "求评论呀~" }}
+        </span>
+      </template>
+      <template v-else-if="!isShowToggle && isExpand">
+        <span v-if="total" class="more" @click="toggleExpand"> 收起</span>
+        <span v-else class="more" @click="toggleExpand"> 取消发布 </span>
+      </template>
     </div>
-    <div
-      v-if="isExpand"
-      id="commentInput"
-      class="!mt-[1rem] w-[100%] flex justify-start items-start"
-    >
-      <div class="avatar-box">
-        <el-avatar class="avatar" :src="userStore.getUserInfo.avatar" @click="toLogin">{{
-          userStore.getUserInfo.nick_name || "登录"
-        }}</el-avatar>
+    <div v-if="isExpand">
+      <div id="commentInput" class="!mt-[1rem] w-[100%] flex justify-start items-start">
+        <div class="avatar-box">
+          <el-avatar class="avatar" :src="userStore.getUserInfo.avatar" @click="toLogin">{{
+            userStore.getUserInfo.nick_name || "登录"
+          }}</el-avatar>
+        </div>
+        <div class="!w-[100%] !ml-[10px]">
+          <CommentInput
+            ref="commentInputRef"
+            v-model:inputText="commentText"
+            :show-publish-button="false"
+            :parent="true"
+            @publish="publish"
+          />
+        </div>
       </div>
-      <div class="!w-[100%] !ml-[10px]">
-        <CommentInput
-          ref="commentInputRef"
-          v-model:inputText="commentText"
-          :show-publish-button="false"
-          :parent="true"
-          @publish="publish"
+      <!-- 评论组件 这里采用了父级评论和子级评论嵌套的方式 -->
+      <div class="comment-list">
+        <ParentItem
+          v-if="isExpand"
+          ref="parentItemRef"
+          :active="activeOrder"
+          :type="type"
+          :id="id"
+          :author-id="authorId"
+          @refresh="refresh"
         />
       </div>
-    </div>
-    <!-- 评论组件 这里采用了父级评论和子级评论嵌套的方式 -->
-    <div class="comment-list">
-      <ParentItem
-        v-if="isExpand"
-        ref="parentItemRef"
-        :active="activeOrder"
-        :type="type"
-        :id="id"
-        :author-id="authorId"
-        @refresh="refresh"
-      />
     </div>
   </div>
 </template>
@@ -228,6 +241,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .comment {
   width: 100%;
+
   &-header {
     display: flex;
     justify-content: space-between;
@@ -235,6 +249,7 @@ onMounted(() => {
 
     .total {
       &-value {
+        cursor: pointer;
         font-size: 0.8rem;
       }
     }
@@ -243,7 +258,6 @@ onMounted(() => {
       cursor: pointer;
       margin-left: 0.8rem;
       font-size: 0.8rem;
-      color: var(--dark-font-color);
 
       &:hover {
         color: var(--primary);
@@ -283,7 +297,7 @@ onMounted(() => {
 
   .input-text {
     width: 100%;
-    background-color: #fafafa;
+    background-color: var(--global-shadow-white);
     border-radius: 8px;
     padding: 8px;
     min-height: 80px;
@@ -311,7 +325,7 @@ onMounted(() => {
 
   .input-text {
     width: 100%;
-    background-color: #fafafa;
+    background-color: var(--global-shadow-white);
     border-radius: 8px;
     padding: 8px;
     box-sizing: border-box;

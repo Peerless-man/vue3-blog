@@ -58,12 +58,7 @@ onMounted(() => {
                   <span class="name text_overflow"> {{ item.album_name }}</span>
                   <span class="desc text_overflow">{{ item.description }}</span>
                 </div>
-                <el-image
-                  class="albumList-box__image animate__animated animate__bounceIn"
-                  :src="item.album_cover"
-                  fit="cover"
-                  lazy
-                >
+                <el-image class="albumList-box__image" :src="item.album_cover" fit="cover" lazy>
                   <template #error>
                     <div class="w-[100%] h-[100%] grid place-items-center">
                       <svg-icon name="image404" :width="8" :height="6"></svg-icon>
@@ -113,14 +108,14 @@ onMounted(() => {
       .name {
         display: block;
         width: 100%;
-        color: #fff;
+        color: var(--global-white);
         font-size: 1.4rem;
         font-weight: bold;
       }
       .desc {
         display: block;
         width: 100%;
-        color: #fff;
+        color: var(--global-white);
         font-size: 1rem;
         font-weight: bold;
       }

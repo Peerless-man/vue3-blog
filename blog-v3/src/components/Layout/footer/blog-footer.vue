@@ -13,7 +13,7 @@
         target="_blank"
       >
         <img
-          src="https://img.shields.io/badge/%E9%98%BF%E9%87%8C%E4%BA%91-%E8%BD%BB%E9%87%8F%E6%9C%8D%E5%8A%A1%E5%99%A8-orange"
+          src="https://img.shields.io/badge/%E9%98%BF%E9%87%8C%E4%BA%91-ECS%E6%9C%8D%E5%8A%A1%E5%99%A8-orange"
           alt=""
       /></a>
       <a class="p-[3px]" href="https://imzbf.github.io/md-editor-v3/docs/index" target="_blank">
@@ -24,9 +24,10 @@
       <a class="p-[3px]" href="https://butterfly.js.org/" target="_blank">
         <img src="https://img.shields.io/badge/HEXO-BUTTERFLY-blue" alt="" />
       </a>
-      <a class="p-[3px]" href="https://www.qiniu.com/" target="_blank">
+      <a class="p-[3px]" href="https://min.io/" target="_blank">
         <img
-          src="https://img.shields.io/badge/%E4%B8%83%E7%89%9B%E4%BA%91-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8-07beff"
+          src="https://img.shields.io/badge/minio-%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F-purple
+"
           alt=""
         />
       </a>
@@ -47,7 +48,7 @@
   transition: all 0.3s;
 
   &:hover {
-    color: #000;
+    color: var(--global-black);
   }
 }
 </style>

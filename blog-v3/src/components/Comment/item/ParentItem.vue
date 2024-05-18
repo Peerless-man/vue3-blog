@@ -56,7 +56,7 @@ const params = reactive({
 // 父级评论列表
 const commentList = ref([]);
 const commentTotal = ref(0);
-
+// 获取父级评论
 const getComment = async (type) => {
   params.loading = true;
   if (type == "clear") {
@@ -81,6 +81,7 @@ const getComment = async (type) => {
   params.loading = false;
 };
 
+// 加载更多的评论
 const showMore = () => {
   params.current++;
   getComment();
@@ -120,12 +121,14 @@ const like = async (item, index) => {
 };
 
 const apply = (item, index) => {
+  // 记录一下回复的是哪个主评论
   commentList.value[index].showApplyInput = true;
   currentApplyIndex.value = index;
   childrenRef.value[index].apply(item, "parent");
 };
 
 const close = (index) => {
+  // 根据记录的主评论index来关闭那个主评论的输入框
   commentList.value[index].showApplyInput = false;
   currentApplyIndex.value = 0;
   childrenRef.value[index].closeComment();
@@ -249,7 +252,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="comment">
+  <div class="comment-parent">
     <template v-if="commentList.length">
       <div
         class="!mt-[0.5rem] animate__animated animate__fadeIn"
@@ -260,19 +263,19 @@ defineExpose({
           <div class="avatar-box">
             <el-avatar class="avatar" :src="comment.from_avatar">{{ comment.from_name }}</el-avatar>
           </div>
-          <div class="right flex-1">
+          <div class="right !w-[100%]">
             <div class="cursor-pointer">
               {{ comment.from_name }}
               <span v-if="comment.from_id == 1" class="up">UP</span>
             </div>
-            <div class="!mt-[1rem]">
+            <div id="comment-content" class="!mt-[1rem]">
               <span v-if="containHTML(comment.content)" v-html="comment.content"></span>
               <TextOverflow
                 v-else
                 class="content"
+                :key="comment.id"
                 :text="comment.content"
-                :width="199"
-                :maxLines="2"
+                :maxLines="3"
                 :font-size="16"
               >
                 <template v-slot:default="{ clickToggle, expanded }">
@@ -296,13 +299,15 @@ defineExpose({
               >
                 <span class="!ml-[0.5rem]">{{ comment.thumbs_up }}</span>
               </span>
-              <span
-                v-if="!comment.showApplyInput"
-                class="!mr-[1rem] apply cursor-pointer"
-                @click="apply(comment, index)"
+              <span class="!mr-[1rem] apply cursor-pointer" @click="apply(comment, index)"
                 >回复</span
               >
-              <span v-else class="!mr-[1rem] close cursor-pointer" @click="close(index)">关闭</span>
+              <span
+                v-if="comment.showApplyInput"
+                class="!mr-[1rem] close cursor-pointer"
+                @click="close(index)"
+                >关闭</span
+              >
               <span
                 class="!mr-[1rem] delete cursor-pointer"
                 v-if="
@@ -338,7 +343,7 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-.comment {
+.comment-parent {
   width: 100%;
 }
 
@@ -362,11 +367,11 @@ defineExpose({
 }
 
 .close {
-  color: #f26c60;
+  color: var(--top);
   word-break: keep-all;
   font-size: 1rem;
   &:hover {
-    color: #f04c49;
+    color: var(--hot-color);
   }
 }
 
@@ -377,16 +382,15 @@ defineExpose({
 .delete {
   word-break: keep-all;
   font-size: 1rem;
-  color: #f26c60;
+  color: var(--top);
 
   &:hover {
-    color: #f04c49;
+    color: var(--hot-color);
   }
 }
 
 .ip {
   font-size: 0.8rem;
-  color: var(--font-color);
   display: inline-block;
 }
 
@@ -408,11 +412,10 @@ defineExpose({
   margin-left: 0.5rem;
   font-size: 0.8rem;
   font-weight: 800;
-  color: #f04c49;
+  color: var(--hot-color);
 }
 
 .btn {
-  margin-left: 3px;
   color: var(--primary);
   cursor: pointer;
 }

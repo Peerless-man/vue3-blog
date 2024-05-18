@@ -43,7 +43,7 @@ onMounted(() => {
     }
   }
   nextTick(() => {
-    gsapTransY(list, 50, 0.6, "none");
+    gsapTransY(list, 30, 0.6, "none");
   });
 });
 </script>
@@ -247,7 +247,7 @@ onMounted(() => {
 
   .right-card {
     padding: 1rem 1.8rem;
-    color: #676767;
+    color: var(--font-color);
     min-height: 10rem;
 
     .card-title {

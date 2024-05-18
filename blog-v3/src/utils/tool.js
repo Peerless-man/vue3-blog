@@ -251,9 +251,9 @@ export const returnTime = (time) => {
 /**
  * 图片压缩
  * @param {*} file 图片
- * @param {*} size 文件压缩大小 实际上只压缩一次 因为有些时候用while循环想继续压缩 但是压缩不了了 压缩一次得了 不过分压缩
+ * @param {*} size 文件压缩至大小 实际上可能压缩不到 有可能会更小
  */
-export const imageConversion = (file, size = 800, quality = 1) => {
+export const imageConversion = (file, size = 800, quality = 1, maxTime = 3) => {
   return new Promise((resolve) => {
     try {
       const reader = new FileReader();
@@ -272,9 +272,15 @@ export const imageConversion = (file, size = 800, quality = 1) => {
           canvas.height = height;
           ctx.drawImage(image, 0, 0, width, height);
           let dataURL = canvas.toDataURL(file.type, quality);
-          if (dataURL.length / 1024 > size) {
-            quality -= 0.2;
-            dataURL = canvas.toDataURL(file.type, quality);
+          // 在有限的时间内压缩
+          while (maxTime && quality > 0.2) {
+            if (Math.round(dataURL.length) / 1024 > size) {
+              maxTime--;
+              quality -= 0.2;
+              dataURL = canvas.toDataURL(file.type, quality);
+            } else {
+              break;
+            }
           }
 
           const arr = dataURL.split(",");

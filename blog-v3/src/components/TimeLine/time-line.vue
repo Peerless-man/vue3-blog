@@ -170,7 +170,7 @@ const goToArticle = (article) => {
         &.is-hollow {
           border-width: 4px;
           border-color: var(--border-color);
-          background-color: var(--global-bg);
+          background-color: var(--global-white);
         }
       }
     }
@@ -186,7 +186,7 @@ const goToArticle = (article) => {
       &.is-hollow {
         border-width: 3px;
         border-color: var(--border-color);
-        background-color: var(--global-bg);
+        background-color: var(--global-white);
         &:hover {
           border-color: var(--primary);
         }

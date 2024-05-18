@@ -128,7 +128,7 @@ defineExpose({
 
 <style lang="scss" scoped>
 .input-inputText {
-  background-color: #fafafa;
+  background-color: var(--global-shadow-white);
   border-radius: 8px;
   padding: 12px;
   box-sizing: border-box;
@@ -145,7 +145,7 @@ defineExpose({
 .comment-content:empty::before {
   content: attr(placeholder);
   font-size: var(--size);
-  color: #a4a4a4;
+  color: var(--comment-grey);
   font-weight: 700;
 }
 

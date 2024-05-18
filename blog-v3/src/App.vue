@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted, h } from "vue";
 import { isMobile, getWelcomeSay } from "@/utils/tool";
 import { addView, getAllPageHeader } from "@/api/config";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 
 import { storeToRefs } from "pinia";
@@ -13,6 +13,7 @@ import BackTop from "@/components/BackTop/index";
 
 const userStore = user();
 const router = useRouter();
+const route = useRoute();
 const { getUserInfo } = storeToRefs(userStore);
 const backTopProps = reactive({
   right: "",
@@ -75,13 +76,12 @@ onMounted(async () => {
     // 获取背景图片
     getAllPageHeaderBg();
     welcome();
-    window.name = "isReload"; // 在首次进入页面时我们可以给window.name设置一个固定值,判断用户是刷新还是首次进入
   }
 
   // 首次判断是手机还是pc
   backTopProps.right = isMobile() ? "0" : "5%";
   backTopProps.svgWidth = isMobile() ? 6 : 7;
-  showGoBack.value = isMobile() ? true : false;
+  showGoBack.value = isMobile() && route.path != "/" ? true : false;
   // 全局增加窗口变化事件，对backTop的边距进行适配
   window.addEventListener("resize", resize);
 });
@@ -100,13 +100,14 @@ onMounted(async () => {
 .app {
   width: 100%;
   box-sizing: border-box;
-  .icon-fanhui {
-    position: fixed;
-    left: 5px;
-    top: 60px;
-    font-size: 2.2rem;
-    color: var(--font-color);
-    z-index: 999;
-  }
+}
+
+.icon-fanhui {
+  position: fixed;
+  left: 5px;
+  top: 60px;
+  font-size: 2.2rem;
+  color: var(--font-color);
+  z-index: 999;
 }
 </style>

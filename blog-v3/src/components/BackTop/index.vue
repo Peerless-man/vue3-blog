@@ -77,7 +77,7 @@ const backTopShow = ref(false);
 const scroll = () => {
   let scrollTop = ref(0);
   scrollTop.value =
-    window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+    window.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
   if (scrollTop.value > 200) {
     // 大于200显示
     backTopShow.value = true;

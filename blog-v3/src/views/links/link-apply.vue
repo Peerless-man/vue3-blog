@@ -1,17 +1,28 @@
-<!--友链列表  -->
+<!--友链申请  -->
 <script setup>
-import { ref, reactive, h, onMounted } from "vue";
+import { ref, reactive, h, watch } from "vue";
 import { addFriendLinks, updateFriendLinks } from "@/api/links";
 import { ElNotification } from "element-plus";
 
 import { imgUpload } from "@/api/user";
 
 import Upload from "@/components/Upload/upload.vue";
-import router from "@/router";
-import { useRoute } from "vue-router";
-import { _getLocalItem } from "@/utils/tool";
+import { _getLocalItem, _removeLocalItem } from "@/utils/tool";
 import { user } from "@/store/index.js";
 import { storeToRefs } from "pinia";
+
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  type: {
+    type: String,
+    default: "add",
+  },
+});
+
+const emit = defineEmits(["update:show"]);
 
 const { getUserInfo } = storeToRefs(user());
 
@@ -26,8 +37,7 @@ const urlV = (rule, value, cb) => {
 };
 
 const loading = ref(false);
-const route = useRoute();
-const type = ref("");
+const dialogVisible = ref(false);
 
 const formRef = ref();
 const form = reactive({
@@ -46,9 +56,11 @@ const rules = reactive({
   site_desc: [{ required: true, message: "请输入网站描述", trigger: "blur" }],
   url: [{ required: true, validator: urlV, trigger: "blur" }],
 });
-
+const handleClose = () => {
+  emit("update:show", false);
+};
 // 申请友链
-const applayLinks = async () => {
+const applyLinks = async () => {
   try {
     await formRef.value.validate(async (valid) => {
       if (valid) {
@@ -81,7 +93,7 @@ const applayLinks = async () => {
             ),
           });
           Object.assign(form, primaryForm);
-          router.go(-1);
+          handleClose();
         } else {
           ElNotification({
             offset: 60,
@@ -103,123 +115,122 @@ const applayLinks = async () => {
   }
 };
 
-onMounted(() => {
-  if (!getUserInfo.value.id) {
-    ElNotification({
-      offset: 60,
-      title: "温馨提示",
-      message: h("div", { style: "color: #e6c081; font-weight: 600;" }, "请先登录"),
-    });
-    router.go(-1);
-  }
-  if (route.path == "/link/apply") {
-    type.value = "apply";
-  } else if (route.path == "/link/update") {
-    type.value == "update";
-    let item = _getLocalItem("blog-link-update");
-    if (item) {
-      form.bgList = [
-        {
-          id: 1,
-          url: item.site_avatar,
-          name: item.site_avatar.split("/").slice(-1),
-        },
-      ];
+watch(
+  () => props.show,
+  (newV) => {
+    dialogVisible.value = newV;
+    if (newV) {
+      Object.assign(form, primaryForm);
+      let item = _getLocalItem("blog-link-update");
+      if (item) {
+        form.bgList = [
+          {
+            id: 1,
+            url: item.site_avatar,
+            name: item.site_avatar.split("/").slice(-1),
+          },
+        ];
+      }
+      Object.assign(form, item);
+    } else {
+      _removeLocalItem("blog-link-update");
     }
-    Object.assign(form, item);
-    console.log(form);
   }
-});
+);
 </script>
 
 <template>
-  <PageHeader />
-  <div class="center_box flex justify-center flex-col items-center">
-    <el-form
-      class="apply-form"
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="100px"
-      label-suffix=":"
-    >
-      <el-form-item label="网站名称" prop="site_name">
-        <el-input
-          v-model="form.site_name"
-          :style="{ width: '220px' }"
-          placeholder="请输入网站名称"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="网站描述" prop="site_desc">
-        <el-input
-          type="textarea"
-          v-model="form.site_desc"
-          :style="{ width: '220px' }"
-          maxlength="125"
-          resize="none"
-          :autosize="{ minRows: 2, maxRows: 3 }"
-          show-word-limit
-          placeholder="请输入网站描述"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="网站地址" prop="url">
-        <el-input
-          v-model="form.url"
-          :style="{ width: '220px' }"
-          placeholder="请输入网站地址"
-          clearable
-        />
-      </el-form-item>
-      <el-form-item label="网站头像" prop="site_avatar">
-        <Upload
-          v-model:file-list="form.bgList"
-          :limit="1"
-          :width="100"
-          :height="100"
-          :preview="false"
-        />
-      </el-form-item>
-    </el-form>
-    <div class="pos">
-      <el-button
-        :disabled="loading"
-        :loading="loading"
-        class="apply-button"
-        type="danger"
-        @click="applayLinks"
-      >
-        {{ loading ? "努力上传中..." : type == "apply" ? "申请友链" : "修改友链" }}
-      </el-button>
+  <el-dialog v-model="dialogVisible" width="120" :before-close="handleClose">
+    <template #header>
+      <h1>{{ type == "add" ? "友链申请" : "友链修改" }}</h1>
+    </template>
+    <div class="apply-box flex flex-col justify-between items-center">
+      <el-form class="apply-form" ref="formRef" :model="form" :rules="rules" label-suffix=":">
+        <el-form-item label="网站头像" prop="site_avatar">
+          <div class="w-[100%] flex justify-center">
+            <Upload
+              v-model:file-list="form.bgList"
+              :width="150"
+              :height="150"
+              :limit="1"
+              :preview="false"
+            />
+          </div>
+        </el-form-item>
+
+        <el-form-item label="网站名称" prop="site_name">
+          <el-input v-model="form.site_name" placeholder="请输入网站名称" clearable />
+        </el-form-item>
+        <el-form-item label="网站描述" prop="site_desc">
+          <el-input
+            type="textarea"
+            v-model="form.site_desc"
+            maxlength="125"
+            resize="none"
+            :autosize="{ minRows: 2, maxRows: 3 }"
+            show-word-limit
+            placeholder="请输入网站描述"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="网站地址" prop="url">
+          <el-input v-model="form.url" placeholder="请输入网站地址" clearable />
+        </el-form-item>
+      </el-form>
+      <div class="pos">
+        <el-button :disabled="loading" :loading="loading" class="apply-button" @click="applyLinks">
+          {{ loading ? "努力上传中..." : type == "add" ? "申请友链" : "修改友链" }}
+        </el-button>
+      </div>
     </div>
-  </div>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
 .pos {
-  margin-top: 30px;
+  width: 100%;
+  margin: 5px 0 10px 0;
 }
 .apply-form {
-  max-width: 400px;
+  width: 100%;
+}
+
+:deep(.el-form-item) {
+  padding: 15px 0;
+}
+
+.apply-button {
+  width: 100%;
+}
+
+:deep(.el-input__wrapper) {
+  height: 40px;
+  line-height: 40px;
 }
 
 :deep(.el-upload--picture-card) {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50px !important;
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 8px !important;
 }
 
 :deep(.el-upload-list__item) {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50px !important;
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 8px !important;
   margin: 0;
 }
 
 :deep(.el-upload-list--picture-card) {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50px !important;
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 8px !important;
+}
+
+// mobile
+@media screen and (max-width: 768px) {
+  .apply-box {
+    height: 88vh;
+  }
 }
 </style>

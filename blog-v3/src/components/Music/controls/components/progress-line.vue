@@ -4,33 +4,28 @@
 * @Description: 音乐进度组件
 -->
 <script setup>
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, inject } from "vue";
 
-import { music } from "@/store/index";
+const musicSetters = inject("musicSetters");
+const musicGetters = inject("musicGetters");
 
 defineComponent({
   name: "ProgressLine",
 });
 
-const props = defineProps({
-  schedule: {
-    // 进度
-    type: Number,
-    default: 0,
-  },
-});
+const { getCurrentSchedule } = musicGetters;
 
 const currentSchedule = ref(0);
 
 const handleChange = () => {
   // 先打断自动设置播放进度
-  music().setIsUseProgress(true);
+  musicSetters.setIsUseProgress(true);
   // 修改pina里的当前播放进度
-  music().setCurrentTime(currentSchedule.value);
+  musicSetters.setCurrentTime(currentSchedule.value);
 };
 
 watch(
-  () => props.schedule,
+  () => getCurrentSchedule.value,
   (newV) => {
     currentSchedule.value = newV;
   },
@@ -61,14 +56,14 @@ watch(
 }
 
 :deep(.el-slider__bar) {
-  background-color: #62bf82;
+  background-color: var(--music-main-active);
   border-radius: 0px !important;
 }
 
 :deep(.el-slider__button) {
   width: 6px;
   height: 6px;
-  border: solid 3px #62bf82;
+  border: solid 3px var(--music-main-active);
 }
 
 :deep(.el-slider.is-vertical .el-slider__runway) {

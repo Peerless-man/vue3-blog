@@ -3,7 +3,7 @@ import { ref, reactive, onMounted } from "vue";
 
 import { blogTimelineGetArticleList } from "@/api/article";
 
-import PageHeader from "@/components/Header/PageHeader.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 import TimeLine from "@/components/TimeLine/time-line.vue";
 
 const archives = ref([]);
@@ -22,17 +22,20 @@ const pagination = (page) => {
 
 // 获取时间轴
 const getArchives = async () => {
-  loading.value = true;
-  let res = await blogTimelineGetArticleList(param.current, param.size);
-  if (res.code == 0) {
-    const { total, list } = res.result;
-    archives.value = list;
-    archivesTotal.value = total;
+  try {
+    let res = await blogTimelineGetArticleList(param.current, param.size);
+    if (res.code == 0) {
+      const { total, list } = res.result;
+      archives.value = list;
+      archivesTotal.value = total;
+    }
+  } finally {
     loading.value = false;
   }
 };
 
 onMounted(() => {
+  loading.value = true;
   getArchives();
 });
 </script>

@@ -4,38 +4,36 @@
  * @Description: 音乐播放器 控制音乐播放、暂停等
  -->
 <script setup>
-import { defineComponent, onMounted } from "vue";
-
-import { storeToRefs } from "pinia";
-import { music } from "@/store/index";
+import { defineComponent, onMounted, inject } from "vue";
 
 import { ElNotification } from "element-plus";
 import TimeVolume from "./time-volume";
-import { calcMusicTime } from "../../musicTool";
+
+const musicGetters = inject("musicGetters");
+const musicSetters = inject("musicSetters");
 
 defineComponent({
   name: "AudioControls",
 });
 
-// 音乐播放器的一些参数 使用storetoRefs是为了保持数据的响应式
-const { getIsPaused, getCurrentTime, getDuration } = storeToRefs(music());
+const { getIsPaused } = musicGetters;
 
 const play = () => {
-  music().togglePlay();
+  musicSetters.togglePlay();
 };
 
 // 上一首
 const prev = async () => {
-  music().setNext(false);
+  musicSetters.setNext(false);
 };
 
 // 下一首
 const next = async () => {
-  music().setNext(true);
+  musicSetters.setNext(true);
 };
 
 onMounted(() => {
-  music().init();
+  musicSetters.init();
   ElNotification({
     offset: 60,
     title: "左下角听听歌吧～",
@@ -51,11 +49,7 @@ onMounted(() => {
       <i class="iconfont icon-bofangzhong change-color" v-else @click="play"></i>
       <i class="iconfont icon-xiayiqu change-color" @click="next"></i>
     </div>
-    <TimeVolume
-      class="right"
-      :currentTime="calcMusicTime(getCurrentTime)"
-      :duration="calcMusicTime(getDuration)"
-    />
+    <TimeVolume class="right" />
   </div>
 </template>
 
@@ -94,7 +88,7 @@ onMounted(() => {
 }
 .change-color:hover {
   cursor: pointer;
-  color: #62c28a;
+  color: var(--music-main-active);
 }
 
 @media screen and (max-width: 768px) {

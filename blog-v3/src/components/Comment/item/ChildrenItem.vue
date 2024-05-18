@@ -55,6 +55,7 @@ const params = reactive({
 });
 const commentList = ref([]);
 const commentTotal = ref(0);
+const currentCommentIndex = ref(0); // 当前回复的comment下标
 
 const showApplyInput = ref(false); // 是否展示回复框
 const commentTo = reactive({
@@ -130,7 +131,7 @@ const like = async (item, index) => {
   }
 };
 
-const apply = (item, type) => {
+const apply = (item, type, index = 0) => {
   if (type == "parent") {
     // 回复评论 回复主评论
     isParentApply.value = true;
@@ -138,6 +139,8 @@ const apply = (item, type) => {
   } else {
     // 回复子评论
     isParentApply.value = false;
+    // 记录一下当前回复的下标 由于关闭输入框
+    currentCommentIndex.value = index;
     emits("changeShowApplyInput", false);
   }
 
@@ -289,24 +292,16 @@ defineExpose({
             >
               <span class="!ml-[0.5rem]">{{ comment.thumbs_up }}</span>
             </span>
-            <!-- 子评论和主评论共用一个文本框 这里有点绕 -->
             <span
               class="!mr-[1rem] apply cursor-pointer"
-              v-if="
-                userStore.getUserInfo.id != comment.from_id && !showApplyInput && !isParentApply
-              "
-              @click="apply(comment, 'children')"
+              v-if="userStore.getUserInfo.id != comment.from_id"
+              @click="apply(comment, 'children', index)"
               >回复</span
             >
-            <span
-              class="!mr-[1rem] apply cursor-pointer"
-              v-if="userStore.getUserInfo.id != comment.from_id && showApplyInput && isParentApply"
-              @click="apply(comment, 'children')"
-              >回复</span
-            >
+            <!-- 这个关闭按钮只关闭子评论的输入框 回复主评论的输入框在ParentItem里关闭 -->
             <span
               class="!mr-[1rem] close cursor-pointer"
-              v-if="showApplyInput && !isParentApply"
+              v-if="showApplyInput && !isParentApply && index == currentCommentIndex"
               @click="closeComment"
               >关闭</span
             >
@@ -396,23 +391,23 @@ defineExpose({
   margin-right: 1rem;
   font-size: 0.8rem;
   font-weight: 800;
-  color: #f04c49;
+  color: var(--hot-color);
 }
 
 .close {
-  color: #f26c60;
+  color: var(--top);
   word-break: keep-all;
   font-size: 1rem;
   &:hover {
-    color: #f04c49;
+    color: var(--hot-color);
   }
 }
 .delete {
   word-break: keep-all;
   font-size: 1rem;
-  color: #f26c60;
+  color: var(--top);
   &:hover {
-    color: #f04c49;
+    color: var(--hot-color);
   }
 }
 .pagination {

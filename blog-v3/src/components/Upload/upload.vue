@@ -122,6 +122,7 @@ watch(
   </el-upload>
   <el-image-viewer
     v-if="dialogVisible"
+    :teleported="true"
     :url-list="uploadFileList.map((v) => v.url)"
     :initial-index="previewIndex"
     @close="closeImgViewer"

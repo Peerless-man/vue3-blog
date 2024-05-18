@@ -126,7 +126,7 @@ const operate = (op, val) => {
     width: 60px;
     height: 60px;
     transition: ease-in-out 1s;
-    background-color: #fff;
+    background-color: var(--global-white);
     margin: -2rem 0 0 1rem;
 
     &:hover {
@@ -180,13 +180,13 @@ const operate = (op, val) => {
     border-radius: 3px;
 
     .iconfont {
-      color: #fff;
+      color: var(--global-white);
       font-size: 1.2rem;
     }
 
     &-text {
       font-size: 1.2rem;
-      color: #fff;
+      color: var(--global-white);
       padding-left: 0.5rem;
     }
   }

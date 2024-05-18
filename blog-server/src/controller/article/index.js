@@ -46,7 +46,7 @@ class ArticleController {
     // 创建事务 方便回滚
     const t = await seq.transaction();
     try {
-      const { tagList, category, ...articleRest } = ctx.request.body.article;
+      const { tagList, category, ...articleRest } = ctx.request.body;
       // 若分类不存在 就先创建分类
       const { id, category_name } = category;
       articleRest.category_id = await createCategoryOrReturn(id, category_name);
@@ -76,7 +76,7 @@ class ArticleController {
   async updateArticle(ctx) {
     const t = await seq.transaction();
     try {
-      const { tagList, category, ...articleRest } = ctx.request.body.article;
+      const { tagList, category, ...articleRest } = ctx.request.body;
       let oldCover = await getArticleCoverById(articleRest.id);
       // 服务器删除图片
       if (oldCover && oldCover != articleRest.article_cover) {
