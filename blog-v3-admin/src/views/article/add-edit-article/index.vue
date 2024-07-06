@@ -48,7 +48,7 @@ const {
           v-model="articleForm.article_title"
           placeholder="请输入文章标题"
           clearable
-          maxlength="20"
+          maxlength="55"
           @change="articleTitleVAlidate"
         />
       </el-form-item>

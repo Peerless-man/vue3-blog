@@ -1,6 +1,9 @@
 <template>
   <!-- 最外层 div 是占位置的 -->
-  <div class="footer_box flex flex-col items-center justify-center">
+  <div
+    v-if="route.path !== '/message/chat'"
+    class="footer_box flex flex-col items-center justify-center"
+  >
     <!-- eslint-disable-next-line -->
     <div class="footer-color">&copy 小张的博客 2023</div>
     <a class="footer-color change-color mt-[5px]" href="http://beian.miit.gov.cn/" target="_blank"
@@ -35,7 +38,10 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRoute } from "vue-router";
+const route = useRoute();
+</script>
 
 <style lang="scss" scoped>
 .footer-color {

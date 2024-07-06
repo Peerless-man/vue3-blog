@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "serve": "NODE_OPTIONS=--max-old-space-size=4096 vite",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "serve": "vite",
+    "build": "vite build",
     "preview": "vite preview",
     "eslint": "eslint . --ext .vue,.js,.jsx --fix",
     "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\""

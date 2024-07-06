@@ -21,7 +21,6 @@ html.dark {
     font-weight: 600 !important;
     color: var(--global-white) !important;
     background: var(--dark-global-gradient) !important;
-    z-index: 9999 !important;
   }
 
   .el-avatar {
@@ -350,5 +349,16 @@ html.dark {
 
   .link-skeleton {
     background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .chat-room {
+    .message-content {
+      color: var(--global-black);
+    }
+  }
+
+  .blog-chat-btn {
+    color: var(--global-white);
+    background-color: rgba(0, 0, 0, 0.3);
   }
 }

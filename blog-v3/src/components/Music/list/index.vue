@@ -266,15 +266,15 @@ onBeforeUnmount(() => {
                 ></i>
               </div>
             </el-col>
-            <div class="observe" @click="loadMore">
-              <template v-if="!musicListLoading">
-                <Loading :size="24" v-if="musicScrollLoading" />
-                <template v-else>
-                  {{ params.loadMore ? "下拉/点击加载更多～" : "已经到底了" }}
-                </template>
-              </template>
-            </div>
           </template>
+          <div class="observe" @click="loadMore">
+            <template v-if="!musicListLoading">
+              <Loading :size="24" v-if="musicScrollLoading" />
+              <template v-else>
+                {{ params.loadMore ? "下拉/点击加载更多～" : "已经到底了" }}
+              </template>
+            </template>
+          </div>
         </el-row>
       </div>
     </div>

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, h, watch } from "vue";
 import { user } from "@/store/index";
-import { useRoute } from "vue-router";
 
 import { addComment, frontGetCommentTotal } from "@/api/comment";
 import { getCurrentType } from "./tool";
@@ -9,12 +8,11 @@ import { getCurrentType } from "./tool";
 import ParentItem from "./item/ParentItem.vue";
 import CommentInput from "./item/CommentInput.vue";
 import { ElNotification } from "element-plus";
-import { _setLocalItem, numberFormate } from "@/utils/tool";
+import { numberFormate } from "@/utils/tool";
 
 const emits = defineEmits(["refresh"]);
 
 const userStore = user();
-const route = useRoute();
 const props = defineProps({
   // 评论的类型 文章 article 说说 talk
   type: {
@@ -64,7 +62,6 @@ const changeOrder = (type) => {
 const toLogin = () => {
   if (userStore.getUserInfo.id) return;
   userStore.setShowLogin(true);
-  _setLocalItem("blogLastRouter", route.fullPath);
 };
 
 const publish = async () => {

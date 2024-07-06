@@ -5,7 +5,6 @@ import { user } from "@/store/index.js";
 import { storeToRefs } from "pinia";
 import { ElNotification } from "element-plus";
 import MessageBox from "@/components/MessageBox/message-box.vue";
-import { _setLocalItem } from "@/utils/tool";
 import SwitchTheme from "@/components/SwitchTheme/index.vue";
 import Login from "./login/login.vue";
 
@@ -52,7 +51,6 @@ const handleClose = () => {
 const toLogin = () => {
   userStore.setShowLogin(true);
   headerState.drawerShow = false;
-  _setLocalItem("blogLastRouter", route.fullPath);
 };
 
 // 去个人中心
@@ -113,12 +111,15 @@ onMounted(() => {
           <el-menu-item index="/home"><i class="iconfont icon-home"></i> 主页</el-menu-item>
           <el-menu-item index="/archives"><i class="iconfont icon-icon"></i> 时间轴</el-menu-item>
           <el-sub-menu index="/resources">
-            <template #title><i class="iconfont icon-menu"></i> 资源导航</template>
+            <template #title><i class="iconfont icon-menu"></i> 更多</template>
+            <!-- <el-menu-item index="/message/chat"
+              ><i class="iconfont icon-speechbubble"></i> 聊天室</el-menu-item
+            > -->
             <el-menu-item index="/resources/front"
-              ><i class="iconfont icon-folder"></i> 前端</el-menu-item
+              ><i class="iconfont icon-folder"></i> 前端推荐</el-menu-item
             >
             <el-menu-item index="/resources/back"
-              ><i class="iconfont icon-houduankaifa"></i> 后端</el-menu-item
+              ><i class="iconfont icon-houduankaifa"></i> 后端推荐</el-menu-item
             >
             <!-- <el-menu-item index="/music"><i class="iconfont icon-bofangduilie"></i> 音乐</el-menu-item> -->
           </el-sub-menu>
@@ -196,12 +197,15 @@ onMounted(() => {
             <el-menu-item index="/home"><i class="iconfont icon-home"></i> 主页</el-menu-item>
             <el-menu-item index="/archives"><i class="iconfont icon-icon"></i> 时间轴</el-menu-item>
             <el-sub-menu index="/resources">
-              <template #title><i class="iconfont icon-menu"></i> 资源导航</template>
+              <template #title><i class="iconfont icon-menu"></i> 更多</template>
+              <!-- <el-menu-item index="/message/chat"
+                ><i class="iconfont icon-speechbubble"></i> 聊天室</el-menu-item
+              > -->
               <el-menu-item index="/resources/front"
-                ><i class="iconfont icon-folder"></i> 前端</el-menu-item
+                ><i class="iconfont icon-folder"></i> 前端推荐</el-menu-item
               >
               <el-menu-item index="/resources/back"
-                ><i class="iconfont icon-houduankaifa"></i> 后端</el-menu-item
+                ><i class="iconfont icon-houduankaifa"></i> 后端推荐</el-menu-item
               >
             </el-sub-menu>
             <el-menu-item index="/category"><i class="iconfont icon-sort"></i> 分类</el-menu-item>

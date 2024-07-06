@@ -94,22 +94,6 @@ onMounted(() => {
                 <div class="group">
                   交流群
                   <div class="flex justify-end items-start flex-nowrap">
-                    <div class="grid place-items-center" v-image="configDetail.we_chat_group">
-                      <el-image
-                        class="img"
-                        :src="configDetail.we_chat_group"
-                        fit="cover"
-                        :preview-src-list="[configDetail.we_chat_group]"
-                        preview-teleported
-                        lazy
-                      >
-                        <template #error>
-                          <div class="w-[100%] h-[100%] grid place-items-center">
-                            <svg-icon name="image404" :width="4" :height="4"></svg-icon>
-                          </div>
-                        </template>
-                      </el-image>
-                    </div>
                     <div class="grid place-items-center" v-image="configDetail.qq_group">
                       <el-image
                         class="img !ml-[10px]"
@@ -126,9 +110,25 @@ onMounted(() => {
                         </template>
                       </el-image>
                     </div>
+                    <div class="grid place-items-center" v-image="configDetail.we_chat_group">
+                      <el-image
+                        class="img"
+                        :src="configDetail.we_chat_group"
+                        fit="cover"
+                        :preview-src-list="[configDetail.we_chat_group]"
+                        preview-teleported
+                        lazy
+                      >
+                        <template #error>
+                          <div class="w-[100%] h-[100%] grid place-items-center">
+                            <svg-icon name="image404" :width="4" :height="4"></svg-icon>
+                          </div>
+                        </template>
+                      </el-image>
+                    </div>
                   </div>
                 </div>
-                <div class="group">
+                <!-- <div class="group">
                   支持作者
                   <div class="flex justify-end items-start flex-nowrap">
                     <div class="grid place-items-center" v-image="configDetail.ali_pay">
@@ -164,7 +164,7 @@ onMounted(() => {
                       </el-image>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </RightSideItem>
             </template>
           </el-skeleton>

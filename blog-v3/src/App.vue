@@ -10,6 +10,7 @@ import { user, staticData } from "@/store/index.js";
 
 import MusicPlayer from "@/components/Music/index";
 import BackTop from "@/components/BackTop/index";
+import ChatRoom from "@/components/ChatRoom/index";
 
 const userStore = user();
 const router = useRouter();
@@ -19,7 +20,7 @@ const backTopProps = reactive({
   right: "",
   svgWidth: 0,
 });
-const showGoBack = ref(false);
+const isPc = ref(true);
 
 const goBack = () => {
   router.go(-1);
@@ -31,15 +32,15 @@ const resize = () => {
   if (w > "1280") {
     backTopProps.right = "5%";
     backTopProps.svgWidth = 7;
-    showGoBack.value = false;
+    isPc.value = true;
   } else if (w > "798" && w <= "1280") {
     backTopProps.right = "0";
     backTopProps.svgWidth = 6;
-    showGoBack.value = false;
+    isPc.value = true;
   } else {
     backTopProps.right = "0";
     backTopProps.svgWidth = 5;
-    showGoBack.value = true;
+    isPc.value = false;
   }
 };
 // 获取所有的网站页面背景图
@@ -70,6 +71,13 @@ const welcome = () => {
 };
 
 onMounted(async () => {
+  // 首次判断是手机还是pc
+  backTopProps.right = isMobile() ? "0" : "5%";
+  backTopProps.svgWidth = isMobile() ? 6 : 7;
+  isPc.value = !isMobile();
+  // 全局增加窗口变化事件，对backTop的边距进行适配
+  window.addEventListener("resize", resize);
+
   // 上传访问量
   await addView();
   if (window.name == "") {
@@ -77,13 +85,6 @@ onMounted(async () => {
     getAllPageHeaderBg();
     welcome();
   }
-
-  // 首次判断是手机还是pc
-  backTopProps.right = isMobile() ? "0" : "5%";
-  backTopProps.svgWidth = isMobile() ? 6 : 7;
-  showGoBack.value = isMobile() && route.path != "/" ? true : false;
-  // 全局增加窗口变化事件，对backTop的边距进行适配
-  window.addEventListener("resize", resize);
 });
 </script>
 
@@ -91,8 +92,13 @@ onMounted(async () => {
   <div class="app">
     <router-view></router-view>
     <BackTop :right="backTopProps.right" :svgWidth="backTopProps.svgWidth" :rotateDeg="-42" />
-    <i v-if="showGoBack" class="iconfont icon-fanhui" @click="goBack"></i>
+    <i
+      v-if="!isPc && ['home', '/'].includes(route.path)"
+      class="iconfont icon-fanhui"
+      @click="goBack"
+    ></i>
     <MusicPlayer />
+    <ChatRoom :isPc="isPc" v-if="route.path !== '/'" />
   </div>
 </template>
 

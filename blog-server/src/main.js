@@ -14,9 +14,12 @@ const { koaSwagger } = require("koa2-swagger-ui");
 const errorHandler = require("./app/errorHandler"); // 错误处理公共方法
 const { UPLOADTYPE } = require("./config/config.default"); // 上传类型
 
+const { initWebsocket } = require("./utils/websocket");
+
 // error handler
 onerror(app);
 
+// 初始化文件上传
 if (UPLOADTYPE == "qiniu" || UPLOADTYPE == "minio") {
   // middlewares
   app.use(
@@ -60,6 +63,8 @@ app.use(
     extension: "ejs",
   })
 );
+
+initWebsocket(); // 初始化websocket
 
 // logger
 app.use(async (ctx, next) => {

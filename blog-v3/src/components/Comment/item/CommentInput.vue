@@ -107,7 +107,8 @@ defineExpose({
         cols="20"
         @input="inputComment(val)"
         @focus="focusComment"
-        @mouseleave="keepIndex"
+        @blur="keepIndex"
+        @click="keepIndex"
         placeholder="期待能留下你的脚印~"
       ></div>
     </div>

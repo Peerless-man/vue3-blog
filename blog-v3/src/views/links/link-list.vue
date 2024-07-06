@@ -215,7 +215,7 @@ onBeforeUnmount(() => {
                   {{ item.site_desc }}</span
                 >
               </div>
-              <div class="op-icon">
+              <div class="op-icon" v-if="getUserInfo.id">
                 <el-icon
                   v-if="getUserInfo.id == 1 || getUserInfo.id == item.user_id"
                   style="font-size: 16px"

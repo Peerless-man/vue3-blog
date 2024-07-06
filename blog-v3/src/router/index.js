@@ -185,6 +185,14 @@ const routes = [
             },
             component: () => import("@/views/message/detail.vue"),
           },
+          // {
+          //   path: "chat",
+          //   name: "MessageChat",
+          //   meta: {
+          //     name: "聊天室",
+          //   },
+          //   component: () => import("@/views/chat/index.vue"),
+          // },
         ],
       },
     ],

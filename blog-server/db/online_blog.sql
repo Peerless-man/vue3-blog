@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 28/12/2023 20:50:08
+ Date: 06/07/2024 10:18:20
 */
 
 SET NAMES utf8mb4;
@@ -40,7 +40,7 @@ CREATE TABLE `blog_article` (
   `reading_duration` double DEFAULT '0' COMMENT '文章阅读时长',
   `order` int DEFAULT NULL COMMENT '排序 1 最大 往后越小 用于置顶文章的排序',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_article_tag
@@ -53,7 +53,7 @@ CREATE TABLE `blog_article_tag` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=239 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_category
@@ -80,7 +80,21 @@ CREATE TABLE `blog_category` (
   UNIQUE KEY `category_name_13` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_14` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_15` (`category_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for blog_chat
+-- ----------------------------
+DROP TABLE IF EXISTS `blog_chat`;
+CREATE TABLE `blog_chat` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL COMMENT '用户id 用于判断是谁发送的',
+  `content` varchar(555) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '聊天内容',
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  `content_type` varchar(55) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '聊天的内容格式 如果是文本就是text 图片就是 img',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
 -- Table structure for blog_comment
@@ -103,7 +117,7 @@ CREATE TABLE `blog_comment` (
   `updatedAt` datetime DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL COMMENT 'ip地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=380 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=446 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_config
@@ -142,7 +156,7 @@ CREATE TABLE `blog_header` (
   `updatedAt` datetime DEFAULT NULL,
   `route_name` varchar(555) DEFAULT NULL COMMENT '路由名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_like
@@ -156,7 +170,7 @@ CREATE TABLE `blog_like` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=291 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=444 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_links
@@ -173,7 +187,7 @@ CREATE TABLE `blog_links` (
   `updatedAt` datetime DEFAULT NULL,
   `user_id` varchar(255) DEFAULT NULL COMMENT '申请者id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_message
@@ -194,7 +208,7 @@ CREATE TABLE `blog_message` (
   `font_weight` int DEFAULT '500' COMMENT '字体宽度',
   `nick_name` varchar(255) DEFAULT NULL COMMENT '游客用户的昵称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_notify
@@ -210,7 +224,7 @@ CREATE TABLE `blog_notify` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=365 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=471 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Table structure for blog_photo
@@ -224,7 +238,7 @@ CREATE TABLE `blog_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_photo_album
@@ -238,7 +252,7 @@ CREATE TABLE `blog_photo_album` (
   `updatedAt` datetime DEFAULT NULL,
   `album_cover` varchar(555) DEFAULT NULL COMMENT '相册封面',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_recommend
@@ -287,7 +301,7 @@ CREATE TABLE `blog_tag` (
   UNIQUE KEY `tag_name_22` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_23` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_24` (`tag_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_talk
@@ -303,7 +317,7 @@ CREATE TABLE `blog_talk` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_talk_photo
@@ -316,7 +330,7 @@ CREATE TABLE `blog_talk_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for blog_user
@@ -356,6 +370,6 @@ CREATE TABLE `blog_user` (
   UNIQUE KEY `username_20` (`username`) USING BTREE,
   UNIQUE KEY `username_21` (`username`) USING BTREE,
   UNIQUE KEY `username_22` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=239 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=373 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;

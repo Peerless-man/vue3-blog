@@ -1,6 +1,6 @@
 <!-- 用户登录注册  -->
 <script setup>
-import { ref, reactive, watch, h, nextTick, onMounted } from "vue";
+import { ref, reactive, watch, h, nextTick } from "vue";
 
 import { reqLogin, reqRegister, getUserInfoById } from "@/api/user";
 
@@ -61,6 +61,7 @@ const registerForm = reactive({
 });
 const primaryRegisterForm = reactive({ ...registerForm });
 const isLogin = ref(true);
+const showDialog = ref(false);
 
 const loginRules = {
   username: [{ required: true, message: "请输入用户账号", trigger: "blur" }],
@@ -199,21 +200,6 @@ const handleClose = () => {
   userStore.setShowLogin(false);
 };
 
-onMounted(() => {
-  isLogin.value = true;
-  nextTick(() => {
-    loginFormRef.value && loginFormRef.value.resetFields();
-    registerForm.value && registerFormRef.value.resetFields();
-
-    // 判断用户是否被记住了
-    let form = _decrypt(_getLocalItem("loginForm"));
-    if (form) {
-      isRemember.value = true;
-      Object.assign(loginForm, JSON.parse(form));
-    }
-  });
-});
-
 watch(
   () => isLogin.value,
   (newV) => {
@@ -227,10 +213,33 @@ watch(
     immediate: true,
   }
 );
+watch(
+  () => getShowLogin.value,
+  (newV) => {
+    showDialog.value = newV;
+    if (newV) {
+      isLogin.value = true;
+      nextTick(() => {
+        loginFormRef.value && loginFormRef.value.resetFields();
+        registerForm.value && registerFormRef.value.resetFields();
+
+        // 判断用户是否被记住了
+        let form = _decrypt(_getLocalItem("loginForm"));
+        if (form) {
+          isRemember.value = true;
+          Object.assign(loginForm, JSON.parse(form));
+        }
+      });
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <template>
-  <el-dialog v-model="getShowLogin" width="120" :before-close="handleClose">
+  <el-dialog v-model="showDialog" width="120" :before-close="handleClose">
     <template #header>
       <h1>{{ isLogin ? "登录" : "注册" }}</h1>
     </template>
