@@ -68,6 +68,7 @@ const commentText = ref(""); // 评论框内容
 const commentInputRef = ref();
 
 const isParentApply = ref(false);
+const likePending = ref(false);
 
 // 关闭当前打开的输入评论框
 const closeComment = () => {
@@ -103,6 +104,8 @@ const getComment = async (type) => {
 // 点赞
 const like = async (item, index) => {
   let res;
+  if (likePending.value) return;
+  likePending.value = true;
   // 查看点赞了没有，点赞了就进行取消点赞
   if (item.is_like) {
     res = await cancelThumbUp(item.id);
@@ -110,6 +113,7 @@ const like = async (item, index) => {
     if (res && res.code == 0) {
       commentList.value[index].is_like = false;
       commentList.value[index].thumbs_up--;
+      likePending.value = false;
       ElNotification({
         offset: 60,
         title: "提示",
@@ -122,6 +126,7 @@ const like = async (item, index) => {
     if (res && res.code == 0) {
       commentList.value[index].is_like = true;
       commentList.value[index].thumbs_up++;
+      likePending.value = false;
       ElNotification({
         offset: 60,
         title: "提示",
@@ -330,7 +335,7 @@ defineExpose({
     </template>
     <Pagination
       class="animate__animated animate__fadeIn"
-      v-if="commentTotal > 0"
+      v-if="commentTotal > params.size"
       :size="params.size"
       :current="params.current"
       layout="prev, pager, next"

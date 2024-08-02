@@ -25,6 +25,8 @@ const param = reactive({
   user_id: userStore.getUserInfo.id,
 });
 
+const likePending = ref(false);
+
 const observeBox = () => {
   // 获取要监听的元素
   box = document.querySelector(".observer");
@@ -64,6 +66,8 @@ const pageGetTalkList = async () => {
 };
 
 const like = async (item, index) => {
+  if (likePending.value) return;
+  likePending.value = true;
   // 取消点赞
   if (item.is_like) {
     let tRes = await cancelTalkLike(item.id);
@@ -71,6 +75,7 @@ const like = async (item, index) => {
       await cancelLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
       talkList.value[index].is_like = false;
       talkList.value[index].like_times--;
+      likePending.value = false;
 
       ElNotification({
         offset: 60,
@@ -86,6 +91,8 @@ const like = async (item, index) => {
       await addLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
       talkList.value[index].is_like = true;
       talkList.value[index].like_times++;
+      likePending.value = false;
+
       ElNotification({
         offset: 60,
         title: "提示",
@@ -355,7 +362,7 @@ onBeforeUnmount(() => {
 }
 
 .talk-item-line {
-  border-bottom: 1px solid #f8f8f8;
+  border-bottom: 1px solid #b8b8b8;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
 }

@@ -10,6 +10,12 @@ const parameter = require("koa-parameter");
 const { koaBody } = require("koa-body"); // 新用法
 const swagger = require("./utils/swagger"); // 存放swagger.js的位置，可以自行配置
 const { koaSwagger } = require("koa2-swagger-ui");
+const RateLimit = require("koa2-ratelimit").RateLimit;
+
+const limiter = RateLimit.middleware({
+  interval: { min: 1 }, // 1 minutes = 1*60*1000
+  max: 200, // limit each IP to 100 requests per interval
+});
 
 const errorHandler = require("./app/errorHandler"); // 错误处理公共方法
 const { UPLOADTYPE } = require("./config/config.default"); // 上传类型
@@ -52,6 +58,8 @@ if (UPLOADTYPE == "qiniu" || UPLOADTYPE == "minio") {
     })
   );
 }
+//  apply to all requests
+app.use(limiter);
 
 app.use(json());
 app.use(logger());

@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch, type Ref } from "vue";
-import { useAppStoreHook } from "@/store/modules/app";
-import {
-  delay,
-  useDark,
-  useECharts,
-  type EchartOptions
-} from "@pureadmin/utils";
+import { ref, computed, watch, nextTick, type Ref } from "vue";
+import { useDark, useECharts, type EchartOptions } from "@pureadmin/utils";
 
 const { isDark } = useDark();
+const cellSize = ref(0);
 
 const props = defineProps({
   commitList: {
@@ -24,79 +19,80 @@ const theme: EchartOptions["theme"] = computed(() => {
 });
 
 const codeMapChartRef = ref<HTMLDivElement | null>(null);
-const { setOptions, resize } = useECharts(
-  codeMapChartRef as Ref<HTMLDivElement>,
-  {
-    theme
-  }
-);
+const { setOptions } = useECharts(codeMapChartRef as Ref<HTMLDivElement>, {
+  theme
+});
 const init = () => {
-  setOptions({
-    tooltip: {
-      formatter: function (params) {
-        return params.value[0] + " : " + params.value[1];
+  nextTick(() => {
+    cellSize.value = Math.round(
+      ((codeMapChartRef.value.offsetWidth - 120) / 366) * 7
+    );
+
+    cellSize.value = cellSize.value > 12 ? cellSize.value : 12;
+
+    setOptions({
+      tooltip: {
+        formatter: function (params) {
+          return params.value[0] + " : " + params.value[1];
+        }
+      },
+      visualMap: {
+        show: false,
+        min: 0,
+        max: 5,
+        inRange: {
+          // gitlab
+          color: ["#ededed", "#acd5f2", "#7fa8d1", "#49729b", "#254e77"]
+          // github
+          // color: ["#eeeeee", "#d6e685", "#8cc665", "#44a340", "#1e6823"]
+        }
+      },
+      calendar: {
+        itemStyle: {
+          color: "#fafafa",
+          borderWidth: 3,
+          borderColor: "#fff"
+        },
+        cellSize: [cellSize.value, cellSize.value],
+        range: [
+          props.commitList[props.commitList.length - 1][0],
+          props.commitList[0][0]
+        ],
+        splitLine: {
+          show: false
+        },
+        dayLabel: {
+          firstDay: 7,
+          nameMap: "ZH"
+        },
+        monthLabel: {
+          nameMap: [
+            "一月",
+            "二月",
+            "三月",
+            "四月",
+            "五月",
+            "六月",
+            "七月",
+            "八月",
+            "九月",
+            "十月",
+            "十一月",
+            "十二月"
+          ]
+        },
+        yearLabel: {
+          show: false
+        }
+      },
+      series: {
+        type: "heatmap",
+        coordinateSystem: "calendar",
+        data: props.commitList
       }
-    },
-    visualMap: {
-      show: false,
-      min: 0,
-      max: 5,
-      inRange: {
-        color: ["#ebedf0", "#d6e685", "#8cc665", "#1e6823"]
-      }
-    },
-    calendar: {
-      itemStyle: {
-        color: "#f1f1f1",
-        borderWidth: 3,
-        borderColor: "#fff"
-      },
-      cellSize: ["auto", 18],
-      range: [
-        props.commitList[props.commitList.length - 1][0],
-        props.commitList[0][0]
-      ],
-      splitLine: {
-        show: false
-      },
-      dayLabel: {
-        firstDay: 7,
-        nameMap: "ZH"
-      },
-      monthLabel: {
-        nameMap: [
-          "一月",
-          "二月",
-          "三月",
-          "四月",
-          "五月",
-          "六月",
-          "七月",
-          "八月",
-          "九月",
-          "十月",
-          "十一月",
-          "十二月"
-        ]
-      },
-      yearLabel: {
-        show: false
-      }
-    },
-    series: {
-      type: "heatmap",
-      coordinateSystem: "calendar",
-      data: props.commitList
-    }
+    });
   });
 };
-
-watch(
-  () => useAppStoreHook().getSidebarStatus,
-  () => {
-    delay(600).then(() => resize());
-  }
-);
 
 watch(
   () => props.commitList,
@@ -113,6 +109,10 @@ watch(
     immediate: true
   }
 );
+
+defineExpose({
+  init
+});
 </script>
 
 <template>

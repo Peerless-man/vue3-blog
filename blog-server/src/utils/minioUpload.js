@@ -1,7 +1,7 @@
 // https://www.npmjs.com/package/minio
 const Minio = require("minio");
 
-const { UPLOADTYPE, MINIO_ACCESSKEY, MINIO_SECRETKEY, MINIO_BUCKET, MINIO_PATH } = require("../config/config.default");
+const { UPLOADTYPE, MINIO_ACCESSKEY, MINIO_SECRETKEY, MINIO_BUCKET, MINIO_PATH, MINIO_PORT } = require("../config/config.default");
 
 let minioClient;
 
@@ -10,7 +10,7 @@ if (UPLOADTYPE == "minio") {
     try {
       minioClient = new Minio.Client({
         endPoint: MINIO_PATH,
-        port: 9000,
+        port: Number(MINIO_PORT) || 9000,
         useSSL: false,
         accessKey: MINIO_ACCESSKEY,
         secretKey: MINIO_SECRETKEY,

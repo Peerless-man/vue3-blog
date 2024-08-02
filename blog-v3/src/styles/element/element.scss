@@ -2,7 +2,7 @@
   border: none;
   border-radius: 5px 5px 8px 8px;
   box-shadow: var(--card-box-shadow) !important;
-  background: rgb(255, 255, 255, 0.3);
+  background: var(--card-bg);
   transition: all 0.3s;
   &__body {
     width: 100%;
@@ -37,13 +37,14 @@
 }
 .el-menu {
   border-right: none;
-  background: transparent;
+  background: transparent !important;
   .el-menu-item {
     border-bottom: none;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1em;
+    font-weight: 500;
     padding: 0 10px;
     background-color: transparent;
+    color: var(--menu-color);
   }
   .el-menu-item.is-active {
     border-bottom: none;
@@ -55,12 +56,17 @@
     background-color: transparent;
   }
   .el-sub-menu__title {
-    font-size: 1.1rem;
-    padding: 0 10px;
-    border-bottom: none;
-    font-weight: 600;
+    font-size: 1em;
+    padding: 0 20px !important;
+    border-bottom: none !important;
+    color: var(--menu-color) !important;
+
+    &:hover {
+      color: var(--primary) !important;
+    }
   }
 }
+
 .el-drawer {
   font-size: 1.2rem;
   .el-drawer__title {
@@ -94,7 +100,7 @@
   background: linear-gradient(120deg, #faeeff, #cfebf3) !important;
 }
 .md-editor-catalog-link span {
-  color: var(--primary) !important;
+  color: var(--font-color) !important;
 }
 .md-editor-catalog-active > span {
   color: var(--md-active) !important;
@@ -228,6 +234,11 @@
 
 .el-descriptions__body {
   background-color: transparent !important;
+}
+
+.el-switch__core {
+  background-color: #676767 !important;
+  border-color: #676767 !important;
 }
 
 input::-webkit-input-placeholder {

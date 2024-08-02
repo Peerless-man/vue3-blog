@@ -9,6 +9,15 @@ export const getMessageList = (data) => {
   });
 };
 
+/** 获取所有留言 */
+export const getAllMessage = () => {
+  return new Promise((resolve, reject) => {
+    http.get("/api/message/getAllMessage").then((res) => {
+      resolve(res);
+    });
+  });
+};
+
 /** 新增留言 */
 export const addMessage = (data) => {
   return new Promise((resolve, reject) => {

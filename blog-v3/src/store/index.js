@@ -52,6 +52,7 @@ export const staticData = defineStore("staticData", {
       theme: isDark.value,
       // 头部图片地址
       pageHeaderList: [],
+      messageTypeIsCard: false,
     };
   },
   getters: {
@@ -62,6 +63,9 @@ export const staticData = defineStore("staticData", {
     // 获取每个页面背景图
     getPageHeaderList() {
       return this.pageHeaderList || _getLocalItem("pageHeaderList");
+    },
+    getMessageTypeIsCard() {
+      return this.messageTypeIsCard;
     },
   },
   actions: {
@@ -75,6 +79,9 @@ export const staticData = defineStore("staticData", {
     setPageHeaderLIst(list) {
       this.pageHeaderList = list;
       _setLocalItem("pageHeaderList", list);
+    },
+    setMessageTypeIsCard(type) {
+      this.messageTypeIsCard = type;
     },
   },
 });

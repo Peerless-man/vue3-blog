@@ -5,6 +5,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import Layout from "@/components/Layout/index.vue";
 import navPage from "@/views/index.vue";
 
+NProgress.configure({ showSpinner: false });
 const routes = [
   {
     path: "/",
@@ -12,6 +13,7 @@ const routes = [
     meta: {
       name: "导航",
     },
+    redirect: "/home",
     component: navPage,
   },
   {
@@ -25,7 +27,7 @@ const routes = [
     children: [
       {
         path: "/home",
-        name: "home",
+        name: "Home",
         meta: {
           name: "首页",
         },
@@ -162,7 +164,7 @@ const routes = [
         children: [
           {
             path: "list",
-            name: "Message",
+            name: "MessageList",
             meta: {
               keepAlive: true,
               name: "留言",
@@ -171,7 +173,7 @@ const routes = [
           },
           {
             path: "publish",
-            name: "publish",
+            name: "PublishMessage",
             meta: {
               name: "编辑/新增留言",
             },
@@ -185,14 +187,6 @@ const routes = [
             },
             component: () => import("@/views/message/detail.vue"),
           },
-          // {
-          //   path: "chat",
-          //   name: "MessageChat",
-          //   meta: {
-          //     name: "聊天室",
-          //   },
-          //   component: () => import("@/views/chat/index.vue"),
-          // },
         ],
       },
     ],

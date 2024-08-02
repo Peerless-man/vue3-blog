@@ -15,8 +15,6 @@ import { _removeLocalItem, _setLocalItem } from "@/utils/tool";
 
 const { getUserInfo } = storeToRefs(user());
 
-const active = ref(0);
-const activeType = ref("");
 const loading = ref(false);
 const scrollLoading = ref(false);
 const params = reactive({
@@ -33,16 +31,6 @@ const blogName = ref("");
 let observe;
 let box;
 
-// 鼠标进入触发
-const mouseEnterItem = (type, index) => {
-  activeType.value = type;
-  active.value = index;
-};
-// 鼠标离开触发
-const mouseLeaveItem = () => {
-  activeType.value = "";
-  active.value = 0;
-};
 const goToSite = (url) => {
   window.open(url);
 };
@@ -157,22 +145,8 @@ onBeforeUnmount(() => {
     <el-skeleton :loading="loading" style="height: 100%" animated>
       <template #template>
         <div class="flex justify-start w-[100%] !mt-[10px]" v-for="i in 2" :key="i">
-          <div class="flex justify-between w-[100%]">
-            <div
-              class="link-skeleton w-[33%] flex justify-center items-center h-[11rem] rounded-md"
-            >
-              <SkeletonItem variant="circle" width="80px" height="80px" />
-            </div>
-            <div
-              class="link-skeleton w-[33%] flex justify-center items-center h-[11rem] rounded-md"
-            >
-              <SkeletonItem variant="circle" width="80px" height="80px" />
-            </div>
-            <div
-              class="link-skeleton w-[33%] flex justify-center items-center h-[11rem] rounded-md"
-            >
-              <SkeletonItem variant="circle" width="80px" height="80px" />
-            </div>
+          <div class="link-skeleton w-[100%] flex justify-center items-center h-[11rem] rounded-md">
+            <SkeletonItem variant="text" width="80%" height="60px" />
           </div>
         </div>
       </template>
@@ -182,44 +156,36 @@ onBeforeUnmount(() => {
             <div
               :key="item.id"
               :style="{
+                zIndex: 1,
                 backgroundImage: `url(${
                   item.site_avatar || 'http://img.mrzym.top/FgTOrGUz5WJwswSLhPsiGL4DOXe3'
                 })`,
               }"
-              :class="['site-item', activeType == 'site' && active == index ? 'site-mask' : '']"
-              @mouseenter="mouseEnterItem('site', index)"
-              @mouseleave="mouseLeaveItem"
+              class="site-item site-mask"
             >
-              <div class="left">
+              <div class="top flex items-center justify-between">
                 <el-avatar
                   :key="item.id"
-                  :class="[activeType == 'site' && active == index ? 'avatar-hover' : 'avatar']"
                   fit="cover"
-                  :size="80"
+                  :size="64"
                   :src="item.site_avatar || returnUrl(item.url)"
                 >
                   <span class="avatar-font">{{ item.site_name }}</span></el-avatar
                 >
-              </div>
-              <div :class="['right', activeType == 'site' && active == index ? 'right-hover' : '']">
-                <div class="w-[100%] flex justify-between items-center">
+                <div class="flex-1 !ml-[2rem]">
                   <span :title="item.site_name" class="name" @click="goToSite(item.url)">{{
                     item.site_name
                   }}</span>
                 </div>
-                <span
-                  :style="{ height: activeType == 'site' && active == index ? '4.6rem' : '0' }"
-                  :title="item.site_desc"
-                  class="desc"
-                >
-                  {{ item.site_desc }}</span
-                >
+              </div>
+              <div class="bottom">
+                <span :title="item.site_desc" class="desc"> {{ item.site_desc }}</span>
               </div>
               <div class="op-icon" v-if="getUserInfo.id">
                 <el-icon
                   v-if="getUserInfo.id == 1 || getUserInfo.id == item.user_id"
                   style="font-size: 16px"
-                  class="left-icon"
+                  class="op-icon"
                   @click="updateLink(item)"
                   ><Edit
                 /></el-icon>
@@ -255,8 +221,6 @@ onBeforeUnmount(() => {
 .site {
   transition: height 0.8s ease;
   &-item {
-    display: flex;
-    justify-content: space-between;
     padding: 10px;
     cursor: pointer;
     position: relative;
@@ -264,55 +228,41 @@ onBeforeUnmount(() => {
     background-position: center;
     background-size: cover;
 
-    .left {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      transition: all 0.8s;
-      opacity: 0.8;
-
+    .top {
       .avatar-hover {
         animation: avatarHover 0.8s forwards;
       }
 
-      .avatar {
-        animation: avatar 0.8s forwards;
-      }
-    }
-
-    .right {
-      position: relative;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-start;
-      z-index: 2;
-
       .name {
+        display: inline-block;
+        width: 10rem;
         font-size: 1.8rem;
         font-weight: bold;
         line-height: 1.7;
-        color: var(--font-color);
+        color: var(--global-white);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         text-decoration: none;
+        transition: 0.2s ease-in-out;
 
         &:hover {
-          color: var(--primary);
+          scale: 1.1;
         }
       }
+    }
 
+    .bottom {
+      width: 100%;
+      margin-top: 1rem;
       .desc {
         transition: all 0.5s;
         display: -webkit-box;
         width: 100%;
         font-weight: bold;
-        height: 4.6rem;
         color: var(--global-white);
         line-height: 1.2;
-        font-size: 1.3rem;
+        font-size: 1rem;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -333,24 +283,12 @@ onBeforeUnmount(() => {
   }
 }
 
-.link-skeleton {
-  background-color: rgba(255, 255, 255, 0.5);
+.op-icon {
+  color: var(--global-white);
 }
 
-.right-hover {
-  .name {
-    color: var(--global-white) !important;
-  }
-  .op-icon {
-    color: var(--global-white) !important;
-    .left-icon:hover,
-    .right-icon:hover {
-      color: #c6b4e9 !important;
-    }
-  }
-  .desc {
-    color: var(--global-white) !important;
-  }
+.link-skeleton {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .site-mask::before {
@@ -360,18 +298,8 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  animation: maskChange 0.5s ease-in-out forwards;
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-@keyframes maskChange {
-  0% {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  100% {
-    background-color: var(--shadow-mask-bg);
-  }
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 @keyframes avatarHover {
@@ -381,16 +309,6 @@ onBeforeUnmount(() => {
 
   100% {
     transform: translateY(-100px);
-  }
-}
-
-@keyframes avatar {
-  0% {
-    transform: translateY(-100px);
-  }
-
-  100% {
-    transform: translateY(0);
   }
 }
 

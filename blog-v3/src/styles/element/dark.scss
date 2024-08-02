@@ -1,30 +1,14 @@
 html.dark {
   // --------- element start --------  //
-  .el-card {
-    background: rgba(29, 30, 31, 0.3);
-  }
-
-  .header_box {
-    background: rgba(29, 30, 31, 0.3);
-    box-shadow: 0px -1px 3px #1c1b1c;
-
-    .el-menu-item {
-      color: var(--dark-font-color);
-    }
-
-    .el-sub-menu__title {
-      color: var(--dark-font-color);
-    }
-  }
   .el-popper.is-light {
     border: none !important;
     font-weight: 600 !important;
     color: var(--global-white) !important;
-    background: var(--dark-global-gradient) !important;
+    background: var(--global-gradient) !important;
   }
 
   .el-avatar {
-    background-image: var(--dark-button-linear-gradient);
+    background-image: var(--button-linear-gradient);
   }
 
   .el-slider__runway {
@@ -37,22 +21,14 @@ html.dark {
 
   // --------- element end --------  //
 
-  .layout {
-    background: var(--dark-global-gradient) !important;
-  }
-
   .info-avatar {
     .blog-name {
-      color: var(--dark-font-color);
+      color: var(--font-color);
     }
   }
 
   .personal-say {
-    color: var(--dark-font-color);
-  }
-
-  .photoList-card {
-    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--font-color);
   }
 
   .album-current {
@@ -61,30 +37,30 @@ html.dark {
 
   .common-menu__label,
   .common-menu__value {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
 
   .right-side .info-card {
     .common-menu {
       .label,
       .value {
-        color: var(--dark-font-color);
+        color: var(--font-color);
       }
     }
 
     .info-card {
       .git-ee2-text,
       .git-ee2 .iconfont {
-        color: var(--dark-font-color);
+        color: var(--font-color);
       }
     }
 
     .git-ee__item-text {
-      color: var(--dark-font-color);
+      color: var(--font-color);
     }
 
     .iconfont {
-      color: var(--dark-font-color);
+      color: var(--font-color);
     }
   }
 
@@ -105,42 +81,35 @@ html.dark {
   }
 
   .page-header .toggle-theme .theme-card-dropdown {
-    color: var(--dark-font-color);
-    border: 1px solid var(--dark-font-color);
+    color: var(--font-color);
+    border: 1px solid var(--font-color);
   }
   // 文章
   .page-header .article,
   .recommend-box {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
   .article-info-inner {
-    color: var(--dark-font-color);
+    color: var(--font-color);
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  ::-webkit-scrollbar {
+    background: var(--global-gradient);
+  }
+  ::scrollbar {
+    background: var(--global-gradient);
   }
 
   /* 滚动条滑块 */
   ::-webkit-scrollbar-thumb {
-    background-color: #57616f;
-    background-image: -webkit-linear-gradient(
-      45deg,
-      rgb(84, 95, 95) 25%,
-      transparent 25%,
-      transparent 50%,
-      rgb(78, 112, 112) 50%,
-      rgb(90, 72, 83) 75%,
-      transparent 75%,
-      transparent
-    );
+    background: #121212;
     border-radius: 2em;
   }
 
   ::scrollbar-thumb {
-    background-color: #69696b;
+    background: #121212;
     border-radius: 2em;
-  }
-
-  .gradient {
-    background: var(--dark-global-gradient);
   }
 
   .leave-message,
@@ -148,17 +117,17 @@ html.dark {
     color: var(--global-white);
   }
   .message-active-tab {
-    background-image: var(--dark-button-linear-gradient) !important;
+    background-image: var(--button-linear-gradient) !important;
   }
   .search-tab {
     background-color: rgba(0, 0, 0, 0.2);
   }
 
   .apply-button {
-    background-image: var(--dark-button-linear-gradient);
+    background-image: var(--button-linear-gradient);
   }
   .apply-button::before {
-    background-image: var(--dark-button-linear-gradient-h);
+    background-image: var(--button-linear-gradient-h);
   }
 
   .login-register-bg {
@@ -167,7 +136,7 @@ html.dark {
 
   // md 文档
   .mk-cute-theme {
-    color: var(--dark-font-color) !important;
+    color: var(--font-color) !important;
   }
 
   .mk-cute-theme h1 a,
@@ -182,11 +151,11 @@ html.dark {
   .mk-cute-theme h4 a:hover,
   .mk-cute-theme h5 a:hover,
   .mk-cute-theme h6 a:hover {
-    color: var(--dark-font-color) !important;
+    color: var(--font-color) !important;
   }
 
   .md-editor-catalog-link span {
-    color: var(--dark-font-color) !important;
+    color: var(--font-color) !important;
   }
 
   .md-editor-catalog-active > span {
@@ -217,15 +186,15 @@ html.dark {
   }
 
   .footer-color {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
 
   .talk-item-line {
-    border-bottom: 1px solid var(--dark-font-color);
+    border-bottom: 1px solid var(--font-color);
   }
 
   .message-item-line {
-    border-bottom: 1px solid var(--dark-font-color);
+    border-bottom: 1px solid var(--font-color);
   }
 
   .category-item .left .bottom {
@@ -236,24 +205,8 @@ html.dark {
   }
 
   // 音乐 ------ start --------- //
-  .music {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .music-box {
-    background-color: var(--music-main-bg);
-  }
-
-  .music-controls {
-    background-color: var(--music-main-bg);
-  }
-
-  .lyric-mask {
-    background-color: var(--music-main-bg);
-  }
-
   .dark-close {
-    background-color: var(--shadow-mask-bg);
+    background-color: var(--mask-bg);
   }
 
   .music-disc {
@@ -284,7 +237,7 @@ html.dark {
   }
 
   .comment {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
 
   .message {
@@ -324,27 +277,16 @@ html.dark {
     }
   }
 
-  .message {
-    .message-title,
-    .type-writer {
-      color: var(--shadow-button-bg);
-    }
-  }
-
-  .tab-li {
-    color: var(--shadow-button-bg);
-  }
-
   .input-inputText {
     color: var(--global-white);
     background-color: rgba(29, 30, 31, 0.3);
   }
   .observer {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
 
   .text-ellipsis {
-    color: var(--dark-font-color);
+    color: var(--font-color);
   }
 
   .link-skeleton {
@@ -359,6 +301,5 @@ html.dark {
 
   .blog-chat-btn {
     color: var(--global-white);
-    background-color: rgba(0, 0, 0, 0.3);
   }
 }

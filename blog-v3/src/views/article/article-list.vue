@@ -83,7 +83,7 @@ onMounted(() => {
         </div>
         <el-row>
           <el-col :xs="12" :sm="8" :md="6" v-for="(item, index) in articleList" :key="index">
-            <el-card class="gradient card-hover" @click="gotoDetail(item.id)">
+            <el-card class="card-hover" @click="gotoDetail(item.id)">
               <div v-image="item.article_cover" class="article-img scale">
                 <el-image
                   class="w-[100%] h-[100%] scale animate__animated animate__fadeInDown"

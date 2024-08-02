@@ -638,21 +638,16 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .blog-chat-btn {
   position: fixed;
-  right: -30px;
-  bottom: 60px;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
+  right: 0px;
+  bottom: 120px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
   color: var(--font-color);
   transition: all 0.3s;
-  background-color: var(--global-shadow-white);
   .icon-pinglun {
-    font-size: 3.2rem;
+    font-size: 2.8rem;
     transform: rotateY(180deg);
-  }
-
-  &:hover {
-    transform: translateX(-30px);
   }
 }
 
@@ -835,8 +830,8 @@ onBeforeUnmount(() => {
   }
 
   .blog-chat-btn {
-    right: -25px;
-    bottom: 20px;
+    right: 0px;
+    bottom: 100px;
     width: 50px;
     height: 50px;
     border-radius: 25px;

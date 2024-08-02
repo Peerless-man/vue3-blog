@@ -331,7 +331,7 @@ watch(
         </el-form-item>
       </el-form>
       <div v-if="isLogin" class="flex justify-between items-center w-[100%] mb-3">
-        <span class="apply-button" type="danger" @click="submit">登录</span>
+        <span class="apply-button" @click="submit">登录</span>
       </div>
       <div v-else class="flex justify-between items-center w-[100%] mb-3">
         <span class="apply-button" @click="submit">注册</span>

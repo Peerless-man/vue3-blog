@@ -7,9 +7,18 @@ const router = new Router({ prefix: "/links" });
 
 const { auth, needAdminAuthNotNeedSuper, needAdminAuth } = require("../middleware/auth/index");
 const { addOrUpdateLinks, deleteLinks, approveLinks, getLinksList, frontUpdateLinks } = require("../controller/links/index");
+const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 // 新增友链
-router.post("/add", addOrUpdateLinks);
+router.post(
+  "/add",
+  createTimesLimiter({
+    prefixKey: "post/like/cancelLike",
+    message: "新增过于频繁 请稍后再试",
+    max: 5,
+  }),
+  addOrUpdateLinks
+);
 
 // 博客前台修改友链
 router.post("/frontUpdate", frontUpdateLinks);

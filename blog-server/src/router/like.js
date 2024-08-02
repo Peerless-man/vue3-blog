@@ -6,12 +6,29 @@ const Router = require("koa-router");
 const router = new Router({ prefix: "/like" });
 
 const { addLike, cancelLike, getIsLikeByIdAndType } = require("../controller/like/index");
+const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 // 点赞
-router.post("/addLike", addLike);
+router.post(
+  "/addLike",
+  createTimesLimiter({
+    prefixKey: "post/like/addLike",
+    message: "点赞过于频繁 请稍后再试",
+    max: 10,
+  }),
+  addLike
+);
 
 // 取消点赞
-router.post("/cancelLike", cancelLike);
+router.post(
+  "/cancelLike",
+  createTimesLimiter({
+    prefixKey: "post/like/cancelLike",
+    message: "取消点赞过于频繁 请稍后再试",
+    max: 10,
+  }),
+  cancelLike
+);
 
 // 获取当前用户对当前文章/说说/留言 是否点赞
 router.post("/getIsLikeByIdAndType", getIsLikeByIdAndType);

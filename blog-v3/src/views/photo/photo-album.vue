@@ -36,8 +36,8 @@ onMounted(() => {
     <el-row class="center_box">
       <el-col :span="24">
         <el-card class="albumList-card">
-          <el-row v-if="loading" class="row-space">
-            <el-col class="col-space" :xs="12" :sm="6" v-for="item in 8" :key="item">
+          <el-row v-if="loading">
+            <el-col :xs="12" :sm="6" v-for="item in 8" :key="item">
               <div class="flex_center">
                 <el-skeleton animated>
                   <template #template>
@@ -47,8 +47,8 @@ onMounted(() => {
               </div>
             </el-col>
           </el-row>
-          <el-row v-else class="row-space">
-            <el-col class="col-space" :xs="12" :sm="6" v-for="item in albumList" :key="item.id">
+          <el-row v-else>
+            <el-col :xs="12" :sm="6" v-for="item in albumList" :key="item.id">
               <div
                 v-image="item.album_cover"
                 class="albumList-box flex_center"
@@ -83,7 +83,7 @@ onMounted(() => {
   }
   &-box {
     position: relative;
-    width: 16rem;
+    width: 100%;
     height: 10rem;
     transition: all 0.3s ease-in-out;
 
@@ -125,12 +125,6 @@ onMounted(() => {
 .albumList-box:hover {
   filter: saturate(2) drop-shadow(0 0 5px rgba(0, 0, 0, 0.66));
   transform: translateY(-5px);
-}
-.row-space {
-  padding: 0 !important;
-}
-.col-space {
-  padding: 5px 2px !important;
 }
 
 @media screen and (max-width: 768px) {

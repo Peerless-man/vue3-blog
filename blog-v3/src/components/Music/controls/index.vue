@@ -36,6 +36,7 @@ defineComponent({
   background: transparent;
   display: flex;
   justify-content: center;
+  background-color: var(--music-main-bg);
   .main {
     width: 100%;
     display: flex;

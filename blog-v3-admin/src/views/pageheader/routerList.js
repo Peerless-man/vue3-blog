@@ -1,5 +1,10 @@
 export const routerList = [
   {
+    label: "首页",
+    value: "Home",
+    disabled: false
+  },
+  {
     label: "时间轴",
     value: "Archives",
     disabled: false
@@ -47,6 +52,21 @@ export const routerList = [
   {
     label: "说说",
     value: "Talk",
+    disabled: false
+  },
+  {
+    label: "留言",
+    value: "MessageList",
+    disabled: false
+  },
+  {
+    label: "留言发布/编辑",
+    value: "PublishMessage",
+    disabled: false
+  },
+  {
+    label: "留言详情",
+    value: "MessageDetail",
     disabled: false
   },
   {

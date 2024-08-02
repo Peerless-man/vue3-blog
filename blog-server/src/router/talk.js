@@ -11,6 +11,7 @@ const router = new Router({ prefix: "/talk" });
 
 const { auth, needAdminAuthNotNeedSuper } = require("../middleware/auth/index");
 const { publishTalk, updateTalk, deleteTalkById, togglePublic, toggleTop, revertTalk, getTalkList, getTalkById, talkLike, cancelTalkLike, blogGetTalkList } = require("../controller/talk/index");
+const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 // 发布说说
 router.post("/publishTalk", auth, needAdminAuthNotNeedSuper, publishTalk);
@@ -37,10 +38,26 @@ router.post("/getTalkList", getTalkList);
 router.get("/getTalkById/:id", getTalkById);
 
 // 说说点赞
-router.put("/like/:id", talkLike);
+router.put(
+  "/like/:id",
+  createTimesLimiter({
+    prefixKey: "put/talk/like/:id",
+    message: "说说点赞过于频繁 请稍后再试",
+    max: 5,
+  }),
+  talkLike
+);
 
 // 取消点赞
-router.put("/cancelLike/:id", cancelTalkLike);
+router.put(
+  "/cancelLike/:id",
+  createTimesLimiter({
+    prefixKey: "put/talk/like/:id",
+    message: "说说取消点赞过于频繁 请稍后再试",
+    max: 5,
+  }),
+  cancelTalkLike
+);
 
 // 前台获取说说
 router.post("/blogGetTalkList", blogGetTalkList);

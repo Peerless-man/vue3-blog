@@ -135,6 +135,7 @@ const Router = require("koa-router");
 const { auth, needAdminAuthNotNeedSuper } = require("../middleware/auth/index");
 
 const router = new Router({ prefix: "/article" });
+const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 const {
   createArticle,
@@ -624,7 +625,15 @@ router.get("/getHotArticle", getHotArticle);
  *         description: 服务端错误
  */
 // 文章点赞
-router.put("/like/:id", articleLike);
+router.put(
+  "/like/:id",
+  createTimesLimiter({
+    prefixKey: "put/article/like/:id",
+    message: "文章点赞过于频繁 请稍后再试",
+    max: 10,
+  }),
+  articleLike
+);
 
 /**
  * @swagger
@@ -646,7 +655,15 @@ router.put("/like/:id", articleLike);
  *         description: 服务端错误
  */
 // 取消点赞
-router.put("/cancelLike/:id", cancelArticleLike);
+router.put(
+  "/cancelLike/:id",
+  createTimesLimiter({
+    prefixKey: "put/article/cancelLike/:id",
+    message: "取消文章点赞过于频繁 请稍后再试",
+    max: 10,
+  }),
+  cancelArticleLike
+);
 
 /**
  * @swagger

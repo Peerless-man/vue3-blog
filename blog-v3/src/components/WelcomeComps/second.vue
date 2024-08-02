@@ -106,17 +106,16 @@
 
 <style lang="scss" scoped>
 .mac-box {
-  // background: var(--global-white);
   width: 100%;
   height: 100vh;
-  background-color: #86868b !important;
+  background-color: #010101 !important;
 }
 .macbook {
   width: 146px;
   height: 96px;
   position: absolute;
   left: 50%;
-  top: 25%;
+  top: 35%;
   // margin: -75px 0 0 -48px;
   transform: translate(-50%, -50%);
   perspective: 500px;

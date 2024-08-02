@@ -25,7 +25,7 @@ const { getUserInfo } = storeToRefs(userStore);
 const loading = ref(false);
 
 const tabList = ref([]);
-
+const hasImgChange = ref(false);
 function keepLastIndex(dom) {
   var range;
   if (window.getSelection) {
@@ -83,6 +83,14 @@ const leaveMessage = async () => {
     });
     return;
   }
+  if (form.message.length > 555) {
+    ElNotification({
+      offset: 60,
+      title: "温馨提示",
+      message: h("div", { style: "color: #e6c081; font-weight: 600;" }, "留言内容过长 请删减"),
+    });
+    return;
+  }
   if (!form.tag) {
     ElNotification({
       offset: 60,
@@ -101,11 +109,14 @@ const leaveMessage = async () => {
   }
   // 上传背景图片
   loading.value = true;
-  if (form.bgList.length && !form.bgList[0].id) {
-    const img = await imgUpload(form.bgList[0]);
-    if (img.code == 0) {
-      const { url } = img.result;
-      form.bg_url = url;
+  if (form.bgList.length) {
+    // 新增 或者是 图片变化了才进行图片上传
+    if (!form.bgList[0].id || hasImgChange.value) {
+      const img = await imgUpload(form.bgList[0]);
+      if (img.code == 0) {
+        const { url } = img.result;
+        form.bg_url = url;
+      }
     }
   }
   let res;
@@ -157,6 +168,16 @@ const changeTab = (key) => {
   activeTab.value = key;
 };
 
+const uploadChange = (val) => {
+  if (val.length) {
+    form.bg_url = val[0].url;
+  } else {
+    form.bg_url = "";
+  }
+
+  hasImgChange.value = true;
+};
+
 onMounted(async () => {
   await getHotMessageTag();
   if (route.query.type == "edit") {
@@ -189,14 +210,13 @@ onMounted(async () => {
 });
 </script>
 <template>
+  <PageHeader>
+    <template #route>
+      {{ form.id ? "编辑留言" : "发布留言" }}
+    </template>
+  </PageHeader>
   <div class="message">
-    <div class="center_box !pt-[80px]">
-      <div class="flex items-center justify-center !h-[1rem]">
-        <TypeWriter
-          size="1.2rem"
-          :typeList="['世间真假，皆我所求，苦与乐，都可奉酒。']"
-        ></TypeWriter>
-      </div>
+    <div class="center_box">
       <el-card class="!mt-[2rem]">
         <div class="!h-[22rem]" :style="{ backgroundColor: form.bg_color }">
           <div class="top" :style="{ backgroundImage: form.bg_url ? `url(${form.bg_url})` : '' }">
@@ -218,9 +238,9 @@ onMounted(async () => {
               @input="inputComment(val)"
               @focus="focusCommentInput"
             ></div>
-          </div>
-          <div class="bottom">
-            <div class="tag">{{ form.tag }}</div>
+            <div class="bottom">
+              <div class="tag">{{ form.tag }}</div>
+            </div>
           </div>
         </div>
       </el-card>
@@ -272,6 +292,7 @@ onMounted(async () => {
               :width="280"
               :height="140"
               :preview="false"
+              @change="uploadChange"
             />
           </div>
           <div v-else>
@@ -315,7 +336,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .message {
   .top {
-    height: 19rem;
+    height: 22rem;
     padding: 8px;
     background-position: center center;
     background-size: cover;
@@ -345,7 +366,7 @@ onMounted(async () => {
   }
 
   .bottom {
-    height: 3rem;
+    height: 2rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;

@@ -139,7 +139,7 @@ window.addEventListener("beforeunload", () => {
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: var(--shadow-mask-bg);
+  background-color: var(--mask-bg);
   z-index: 2002;
   opacity: 0;
   display: none;
@@ -148,7 +148,7 @@ window.addEventListener("beforeunload", () => {
     position: relative;
     width: 100%;
     max-width: 1024px;
-    background-color: var(--global-white);
+    background-color: var(--music-main-bg);
     overflow: hidden;
   }
 
@@ -278,7 +278,7 @@ window.addEventListener("beforeunload", () => {
 // mobile
 @media screen and (max-width: 768px) {
   .music-disc {
-    bottom: 17px;
+    bottom: 30px;
     width: 50px;
     border-radius: 25px;
     min-width: 50px;

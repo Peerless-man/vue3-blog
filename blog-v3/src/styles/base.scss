@@ -75,11 +75,6 @@ div:focus {
 .layout {
   background: var(--global-gradient) !important;
 }
-// 其他地方需要使用到的渐变色
-.gradient {
-  background: rgb(255, 255, 255, 0.7);
-  background: linear-gradient(120deg, #f8feff, #dffbff, #faedff, #e0eeff, #f5f5d2, #fffff9);
-}
 
 // 头部
 .header_box {
@@ -89,11 +84,8 @@ div:focus {
   z-index: 2001;
   width: 100%;
   height: 3.6rem;
-  background-color: #fff;
   overflow: hidden;
   box-sizing: border-box;
-  box-shadow: 0px -1px 3px var(--primary);
-  background: rgb(255, 255, 255, 0.7);
 }
 // 主内容部分
 .main_box {
@@ -108,22 +100,37 @@ div:focus {
   z-index: 2009;
   height: 10rem;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.3);
   backdrop-filter: saturate(100%) blur(3px);
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
+// 给 头部一个 fadeIn 的动画
+.page-header,
+#home {
+  transition: all 0.5s;
+  animation: fadeIn 1s;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 // 给center_box加了一个向上移动的动画
 .center_box {
-  animation: Up 0.6s ease-in-out forwards;
+  animation: Up 1s;
 }
 
 @keyframes Up {
   0% {
-    transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(50px);
   }
   100% {
+    opacity: 1;
     transform: translateY(0px);
   }
 }
@@ -132,20 +139,17 @@ div:focus {
 // 手机
 @media screen and (max-width: 768px) {
   .home_center_box {
-    padding-top: 83px;
-    max-width: 1000px;
+    padding-top: 20px;
     margin: 0 auto;
     min-height: calc(100vh - 128px);
   }
   .center_box {
     padding: 1.6rem 10px;
-    max-width: 1000px;
     margin: 0 auto;
-    min-height: calc(100vh - 35rem);
+    min-height: calc(100vh - 30rem);
   }
   .article_box {
     padding: 1.6rem 10px;
-    max-width: 1000px;
     margin: 0 auto;
     min-height: calc(100vh - 28rem);
   }
@@ -183,20 +187,20 @@ div:focus {
 // pc
 @media screen and (min-width: 768px) {
   .home_center_box {
-    padding-top: 80px;
-    max-width: 1200px;
+    padding-top: 20px;
+    max-width: 1080px;
     margin: 0 auto;
     min-height: calc(100vh - 128px);
   }
   .center_box {
     padding: 2.8rem 10px;
-    max-width: 1000px;
+    max-width: 880px;
     margin: 0 auto;
-    min-height: calc(100vh - 35rem);
+    min-height: calc(100vh - 30rem);
   }
   .article_box {
     padding: 2.8rem 10px;
-    max-width: 1200px;
+    max-width: 1080px;
     margin: 0 auto;
     min-height: calc(100vh - 28rem);
   }
@@ -235,12 +239,12 @@ div:focus {
 
 // 滚动条宽度
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 ::scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 // 滚动条插槽
 ::-webkit-scrollbar-track {
@@ -251,30 +255,9 @@ div:focus {
 }
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-  background-color: #efbcda;
-  background-image: -webkit-linear-gradient(
-    45deg,
-    rgb(171, 245, 218) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgb(150, 212, 236) 50%,
-    rgb(239, 147, 228) 75%,
-    transparent 75%,
-    transparent
-  );
-  border-radius: 2em;
+  background: var(--font-color);
+  border-radius: 1em;
 }
 ::scrollbar-thumb {
-  background-color: #efbcda;
-  background-image: -webkit-linear-gradient(
-    45deg,
-    rgb(171, 245, 218) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgb(150, 212, 236) 50%,
-    rgb(239, 147, 228) 75%,
-    transparent 75%,
-    transparent
-  );
-  border-radius: 2em;
+  border-radius: 1em;
 }

@@ -35,7 +35,9 @@ const auth = async (ctx, next) => {
 
 // 对需要管理员发布信息，但是不建议超级管理员发布信息的接口进行提示
 const needAdminAuthNotNeedSuper = async (ctx, next) => {
-  const { role, username } = ctx.state.user;
+  const { authorization } = ctx.request.header;
+  const token = authorization.replace("Bearer ", "");
+  const { role, username } = jwt.verify(token, JWT_SECRET);
   if (Number(role) !== 1) {
     console.error("普通用户仅限查看");
     return ctx.app.emit("error", throwError(errorCode, "普通用户仅限查看"), ctx);
@@ -49,7 +51,9 @@ const needAdminAuthNotNeedSuper = async (ctx, next) => {
 
 // 对需要管理员权限的进行操作进行提示
 const needAdminAuth = async (ctx, next) => {
-  const { role } = ctx.state.user;
+  const { authorization } = ctx.request.header;
+  const token = authorization.replace("Bearer ", "");
+  const { role } = jwt.verify(token, JWT_SECRET);
   if (Number(role) !== 1) {
     console.error("普通用户仅限查看");
     return ctx.app.emit("error", throwError(errorCode, "普通用户仅限查看"), ctx);
@@ -58,7 +62,9 @@ const needAdminAuth = async (ctx, next) => {
 };
 
 const isSuperAdmin = async (ctx, next) => {
-  const { username } = ctx.state.user;
+  const { authorization } = ctx.request.header;
+  const token = authorization.replace("Bearer ", "");
+  const { username } = jwt.verify(token, JWT_SECRET);
   if (username == "admin") {
     console.error("管理员信息只可通过配置信息修改");
     return ctx.app.emit("error", throwError(errorCode, "管理员信息只可通过配置信息修改"), ctx);

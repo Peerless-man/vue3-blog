@@ -43,7 +43,7 @@ onMounted(() => {
     }
   }
   nextTick(() => {
-    gsapTransY(list, 30, 0.6, "none");
+    gsapTransY(list, 30, 0.3, "none");
   });
 });
 </script>
@@ -92,7 +92,6 @@ onMounted(() => {
             <template #default>
               <RightSideItem size="1.5rem" color="#76d703" icon="icon-jiaoliuye" title="交流">
                 <div class="group">
-                  交流群
                   <div class="flex justify-end items-start flex-nowrap">
                     <div class="grid place-items-center" v-image="configDetail.qq_group">
                       <el-image
@@ -275,6 +274,7 @@ onMounted(() => {
       font-size: 1.1rem;
       line-height: 1.2;
       white-space: pre-line;
+      word-break: break-all;
 
       &__item {
         display: inline-block;
@@ -304,6 +304,8 @@ onMounted(() => {
   .img {
     width: 80px;
     height: 80px;
+    border-radius: 8px;
+    margin-right: 10px;
   }
 }
 </style>

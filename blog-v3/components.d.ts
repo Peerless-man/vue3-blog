@@ -64,6 +64,7 @@ declare module '@vue/runtime-core' {
     First: typeof import('./src/components/WelcomeComps/first.vue')['default']
     GsapCount: typeof import('./src/components/GsapCount/index.vue')['default']
     HomeArticleList: typeof import('./src/components/HomeArticle/home-article-list.vue')['default']
+    HomeHeader: typeof import('./src/components/PageHeader/home-header.vue')['default']
     IconList: typeof import('./src/components/Comment/item/IconList.vue')['default']
     Information: typeof import('./src/components/Music/controls/components/information.vue')['default']
     Layout: typeof import('./src/components/Layout/index.vue')['default']
@@ -97,5 +98,6 @@ declare module '@vue/runtime-core' {
     Tooltip: typeof import('./src/components/ToolTip/tooltip.vue')['default']
     TypeWriter: typeof import('./src/components/TypeWriter/type-writer.vue')['default']
     Upload: typeof import('./src/components/Upload/upload.vue')['default']
+    Waves: typeof import('./src/components/WelcomeComps/waves.vue')['default']
   }
 }

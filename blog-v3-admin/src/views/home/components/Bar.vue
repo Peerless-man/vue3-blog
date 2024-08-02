@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, type Ref } from "vue";
-import { useAppStoreHook } from "@/store/modules/app";
-import {
-  delay,
-  useDark,
-  useECharts,
-  type EchartOptions
-} from "@pureadmin/utils";
+import { ref, computed, type Ref } from "vue";
+import { useDark, useECharts, type EchartOptions } from "@pureadmin/utils";
 import * as echarts from "echarts/core";
 
 const { isDark } = useDark();
@@ -48,7 +42,7 @@ setOptions(
           // width: "70",
           // overflow: "truncate"
         },
-        data: ["2022", "2023"],
+        data: ["2023", "2024"],
         triggerEvent: true
       }
     ],
@@ -75,7 +69,7 @@ setOptions(
             }
           ])
         },
-        data: [1, 1]
+        data: [2, 6]
       },
       {
         name: "fork",
@@ -93,7 +87,7 @@ setOptions(
             }
           ])
         },
-        data: [1, 1]
+        data: [12, 38]
       },
       {
         name: "star",
@@ -111,7 +105,7 @@ setOptions(
             }
           ])
         },
-        data: [1, 1]
+        data: [89, 125]
       }
     ],
     addTooltip: true
@@ -124,12 +118,9 @@ setOptions(
   }
 );
 
-watch(
-  () => useAppStoreHook().getSidebarStatus,
-  () => {
-    delay(600).then(() => resize());
-  }
-);
+defineExpose({
+  resize
+});
 </script>
 
 <template>

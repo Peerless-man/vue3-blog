@@ -56,6 +56,7 @@ const params = reactive({
 // 父级评论列表
 const commentList = ref([]);
 const commentTotal = ref(0);
+const likePending = ref(false);
 // 获取父级评论
 const getComment = async (type) => {
   params.loading = true;
@@ -92,6 +93,8 @@ const currentApplyIndex = ref(0);
 // 点赞
 const like = async (item, index) => {
   let res;
+  if (likePending.value) return;
+  likePending.value = true;
   // 查看点赞了没有，点赞了就进行取消点赞
   if (item.is_like) {
     res = await cancelThumbUp(item.id);
@@ -99,6 +102,8 @@ const like = async (item, index) => {
     if (res && res.code == 0) {
       commentList.value[index].is_like = false;
       commentList.value[index].thumbs_up--;
+      likePending.value = false;
+
       ElNotification({
         offset: 60,
         title: "提示",
@@ -111,6 +116,8 @@ const like = async (item, index) => {
     if (res && res.code == 0) {
       commentList.value[index].is_like = true;
       commentList.value[index].thumbs_up++;
+      likePending.value = false;
+
       ElNotification({
         offset: 60,
         title: "提示",

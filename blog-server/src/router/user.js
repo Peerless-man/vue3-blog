@@ -13,9 +13,21 @@ const { login, register, updateOwnUserInfo, updatePassword, updateRole, getUserL
 const { userValidate, verifyUser, crpyPassword, verifyLogin, verifyUpdatePassword } = require("../middleware/user/index");
 
 const { auth, isSuperAdmin, needAdminAuth } = require("../middleware/auth/index");
+const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 // 用户注册
-router.post("/register", userValidate, verifyUser, crpyPassword, register);
+router.post(
+  "/register",
+  createTimesLimiter({
+    prefixKey: "post/user/register",
+    message: "用户注册过于频繁 请稍后再试",
+    max: 3,
+  }),
+  userValidate,
+  verifyUser,
+  crpyPassword,
+  register
+);
 /**
  * @swagger
  * /user/login:

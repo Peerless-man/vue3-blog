@@ -48,8 +48,6 @@ const changeSwitch = () => {
     :active-icon="Sunrise"
     inline-prompt
     :inactive-icon="Moon"
-    active-color="#000"
-    inactive-color="#000"
     @change="changeSwitch"
   />
 </template>

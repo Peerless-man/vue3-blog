@@ -7,7 +7,7 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: "1rem",
+    default: "1em",
   },
   // 句子与句子之间的间隔时间
   timeSpace: {
@@ -19,15 +19,34 @@ const props = defineProps({
     type: Number,
     default: 0.3,
   },
+  color: {
+    type: String,
+    default: "",
+  },
 });
 
 const loopList = ref([]);
-const arr = [];
+const arr = [],
+  interArr = [];
+
+const reset = () => {
+  arr.length &&
+    arr.forEach((a) => {
+      a && clearTimeout(a);
+    });
+
+  interArr.length &&
+    interArr.forEach((a) => {
+      a && clearInterval(a);
+    });
+};
 
 watch(
   () => props.typeList,
   () => {
     nextTick(() => {
+      reset();
+
       if (!props.typeList.length) return;
       let lastTime = 0;
       props.typeList.forEach((v, index) => {
@@ -62,6 +81,7 @@ watch(
               interTimer = null;
             }
           }, props.wordPrintTime * 1000);
+          interArr.push(interTimer);
         }, loop.delay * 1000);
         arr.push(timer);
       });
@@ -74,15 +94,12 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  arr.length &&
-    arr.forEach((a) => {
-      clearTimeout(a);
-    });
+  reset();
 });
 </script>
 
 <template>
-  <div class="type-writer">
+  <div :style="{ color: color }" class="type-writer">
     <span id="writer" :style="{ fontSize: size }"></span>
     <span class="space" :style="{ fontSize: size }">|</span>
   </div>
@@ -90,6 +107,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .type-writer {
+  width: 100%;
   color: var(--global-white);
   font-size: 1em;
   cursor: pointer;

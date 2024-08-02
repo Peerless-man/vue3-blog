@@ -67,7 +67,7 @@ watch(
     <div class="center_box">
       <div class="photoList-card">
         <el-row v-if="loading" class="row-space">
-          <el-col class="col-space" :xs="12" :sm="8" v-for="index in 6" :key="index">
+          <el-col class="col-space" :xs="12" :sm="6" v-for="index in 6" :key="index">
             <div class="image-box">
               <el-skeleton animated>
                 <template #template>
@@ -81,7 +81,7 @@ watch(
           <el-col
             class="col-space"
             :xs="12"
-            :sm="8"
+            :sm="6"
             v-for="(item, index) in photoList"
             :key="item.id"
           >
@@ -218,7 +218,7 @@ watch(
 // pc
 @media screen and (min-width: 769px) {
   .image {
-    height: 14rem;
+    height: 10rem;
   }
 
   .album-box {

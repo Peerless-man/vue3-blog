@@ -196,7 +196,7 @@ const goToArticle = (id) => {
   .iconfont {
     font-size: 1.8rem;
     cursor: pointer;
-    color: var(--font-color);
+    color: var(--menu-color);
   }
 }
 .search-main__box {

@@ -2,7 +2,6 @@ import axios from "axios/dist/axios";
 import { h } from "vue";
 import { ElNotification } from "element-plus";
 import { user } from "@/store/index";
-import router from "../router/index";
 
 // 创建一个 axios 实例
 const http = axios.create({
@@ -108,6 +107,14 @@ http.interceptors.response.use(
           ),
         });
         break;
+      case "429":
+        // 429 表示给用户一些提示
+        ElNotification({
+          offset: 60,
+          title: "温馨提示",
+          message: h("div", { style: "color: #e6c081; font-weight: 600;" }, data.message),
+        });
+        break;
       case "500":
         ElNotification({
           offset: 60,
@@ -122,6 +129,7 @@ http.interceptors.response.use(
       default:
         return;
     }
+
     return Promise.reject(error);
   }
 );

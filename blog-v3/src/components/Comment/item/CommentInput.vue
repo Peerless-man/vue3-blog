@@ -137,6 +137,7 @@ defineExpose({
   font-size: 1.2rem;
   font-weight: 700;
   transition: all 0.3s;
+  word-break: break-all;
   box-shadow: 0 3px 6px 3px rgba(7, 17, 27, 0.06);
   &:hover {
     box-shadow: 0 3px 6px 3px rgba(7, 17, 27, 0.15);

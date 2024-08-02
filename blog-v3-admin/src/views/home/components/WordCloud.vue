@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, type Ref } from "vue";
-import { useAppStoreHook } from "@/store/modules/app";
-import {
-  delay,
-  useDark,
-  useECharts,
-  type EchartOptions
-} from "@pureadmin/utils";
+import { ref, computed, type Ref } from "vue";
+import { useDark, useECharts, type EchartOptions } from "@pureadmin/utils";
 import { getTagDictionary } from "@/api/tag";
 
 import "echarts-wordcloud";
@@ -99,12 +93,9 @@ const init = async () => {
 
 init();
 
-watch(
-  () => useAppStoreHook().getSidebarStatus,
-  () => {
-    delay(600).then(() => resize());
-  }
-);
+defineExpose({
+  resize
+});
 </script>
 
 <template>

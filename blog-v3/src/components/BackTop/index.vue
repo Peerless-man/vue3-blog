@@ -1,28 +1,15 @@
-<template>
-  <div
-    :class="[backTopShow ? 'back-top-show' : 'back-top-hidden', 'back-top']"
-    :style="`bottom: ${backTopProps.bottom};right:${backTopProps.right};height: ${backTopProps.width};width:${backTopProps.width};`"
-  >
-    <svg-icon
-      :style="{ transform: `rotateZ(${props.rotateDeg}deg)` }"
-      :name="svgThemeName"
-      :width="svgWidth"
-      @click="scrollToTop"
-    ></svg-icon>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted, reactive, watch, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, reactive, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { staticData } from "@/store/index.js";
+import { debounce } from "@/utils/tool.js";
 
 const { mainTheme } = storeToRefs(staticData());
-
+const isFirst = ref(true);
 const props = defineProps({
   bottom: {
     type: [String, Number],
-    default: "100px",
+    default: "20px",
   },
   right: {
     type: [String, Number],
@@ -69,22 +56,19 @@ const svgThemeName = computed(() => {
   return mainTheme.value ? "dark" + props.svgName : "light" + props.svgName;
 });
 
-onMounted(() => {
-  // 注册滚动
-  window.addEventListener("scroll", scroll);
-});
 const backTopShow = ref(false);
-const scroll = () => {
+const scroll = debounce(() => {
   let scrollTop = ref(0);
   scrollTop.value =
     window.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
   if (scrollTop.value > 200) {
     // 大于200显示
     backTopShow.value = true;
+    isFirst.value = false;
   } else {
     backTopShow.value = false;
   }
-};
+}, 10);
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -92,7 +76,33 @@ const scrollToTop = () => {
     behavior: "smooth",
   });
 };
+
+onMounted(() => {
+  // 注册滚动
+  window.addEventListener("scroll", scroll);
+});
+
+onBeforeUnmount(() => {
+  // 取消注册
+  window.removeEventListener("scroll", scroll);
+});
 </script>
+
+<template>
+  <div
+    v-if="!isFirst"
+    :class="[backTopShow ? 'back-top-show' : 'back-top-hidden', 'back-top']"
+    :style="`bottom: ${backTopProps.bottom};right:${backTopProps.right};height: ${backTopProps.width};width:${backTopProps.width};`"
+  >
+    <svg-icon
+      :style="{ transform: `rotateZ(${props.rotateDeg}deg)` }"
+      :name="svgThemeName"
+      :width="svgWidth"
+      @click="scrollToTop"
+    ></svg-icon>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .back-top {
   position: fixed;

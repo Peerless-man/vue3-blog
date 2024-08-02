@@ -1,7 +1,7 @@
 const { result, ERRORCODE, throwError } = require("../../result/index");
 const errorCode = ERRORCODE.MESSAGE;
 
-const { addMessage, deleteMessage, getMessageList, updateMessage, likeMessage, cancelLikeMessage, getMessageTag } = require("../../service/message/index");
+const { addMessage, deleteMessage, getMessageList, getAllMessage, updateMessage, likeMessage, cancelLikeMessage, getMessageTag } = require("../../service/message/index");
 const { addNotify } = require("../notify/index");
 
 const filterSensitive = require("../../utils/sensitive");
@@ -15,7 +15,7 @@ class MessageController {
     try {
       let { user_id, message, nick_name, ...rest } = ctx.request.body;
       if (!user_id) {
-        nick_name = randomNickname("游客", 5)
+        nick_name = randomNickname("游客", 5);
       }
 
       message = await filterSensitive(message);
@@ -38,7 +38,7 @@ class MessageController {
 
   /**
    * 修改留言
-   * @param {*} ctx 
+   * @param {*} ctx
    */
   async updateMessage(ctx) {
     try {
@@ -109,9 +109,19 @@ class MessageController {
     }
   }
 
+  async getAllMessage(ctx) {
+    try {
+      const res = await getAllMessage();
+      ctx.body = result("获取留言成功", res);
+    } catch (err) {
+      console.error(err);
+      return ctx.app.emit("error", throwError(errorCode, "获取留言失败"), ctx);
+    }
+  }
+
   /**
    * 获取热门标签
-   * @param {*} ctx 
+   * @param {*} ctx
    */
   async getMessageTag(ctx) {
     try {

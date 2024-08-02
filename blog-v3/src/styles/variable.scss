@@ -1,52 +1,63 @@
 // 整体主题色变量
 :root {
-  --primary: #5cbfef;
+  --global-font-size: 14px;
+
+  --primary: #49b1f5;
   --router-color: #dddddd;
-  --font-color: #676767;
-  --dark-font-color: #a7a7a7;
+  --font-color: #4b4948;
   --second-font-color: #b3b7ff;
   --hot-color: #f00;
-  --md-active: #409eff;
+  --md-active: #49b1f5;
   --global-white: #fff;
   --global-black: #000;
-  --global-shadow-white: #fafafa;
-  --header-bg-color: #8a7e90;
+  --global-shadow-white: rgba(255, 255, 255, 0.5);
   --meta-color: #858585;
   --comment-grey: #a4a4a4;
   --border-color: #7ec4f2;
   --hr-border: #a9d5f4;
   --top: #f26c60;
   --error: #f56c6c;
+  // music
   --music-main-active: #62c28a;
-  --chat-bg: #e6e6e6;
-  --music-main-bg: #101827;
-  --shadow-mask-bg: rgba(0, 0, 0, 0.5);
-  --shadow-button-bg: rgba(255, 255, 255, 0.5);
-  --global-font-size: 14px;
+  --music-main-bg: #fff;
+  --mask-bg: rgba(0, 0, 0, 0.5);
+  --shadow-button-bg: rgba(210, 210, 210, 0.5);
+  --card-bg: #fff;
   --card-box-shadow: 0 3px 6px 3px rgba(7, 17, 27, 0.06);
   --card-hover-box-shadow: 0 3px 6px 3px rgba(7, 17, 27, 0.15);
-  --global-gradient: linear-gradient(
-    90deg,
-    #f0f0f0 1%,
-    #ead2ea 10.2%,
-    #e4d5ee 19.6%,
-    #d1def3 36.8%,
-    #b5dee5 62.2%,
-    #cfebf3 88.9%,
-    #f0f0f0 99%
-  );
-  --dark-global-gradient: linear-gradient(
-    90deg,
-    #413939 1%,
-    #483e48 10.2%,
-    #4b4552 19.6%,
-    #3a3a45 36.8%,
-    #364040 62.2%,
-    #3b4146 88.9%,
-    #4a4242 99%
-  );
+  --chat-bg: #e6e6e6;
+  --global-gradient: #fff;
+  --header-bg: rgba(29, 30, 31, 0.5);
+  --home-bg: #303030;
+  --home-mask-color: rgba(0, 0, 0, 0.2);
+
+  --menu-color: #fff;
+
   --button-linear-gradient: linear-gradient(300deg, #74ebd5 0%, #9face6 100%);
   --button-linear-gradient-h: linear-gradient(300deg, #9face6 0%, #74ebd5 100%);
-  --dark-button-linear-gradient: linear-gradient(300deg, #a286a2 0%, #648faf 100%);
-  --dark-button-linear-gradient-h: linear-gradient(300deg, #648faf 0%, #a286a2 100%);
+
+  --wave-one-color: rgba(255, 255, 255, 0.7);
+  --wave-two-color: rgba(255, 255, 255, 0.5);
+  --wave-three-color: rgba(255, 255, 255, 0.3);
+  --wave-four-color: rgba(255, 255, 255, 1);
+}
+
+html.dark {
+  --font-color: #b8b8b8;
+  --global-gradient: #282828;
+  --card-bg: #303030;
+  --shadow-button-bg: rgba(0, 0, 0, 0.2);
+  --home-bg: #282828;
+  --home-mask-color: rgba(0, 0, 0, 0.4);
+  --music-main-bg: #303030;
+
+  --menu-color: var(--font-color);
+
+  --button-linear-gradient: linear-gradient(300deg, #a286a2 0%, #648faf 100%);
+  --button-linear-gradient-h: linear-gradient(300deg, #648faf 0%, #a286a2 100%);
+
+  --wave-one-color: rgba(40, 40, 40, 0.7);
+  --wave-two-color: rgba(40, 40, 40, 0.5);
+  --wave-three-color: rgba(40, 40, 40, 0.3);
+  --wave-four-color: rgba(40, 40, 40, 1);
 }

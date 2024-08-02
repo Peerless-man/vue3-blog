@@ -1,5 +1,5 @@
 <script lang="ts" setup name="AddEditArticle">
-import MdEditor from "md-editor-v3";
+import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import DocumentChecked from "@iconify-icons/ep/document-checked";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -64,7 +64,7 @@ const {
         </div>
       </el-form-item>
       <el-form-item style="width: 100%; height: auto" prop="article_content">
-        <md-editor
+        <MdEditor
           v-model="articleForm.article_content"
           @onUploadImg="uploadImage"
         />

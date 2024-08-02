@@ -8,6 +8,7 @@ import { getAllTag } from "@/api/tag";
 import { homeGetStatistic } from "@/api/home";
 import { randomFontColor, numberFormate } from "@/utils/tool";
 
+import PageHeader from "@/components/PageHeader/index.vue";
 import HomeArticleList from "@/components/HomeArticle/home-article-list.vue";
 import RightSide from "@/components/RightSide/right-side.vue";
 import MobileTopSkeleton from "@/components/RightSide/components/skeleton/mobile-top-skeleton.vue";
@@ -105,8 +106,8 @@ const init = async () => {
 
 const observeMobileBox = () => {
   nextTick(() => {
-    gsapTransY([".mobile-top-card", ".mobile-bottom-card"], -30, 0.5, "bounce.in");
-    gsapTransY([".mobile-bottom-card"], 30, 0.6, "none");
+    gsapTransY([".mobile-top-card", ".mobile-bottom-card"], -30, 0.3, "bounce.in");
+    gsapTransY([".mobile-bottom-card"], 30, 0.3, "none");
   });
 };
 
@@ -117,6 +118,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <PageHeader />
   <div class="home_center_box">
     <el-row>
       <el-col :xs="24" :sm="18">
@@ -310,6 +312,8 @@ onMounted(async () => {
   .img {
     width: 80px;
     height: 80px;
+    border-radius: 8px;
+    margin-right: 10px;
   }
 }
 </style>

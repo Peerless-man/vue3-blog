@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, computed, reactive, h } from "vue";
+import { onMounted, onBeforeUnmount, computed, reactive, h } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { user } from "@/store/index.js";
 import { storeToRefs } from "pinia";
@@ -7,6 +7,7 @@ import { ElNotification } from "element-plus";
 import MessageBox from "@/components/MessageBox/message-box.vue";
 import SwitchTheme from "@/components/SwitchTheme/index.vue";
 import Login from "./login/login.vue";
+import { debounce } from "@/utils/tool";
 
 const router = useRouter();
 const route = useRoute();
@@ -17,6 +18,7 @@ const headerState = reactive({
   startScrollTop: 0,
   headerClass: "",
   activeIndex: 0,
+  scrollTop: 0,
 });
 
 const getPath = computed(() => {
@@ -68,9 +70,11 @@ const logOut = () => {
 };
 
 // 顶部导航固定
-const scroll = () => {
+const scroll = debounce(() => {
   let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   const { startScrollTop } = headerState;
+  headerState.scrollTop = scrollTop;
+
   if (scrollTop <= 50) {
     headerState.headerClass = "fixed-header";
     headerState.startScrollTop = scrollTop;
@@ -82,16 +86,25 @@ const scroll = () => {
     headerState.headerClass = "hide-header";
   }
   headerState.startScrollTop = scrollTop;
-};
+}, 5);
 
 onMounted(() => {
   // 页面增加滚动事件
   window.addEventListener("scroll", scroll);
 });
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", scroll);
+});
 </script>
 
 <template>
-  <div class="header_box" :class="headerState.headerClass">
+  <div
+    :class="['header_box', headerState.headerClass]"
+    :style="{
+      background: headerState.scrollTop < 50 ? 'transparent' : 'var(--header-bg)',
+    }"
+  >
     <div class="pc_menu flex_r_between">
       <div class="sub-avatar">
         <router-link v-if="getBlogAvatar" to="/"
@@ -106,6 +119,7 @@ onMounted(() => {
           mode="horizontal"
           :default-active="getPath"
           :ellipsis="false"
+          menu-trigger="click"
           @select="(val) => handleSelect(val, 'pc')"
         >
           <el-menu-item index="/home"><i class="iconfont icon-home"></i> 主页</el-menu-item>
@@ -169,7 +183,7 @@ onMounted(() => {
       <div class="flex_r_between">
         <BlogSearch></BlogSearch>
         <el-drawer
-          title="导航"
+          style="background: #484848"
           v-model="headerState.drawerShow"
           direction="ltr"
           :before-close="handleClose"
@@ -277,6 +291,7 @@ onMounted(() => {
 
 .icon-menu2 {
   font-size: 1.4rem;
+  color: var(--menu-color);
 }
 
 .icon-menu {

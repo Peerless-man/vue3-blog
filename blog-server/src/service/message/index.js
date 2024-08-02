@@ -157,6 +157,43 @@ class MessageService {
     };
   }
 
+  /*
+   * 获取所有留言
+   */
+  async getAllMessage() {
+    const { rows, count } = await Message.findAndCountAll({
+      order: [["createdAt", "DESC"]],
+    });
+
+    // 根据用户form_id获取用户当前的昵称和头像
+    const promiseList = rows.map(async (row) => {
+      let res;
+      if (row.user_id) {
+        res = await getOneUserInfo({ id: row.user_id });
+        return res;
+      } else {
+        return {
+          nick_name: row.nick_name,
+          avatar: "",
+        };
+      }
+    });
+
+    await Promise.all(promiseList).then((result) => {
+      result.forEach((r, index) => {
+        if (r) {
+          rows[index].dataValues.nick_name = r.nick_name;
+          rows[index].dataValues.avatar = r.avatar;
+        }
+      });
+    });
+
+    return {
+      list: rows,
+      total: count,
+    };
+  }
+
   /**
    * 获取热门的标签
    */

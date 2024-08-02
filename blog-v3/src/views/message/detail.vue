@@ -4,7 +4,7 @@
 * @Description: 留言详情页
 -->
 <script setup>
-import { reactive, onMounted, h } from "vue";
+import { reactive, onMounted, h, ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { returnTime, _getLocalItem, _setLocalItem, containHTML } from "@/utils/tool";
@@ -13,6 +13,7 @@ import { addLike, cancelLike } from "@/api/like";
 import { user } from "@/store/index";
 
 import { ElNotification } from "element-plus";
+import PageHeader from "@/components/PageHeader";
 
 const userStore = user();
 const { getUserInfo } = storeToRefs(userStore);
@@ -33,7 +34,11 @@ const message = reactive({
   is_like: false,
 });
 
+const likePending = ref(false);
+
 const like = async (item) => {
+  if (likePending.value) return;
+  likePending.value = true;
   // 取消点赞
   if (item.is_like) {
     const res = await cancelLikeMessage(item.id);
@@ -42,6 +47,8 @@ const like = async (item) => {
       await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
       item.like_times--;
       item.is_like = false;
+      likePending.value = false;
+
       ElNotification({
         offset: 60,
         title: "提示",
@@ -57,6 +64,8 @@ const like = async (item) => {
       await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
       item.like_times++;
       item.is_like = true;
+      likePending.value = false;
+
       ElNotification({
         offset: 60,
         title: "提示",
@@ -79,8 +88,11 @@ onMounted(() => {
 });
 </script>
 <template>
+  <PageHeader>
+    <template #route> 留言详情 </template>
+  </PageHeader>
   <div class="message">
-    <div class="center_box !pt-[80px]">
+    <div class="center_box">
       <el-card>
         <div
           :style="{ backgroundColor: message.bg_color }"
@@ -99,6 +111,7 @@ onMounted(() => {
               </div>
             </div>
             <div
+              class="content"
               v-if="containHTML(message.message)"
               v-html="message.message"
               :style="{
@@ -108,6 +121,7 @@ onMounted(() => {
               }"
             ></div>
             <div
+              class="content"
               v-else
               :style="{
                 color: message.color,
@@ -117,21 +131,21 @@ onMounted(() => {
             >
               {{ message.message }}
             </div>
-          </div>
-          <div class="bottom">
-            <div class="left flex items-center">
-              <div class="time">{{ returnTime(message.createdAt) }}前</div>
-              <div class="index-tag">#{{ message.tag }}</div>
-            </div>
-            <div class="flex justify-start items-center option">
-              <svg-icon
-                :name="message.is_like ? 'redHeart' : 'greyHeart'"
-                :width="1.5"
-                @click="like(message, index)"
-              ></svg-icon>
-              <span :style="{ color: message.is_like ? '#f00' : '' }" class="!ml-[5px]">{{
-                message.like_times || 0
-              }}</span>
+            <div class="bottom">
+              <div class="left flex items-center">
+                <div class="time">{{ returnTime(message.createdAt) }}前</div>
+                <div class="index-tag">#{{ message.tag }}</div>
+              </div>
+              <div class="flex justify-start items-center option">
+                <svg-icon
+                  :name="message.is_like ? 'redHeart' : 'greyHeart'"
+                  :width="1.5"
+                  @click="like(message, index)"
+                ></svg-icon>
+                <span :style="{ color: message.is_like ? '#f00' : '' }" class="!ml-[5px]">{{
+                  message.like_times || 0
+                }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -180,8 +194,14 @@ onMounted(() => {
   background-repeat: no-repeat;
 }
 
+.content {
+  word-break: break-all;
+  height: 15rem;
+  overflow: auto;
+}
+
 .top {
-  height: 19rem;
+  height: 22rem;
   padding: 8px;
   overflow: auto;
   white-space: pre-line;
@@ -210,7 +230,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 3rem;
+  height: 2rem;
   padding: 8px;
 }
 .option {

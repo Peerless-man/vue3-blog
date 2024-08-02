@@ -464,7 +464,7 @@ onBeforeUnmount(() => {
   bottom: 0;
   z-index: 2000;
   padding: 35px 0;
-  background-color: var(--global-white);
+  background-color: var(--music-main-bg);
   overflow: hidden;
   display: none;
   background-position: center center;
@@ -567,7 +567,7 @@ onBeforeUnmount(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--shadow-mask-bg);
+    background-color: var(--mask-bg);
     border-radius: 60px;
 
     &-group {
