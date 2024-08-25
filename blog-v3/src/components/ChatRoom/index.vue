@@ -110,8 +110,7 @@ const initWebsocket = async (isReconnect = false) => {
     websocket = null;
   }
 
-  websocket = new WebSocket("ws://mrzym.top/ws/");
-  // websocket = new WebSocket("ws://localhost:8889/");
+  websocket = new WebSocket("ws://localhost:8889/");
 
   if (websocket) {
     websocket.onopen = () => {
