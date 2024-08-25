@@ -5,6 +5,7 @@ import VueDanmaku from "vue3-danmaku";
 
 const vueDanmakuRef = ref(null);
 const danmus = ref([]);
+const loop = ref(false);
 
 const addDanmu = (danmu) => {
   vueDanmakuRef.value && vueDanmakuRef.value.add(danmu);
@@ -14,6 +15,9 @@ const init = () => {
   danmus.value = [];
   getAllMessage().then((res) => {
     danmus.value = res.result.list;
+    if (danmus.value.length > 100) {
+      loop.value = true;
+    }
   });
 };
 
@@ -33,7 +37,7 @@ defineExpose({
     ref="vueDanmakuRef"
     class="!absolute !top-[60px] left-0 w-[100%] !z-[2] h-[calc(100vh-60px)]"
     v-model:danmus="danmus"
-    loop
+    :loop="loop"
     useSlot
     :speeds="60"
     :isSuspend="true"
