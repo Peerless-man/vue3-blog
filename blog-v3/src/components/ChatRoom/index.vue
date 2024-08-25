@@ -448,7 +448,11 @@ onBeforeUnmount(() => {
                         :key="user.user_id"
                         class="flex items-center box-shadow !py-[3px] !mb-[5px]"
                       >
-                        <el-avatar :size="32" class="!mr-[10px]" :src="user.avatar"></el-avatar>
+                        <el-avatar
+                          :size="32"
+                          class="!mr-[10px] min-w-[32px] min-h-[32px]"
+                          :src="user.avatar"
+                        ></el-avatar>
                         <span class="!mr-[10px] nick-name">{{ user.nick_name }}</span>
                         <el-button
                           v-if="getUserInfo.role == 1 && user.user_id != getUserInfo.id"
@@ -542,12 +546,12 @@ onBeforeUnmount(() => {
                       </template>
                     </el-dropdown>
                   </div>
-                  <el-avatar class="!ml-[10px]" :src="message.avatar">{{
+                  <el-avatar class="!ml-[10px] min-w-[32px] min-h-[32px]" :src="message.avatar">{{
                     message.nick_name
                   }}</el-avatar>
                 </div>
                 <div v-else class="flex items-start justify-start">
-                  <el-avatar class="!mr-[10px]" :src="message.avatar">{{
+                  <el-avatar class="!mr-[10px] min-w-[32px] min-h-[32px]" :src="message.avatar">{{
                     message.nick_name
                   }}</el-avatar>
                   <div class="flex flex-col justify-start items-start">
@@ -696,6 +700,7 @@ onBeforeUnmount(() => {
 
         .message-content {
           display: inline-block;
+          word-break: break-all;
           padding: 8px;
           border-radius: 8px;
           background: var(--global-white);
