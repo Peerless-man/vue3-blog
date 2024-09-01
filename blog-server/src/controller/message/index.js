@@ -1,7 +1,7 @@
 const { result, ERRORCODE, throwError } = require("../../result/index");
 const errorCode = ERRORCODE.MESSAGE;
 
-const { addMessage, deleteMessage, getMessageList, getAllMessage, updateMessage, likeMessage, cancelLikeMessage, getMessageTag } = require("../../service/message/index");
+const { addMessage, deleteMessage, getMessageList, getAllMessage, updateMessage, messageLike, cancelMessageLike, getMessageTag } = require("../../service/message/index");
 const { addNotify } = require("../notify/index");
 
 const filterSensitive = require("../../utils/sensitive");
@@ -72,9 +72,9 @@ class MessageController {
   /**
    * 留言点赞
    */
-  async likeMessage(ctx) {
+  async messageLike(ctx) {
     try {
-      const res = await likeMessage(ctx.params.id);
+      const res = await messageLike(ctx.params.id);
 
       ctx.body = result("留言点赞成功", res);
     } catch (err) {
@@ -86,9 +86,9 @@ class MessageController {
   /**
    * 取消留言点赞
    */
-  async cancelLikeMessage(ctx) {
+  async cancelMessageLike(ctx) {
     try {
-      const res = await cancelLikeMessage(ctx.params.id);
+      const res = await cancelMessageLike(ctx.params.id);
 
       ctx.body = result("取消留言点赞成功", res);
     } catch (err) {
@@ -100,7 +100,9 @@ class MessageController {
   // 分页获取留言
   async getMessageList(ctx) {
     try {
-      const res = await getMessageList(ctx.request.body);
+      let ip = ctx.get("X-Real-IP") || ctx.get("X-Forwarded-For") || ctx.ip;
+      ip = ip.split(":").pop();
+      const res = await getMessageList({ ...ctx.request.body, ip });
 
       ctx.body = result("分页获取留言成功", res);
     } catch (err) {

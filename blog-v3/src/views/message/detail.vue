@@ -8,7 +8,6 @@ import { reactive, onMounted, h, ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { returnTime, _getLocalItem, _setLocalItem, containHTML } from "@/utils/tool";
-import { likeMessage, cancelLikeMessage } from "@/api/message";
 import { addLike, cancelLike } from "@/api/like";
 import { user } from "@/store/index";
 
@@ -41,10 +40,9 @@ const like = async (item) => {
   likePending.value = true;
   // 取消点赞
   if (item.is_like) {
-    const res = await cancelLikeMessage(item.id);
+    // 记录留言取消点赞
+    const res = await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
     if (res.code == 0) {
-      // 记录留言取消点赞
-      await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
       item.like_times--;
       item.is_like = false;
       likePending.value = false;
@@ -58,10 +56,9 @@ const like = async (item) => {
   }
   // 点赞
   else {
-    const res = await likeMessage(item.id);
+    // 记录留言点赞
+    const res = await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
     if (res.code == 0) {
-      // 记录留言点赞
-      await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
       item.like_times++;
       item.is_like = true;
       likePending.value = false;
@@ -74,6 +71,7 @@ const like = async (item) => {
     }
   }
   _setLocalItem("message-refresh", true);
+  _setLocalItem("blog-message-item", item);
 };
 
 const commentRefresh = () => {

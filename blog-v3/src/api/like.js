@@ -10,9 +10,9 @@ export const addLike = (data) => {
 };
 
 /** 判断当前用户是否点赞了 */
-export const getIsLikeByIdAndType = (data) => {
+export const getIsLikeByIdOrIpAndType = (data) => {
   return new Promise((resolve, reject) => {
-    http.post("/api/like/getIsLikeByIdAndType", data).then((res) => {
+    http.post("/api/like/getIsLikeByIdOrIpAndType", data).then((res) => {
       resolve(res);
     });
   });

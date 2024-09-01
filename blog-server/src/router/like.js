@@ -5,7 +5,7 @@
 const Router = require("koa-router");
 const router = new Router({ prefix: "/like" });
 
-const { addLike, cancelLike, getIsLikeByIdAndType } = require("../controller/like/index");
+const { addLike, cancelLike, getIsLikeByIdOrIpAndType } = require("../controller/like/index");
 const { createTimesLimiter } = require("../middleware/limit-request/index");
 
 // 点赞
@@ -31,6 +31,6 @@ router.post(
 );
 
 // 获取当前用户对当前文章/说说/留言 是否点赞
-router.post("/getIsLikeByIdAndType", getIsLikeByIdAndType);
+router.post("/getIsLikeByIdOrIpAndType", getIsLikeByIdOrIpAndType);
 
 module.exports = router;

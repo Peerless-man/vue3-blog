@@ -2,7 +2,7 @@ const Comment = require("../../model/comment/comment");
 const { Op } = require("sequelize");
 const { getIpAddress } = require("../../utils/tool");
 const { getOneUserInfo } = require("../user/index");
-const { getIsLikeByIdAndType } = require("../like/index");
+const { getIsLikeByIdAndType, getIsLikeByIpAndType } = require("../like/index");
 
 /**
  * 评论服务层
@@ -36,7 +36,7 @@ class CommentService {
    * 点赞评论
    * @param { id }
    */
-  async thumbUpComment(id) {
+  async commentLike(id) {
     let comment = await Comment.findByPk(id);
     if (comment) {
       await comment.increment("thumbs_up", { by: 1 });
@@ -49,7 +49,7 @@ class CommentService {
    * 取消点赞评论
    * @param { id }
    */
-  async cancelThumbUp(id) {
+  async cancelCommentLike(id) {
     let comment = await Comment.findByPk(id);
     if (comment) {
       await comment.decrement("thumbs_up", { by: 1 });
@@ -182,7 +182,7 @@ class CommentService {
    * @param {*} type 说说还是评论 talk/article
    * @param {*} id 说说/评论id
    */
-  async frontGetParentComment({ current, size, type, for_id, user_id, order }) {
+  async frontGetParentComment({ current, size, type, for_id, user_id, order, ip }) {
     const whereOpt = {};
     const offset = (current - 1) * size;
     const limit = size * 1;
@@ -230,6 +230,15 @@ class CommentService {
           rows[index].dataValues.is_like = r;
         });
       });
+    } else {
+      const promiseLikeList = rows.map((row) => {
+        return getIsLikeByIpAndType({ for_id: row.id, type: 4, ip });
+      });
+      await Promise.all(promiseLikeList).then((result) => {
+        result.forEach((r, index) => {
+          rows[index].dataValues.is_like = r;
+        });
+      });
     }
 
     return {
@@ -246,7 +255,7 @@ class CommentService {
    * @param {*} type 说说还是评论 talk/article
    * @param {*} id 说说/评论id
    */
-  async frontGetChildrenComment({ current, size, type, for_id, user_id, parent_id }) {
+  async frontGetChildrenComment({ current, size, type, for_id, user_id, parent_id, ip }) {
     const whereOpt = {};
     const offset = (current - 1) * size;
     const limit = size * 1;
@@ -310,6 +319,15 @@ class CommentService {
           rows[index].dataValues.is_like = r;
         });
       });
+    } else {
+      const promiseLikeList = rows.map((row) => {
+        return getIsLikeByIpAndType({ for_id: row.id, type: 4, ip });
+      });
+      await Promise.all(promiseLikeList).then((result) => {
+        result.forEach((r, index) => {
+          rows[index].dataValues.is_like = r;
+        });
+      });
     }
 
     return {
@@ -325,11 +343,11 @@ class CommentService {
     const res = await Comment.count({
       where: {
         for_id,
-        type
-      }
-    })
+        type,
+      },
+    });
 
-    return res
+    return res;
   }
 }
 

@@ -18,24 +18,6 @@ export const applyComment = (data) => {
   });
 };
 
-/** 点赞评论 */
-export const thumbUpComment = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/comment/thumbUp/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
-/** 取消点赞评论 */
-export const cancelThumbUp = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/comment/cancelThumbUp/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
 /** 删除自己的评论 */
 export const deleteComment = (id, parent_id = 0) => {
   return new Promise((resolve, reject) => {

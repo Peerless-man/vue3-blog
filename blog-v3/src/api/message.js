@@ -36,24 +36,6 @@ export const updateMessage = (data) => {
   });
 };
 
-/** 点赞留言 */
-export const likeMessage = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/message/like/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
-/** 取消点赞留言 */
-export const cancelLikeMessage = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/message/cancelLike/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
 /** 删除留言 */
 export const deleteMessage = (id) => {
   return new Promise((resolve, reject) => {

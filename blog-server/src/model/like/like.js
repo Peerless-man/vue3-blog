@@ -19,8 +19,13 @@ const Like = seq.define(
     },
     user_id: {
       type: DataTypes.INTEGER,
-      require: true,
+      require: false,
       comment: "点赞用户id",
+    },
+    ip: {
+      type: DataTypes.STRING,
+      require: true,
+      comment: "点赞ip",
     },
     createdAt: {
       type: Sequelize.DATE,

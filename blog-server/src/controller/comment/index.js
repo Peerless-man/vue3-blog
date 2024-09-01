@@ -1,9 +1,9 @@
-const { createComment, applyComment, thumbUpComment, cancelThumbUp, deleteComment, backGetCommentList, frontGetParentComment, frontGetChildrenComment, getCommentTotal } = require("../../service/comment/index");
+const { createComment, applyComment, commentLike, cancelCommentLike, deleteComment, backGetCommentList, frontGetParentComment, frontGetChildrenComment, getCommentTotal } = require("../../service/comment/index");
 
 const { result, ERRORCODE, throwError } = require("../../result/index");
 const errorCode = ERRORCODE.CATEGORY;
 const { addNotify } = require("../notify/index");
-const { getCurrentTypeName } = require("../../utils/tool")
+const { getCurrentTypeName } = require("../../utils/tool");
 
 const filterSensitive = require("../../utils/sensitive");
 
@@ -74,9 +74,9 @@ class CommentController {
   /**
    * 点赞评论
    */
-  async thumbUpComment(ctx) {
+  async commentLike(ctx) {
     try {
-      let res = await thumbUpComment(ctx.params.id);
+      let res = await commentLike(ctx.params.id);
       ctx.body = result("点赞成功", {
         res,
       });
@@ -89,9 +89,9 @@ class CommentController {
   /**
    * 取消点赞评论
    */
-  async cancelThumbUp(ctx) {
+  async cancelCommentLike(ctx) {
     try {
-      let res = await cancelThumbUp(ctx.params.id);
+      let res = await cancelCommentLike(ctx.params.id);
       ctx.body = result("取消点赞成功", {
         res,
       });
@@ -136,8 +136,10 @@ class CommentController {
    */
   async frontGetParentComment(ctx) {
     try {
+      let ip = ctx.get("X-Real-IP") || ctx.get("X-Forwarded-For") || ctx.ip;
+      ip = ip.split(":").pop();
       const { current, size, type, for_id, user_id, order } = ctx.request.body;
-      let res = await frontGetParentComment({ current, size, type, for_id, user_id, order });
+      let res = await frontGetParentComment({ current, size, type, for_id, user_id, order, ip });
       ctx.body = result("分页查找评论成功", res);
     } catch (err) {
       console.error(err);
@@ -150,8 +152,10 @@ class CommentController {
    */
   async frontGetChildrenComment(ctx) {
     try {
+      let ip = ctx.get("X-Real-IP") || ctx.get("X-Forwarded-For") || ctx.ip;
+      ip = ip.split(":").pop();
       const { current, size, type, for_id, user_id, parent_id } = ctx.request.body;
-      let res = await frontGetChildrenComment({ current, size, type, for_id, user_id, parent_id });
+      let res = await frontGetChildrenComment({ current, size, type, for_id, user_id, parent_id, ip });
       ctx.body = result("分页查找子评论成功", res);
     } catch (err) {
       console.error(err);
@@ -160,8 +164,8 @@ class CommentController {
   }
 
   /**
-  * 获取当前评论的总条数
-  */
+   * 获取当前评论的总条数
+   */
   async getCommentTotal(ctx) {
     try {
       const { for_id, type } = ctx.request.body;

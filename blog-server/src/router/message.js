@@ -5,7 +5,7 @@
 const Router = require("koa-router");
 const router = new Router({ prefix: "/message" });
 
-const { addMessage, updateMessage, deleteMessage, likeMessage, cancelLikeMessage, getMessageList, getAllMessage, getMessageTag } = require("../controller/message/index");
+const { addMessage, updateMessage, deleteMessage, messageLike, cancelMessageLike, getMessageList, getAllMessage, getMessageTag } = require("../controller/message/index");
 const { auth, needAdminAuthNotNeedSuper } = require("../middleware/auth/index");
 const { createTimesLimiter } = require("../middleware/limit-request/index");
 
@@ -54,7 +54,7 @@ router.put(
     message: "留言点赞过于频繁 请稍后再试",
     max: 5,
   }),
-  likeMessage
+  messageLike
 );
 
 // 取消点赞留言
@@ -65,7 +65,7 @@ router.put(
     message: "留言点赞过于频繁 请稍后再试",
     max: 5,
   }),
-  cancelLikeMessage
+  cancelMessageLike
 );
 
 // 分页获取留言

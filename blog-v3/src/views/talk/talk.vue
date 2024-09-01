@@ -4,7 +4,7 @@ import { user } from "@/store";
 
 import { returnTime } from "@/utils/tool";
 import { addLike, cancelLike } from "@/api/like";
-import { getTalkList, talkLike, cancelTalkLike } from "@/api/talk";
+import { getTalkList } from "@/api/talk";
 
 import { ElNotification } from "element-plus";
 import TextOverflow from "@/components/TextOverflow/index.vue";
@@ -70,9 +70,8 @@ const like = async (item, index) => {
   likePending.value = true;
   // 取消点赞
   if (item.is_like) {
-    let tRes = await cancelTalkLike(item.id);
-    if (tRes.code == 0) {
-      await cancelLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
+    const res = await cancelLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
+    if (res.code == 0) {
       talkList.value[index].is_like = false;
       talkList.value[index].like_times--;
       likePending.value = false;
@@ -86,9 +85,8 @@ const like = async (item, index) => {
   }
   // 点赞
   else {
-    let tRes = await talkLike(item.id);
-    if (tRes.code == 0) {
-      await addLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
+    const res = await addLike({ for_id: item.id, type: 2, user_id: userStore.getUserInfo.id });
+    if (res.code == 0) {
       talkList.value[index].is_like = true;
       talkList.value[index].like_times++;
       likePending.value = false;

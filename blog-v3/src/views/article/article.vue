@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, reactive, h, nextTick } from "vue";
+import { ref, watch, reactive, h, nextTick, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElNotification } from "element-plus";
 import { staticData, user } from "@/store/index.js";
@@ -8,14 +8,8 @@ import { storeToRefs } from "pinia";
 import { MdPreview, MdCatalog } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 
-import {
-  getArticleById,
-  getRecommendArticleById,
-  readingDuration,
-  articleLike,
-  cancelArticleLike,
-} from "@/api/article";
-import { addLike, cancelLike, getIsLikeByIdAndType } from "@/api/like";
+import { getArticleById, getRecommendArticleById, readingDuration } from "@/api/article";
+import { addLike, cancelLike, getIsLikeByIdOrIpAndType } from "@/api/like";
 
 import Comment from "@/components/Comment/Comment.vue";
 import Tooltip from "@/components/ToolTip/tooltip.vue";
@@ -71,9 +65,12 @@ const like = async () => {
   likePending.value = true;
   // 取消点赞
   if (isLike.value) {
-    let tRes = await cancelArticleLike(route.query.id);
-    if (tRes.code == 0) {
-      await cancelLike({ for_id: articleInfo.value.id, type: 1, user_id: getUserInfo.value.id });
+    let res = await cancelLike({
+      for_id: articleInfo.value.id,
+      type: 1,
+      user_id: getUserInfo.value.id,
+    });
+    if (res.code == 0) {
       articleInfo.value.thumbs_up_times--;
       isLike.value = false;
       likePending.value = false;
@@ -91,9 +88,12 @@ const like = async () => {
   }
   // 点赞
   else {
-    let tRes = await articleLike(route.query.id);
-    if (tRes.code == 0) {
-      await addLike({ for_id: articleInfo.value.id, type: 1, user_id: getUserInfo.value.id });
+    let res = await addLike({
+      for_id: articleInfo.value.id,
+      type: 1,
+      user_id: getUserInfo.value.id,
+    });
+    if (res.code == 0) {
       articleInfo.value.thumbs_up_times++;
       isLike.value = true;
       likePending.value = false;
@@ -111,15 +111,14 @@ const getArticleDetails = async (id) => {
   if (res.code == 0) {
     mdState.text = res.result.article_content;
     articleInfo.value = res.result;
-    if (getUserInfo.value.id) {
-      const res = await getIsLikeByIdAndType({
-        for_id: articleInfo.value.id,
-        type: 1,
-        user_id: getUserInfo.value.id,
-      });
-      if (res.code == 0) {
-        isLike.value = res.result;
-      }
+
+    const LRes = await getIsLikeByIdOrIpAndType({
+      for_id: articleInfo.value.id,
+      type: 1,
+      user_id: getUserInfo.value.id,
+    });
+    if (LRes.code == 0) {
+      isLike.value = LRes.result;
     }
   }
 };
@@ -175,9 +174,7 @@ const observeBox = () => {
 watch(
   () => route,
   (newV) => {
-    if (setUpTimes && lastArticleId) {
-      addReadingDuration(lastArticleId); // 添加阅读时长
-    }
+    // 初始化的时候 记录进来的时间
     setUpTimes = new Date();
     lastArticleId = newV.query.id;
 
@@ -190,6 +187,12 @@ watch(
     deep: true,
   }
 );
+// 用户离开页面时增加阅读时长
+onBeforeUnmount(() => {
+  if (setUpTimes) {
+    addReadingDuration(lastArticleId); // 添加阅读时长
+  }
+});
 </script>
 
 <template>

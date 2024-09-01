@@ -7,7 +7,7 @@ const router = new Router({ prefix: "/comment" });
 
 const { auth, needAdminAuthNotNeedSuper } = require("../middleware/auth/index");
 
-const { addComment, deleteComment, applyComment, thumbUpComment, cancelThumbUp, backGetCommentList, frontGetParentComment, frontGetChildrenComment, getCommentTotal } = require("../controller/comment/index");
+const { addComment, deleteComment, applyComment, commentLike, cancelCommentLike, backGetCommentList, frontGetParentComment, frontGetChildrenComment, getCommentTotal } = require("../controller/comment/index");
 
 const { createTimesLimiter } = require("../middleware/limit-request/index");
 
@@ -41,18 +41,18 @@ router.put(
     message: "点赞过于频繁 请稍后再试",
     max: 10,
   }),
-  thumbUpComment
+  commentLike
 );
 
 // 取消点赞评论
 router.put(
-  "/cancelThumbUp/:id",
+  "/cancelCommentLike/:id",
   createTimesLimiter({
     prefixKey: "post/comment/add",
     message: "取消点赞过于频繁 请稍后再试",
     max: 10,
   }),
-  cancelThumbUp
+  cancelCommentLike
 );
 
 // 前台删除评论

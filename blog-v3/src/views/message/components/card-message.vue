@@ -8,13 +8,7 @@ import { ElNotification, ElMessageBox } from "element-plus";
 
 import { gsapTransXScale } from "@/utils/transform";
 
-import {
-  getMessageList,
-  likeMessage,
-  cancelLikeMessage,
-  deleteMessage,
-  getMessageTag,
-} from "@/api/message";
+import { getMessageList, deleteMessage, getMessageTag } from "@/api/message";
 
 import { addLike, cancelLike } from "@/api/like";
 import svgIcon from "@/components/SvgIcon/index.vue";
@@ -116,12 +110,9 @@ const like = async (item, index) => {
   likePending.value = true;
   // 取消点赞
   if (item.is_like) {
-    const res = await cancelLikeMessage(item.id);
+    // 记录留言取消点赞
+    const res = await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
     if (res.code == 0) {
-      // 记录留言取消点赞
-      if (getUserInfo.value.id) {
-        await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
-      }
       messageList.value[index].like_times--;
       messageList.value[index].is_like = false;
       likePending.value = false;
@@ -135,12 +126,9 @@ const like = async (item, index) => {
   }
   // 点赞
   else {
-    const res = await likeMessage(item.id);
+    // 记录留言点赞
+    const res = await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
     if (res.code == 0) {
-      // 记录留言点赞
-      if (getUserInfo.value.id) {
-        await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
-      }
       messageList.value[index].like_times++;
       messageList.value[index].is_like = true;
       likePending.value = false;

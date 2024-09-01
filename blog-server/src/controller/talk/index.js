@@ -152,8 +152,9 @@ class TalkController {
   async blogGetTalkList(ctx) {
     try {
       const { current, size, user_id } = ctx.request.body;
-
-      let res = await blogGetTalkList(current, size, user_id);
+      let ip = ctx.get("X-Real-IP") || ctx.get("X-Forwarded-For") || ctx.ip;
+      ip = ip.split(":").pop();
+      let res = await blogGetTalkList(current, size, user_id, ip);
       ctx.body = result("获取说说列表成功", res);
     } catch (err) {
       console.error(err);

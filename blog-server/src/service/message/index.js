@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const Message = require("../../model/message/message");
 const { getOneUserInfo } = require("../user/index");
-const { getIsLikeByIdAndType } = require("../like/index");
+const { getIsLikeByIdAndType, getIsLikeByIpAndType } = require("../like/index");
 const { getCommentTotal } = require("../comment/index");
 
 /**
@@ -52,7 +52,7 @@ class MessageService {
    * 点赞留言
    * @param { id }
    */
-  async likeMessage(id) {
+  async messageLike(id) {
     let message = await Message.findByPk(id);
     if (message) {
       await message.increment("like_times", { by: 1 });
@@ -65,7 +65,7 @@ class MessageService {
    * 取消点赞留言
    * @param { id }
    */
-  async cancelLikeMessage(id) {
+  async cancelMessageLike(id) {
     let message = await Message.findByPk(id);
     if (message) {
       await message.decrement("like_times", { by: 1 });
@@ -77,7 +77,7 @@ class MessageService {
   /**
    * 分页获取留言
    */
-  async getMessageList({ current, size, message, time, tag, user_id }) {
+  async getMessageList({ current, size, message, time, tag, user_id, ip }) {
     const offset = (current - 1) * size;
     const limit = size * 1;
     const whereOpt = {};
@@ -131,6 +131,15 @@ class MessageService {
     if (user_id) {
       const promiseLikeList = rows.map((row) => {
         return getIsLikeByIdAndType({ for_id: row.id, type: 3, user_id });
+      });
+      await Promise.all(promiseLikeList).then((result) => {
+        result.forEach((r, index) => {
+          rows[index].dataValues.is_like = r;
+        });
+      });
+    } else {
+      const promiseLikeList = rows.map((row) => {
+        return getIsLikeByIpAndType({ for_id: row.id, type: 3, ip });
       });
       await Promise.all(promiseLikeList).then((result) => {
         result.forEach((r, index) => {

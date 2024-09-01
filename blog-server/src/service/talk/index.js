@@ -2,7 +2,7 @@ const Talk = require("../../model/talk/talk");
 
 const { publishTalkPhoto, deleteTalkPhoto, getPhotoByTalkId } = require("./talkPhoto");
 const { getOneUserInfo } = require("../user/index");
-const { getIsLikeByIdAndType } = require("../like/index");
+const { getIsLikeByIdAndType, getIsLikeByIpAndType } = require("../like/index");
 
 /**
  * 说说服务层
@@ -219,7 +219,7 @@ class TalkService {
   }
 
   // 前台获取说说列表
-  async blogGetTalkList(current, size, user_id) {
+  async blogGetTalkList(current, size, user_id, ip) {
     const offset = (current - 1) * size;
     const limit = size * 1;
 
@@ -268,6 +268,15 @@ class TalkService {
     if (user_id) {
       const promiseLikeList = rows.map((row) => {
         return getIsLikeByIdAndType({ for_id: row.id, type: 2, user_id });
+      });
+      await Promise.all(promiseLikeList).then((result) => {
+        result.forEach((r, index) => {
+          rows[index].dataValues.is_like = r;
+        });
+      });
+    } else {
+      const promiseLikeList = rows.map((row) => {
+        return getIsLikeByIpAndType({ for_id: row.id, type: 2, ip });
       });
       await Promise.all(promiseLikeList).then((result) => {
         result.forEach((r, index) => {

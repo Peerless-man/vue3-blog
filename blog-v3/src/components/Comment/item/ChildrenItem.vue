@@ -1,12 +1,6 @@
 <script setup>
 import { reactive, ref, watch, h } from "vue";
-import {
-  frontGetChildrenComment,
-  applyComment,
-  thumbUpComment,
-  cancelThumbUp,
-  deleteComment,
-} from "@/api/comment";
+import { frontGetChildrenComment, applyComment, deleteComment } from "@/api/comment";
 import { ElNotification, ElMessageBox } from "element-plus";
 
 import Pagination from "@/components/Pagination/pagination.vue";
@@ -108,8 +102,7 @@ const like = async (item, index) => {
   likePending.value = true;
   // 查看点赞了没有，点赞了就进行取消点赞
   if (item.is_like) {
-    res = await cancelThumbUp(item.id);
-    await cancelLike({ for_id: item.id, type: 4, user_id: userStore.getUserInfo.id });
+    res = await cancelLike({ for_id: item.id, type: 4, user_id: userStore.getUserInfo.id });
     if (res && res.code == 0) {
       commentList.value[index].is_like = false;
       commentList.value[index].thumbs_up--;
@@ -121,8 +114,7 @@ const like = async (item, index) => {
       });
     }
   } else {
-    res = await thumbUpComment(item.id);
-    await addLike({ for_id: item.id, type: 4, user_id: userStore.getUserInfo.id });
+    res = await addLike({ for_id: item.id, type: 4, user_id: userStore.getUserInfo.id });
     if (res && res.code == 0) {
       commentList.value[index].is_like = true;
       commentList.value[index].thumbs_up++;

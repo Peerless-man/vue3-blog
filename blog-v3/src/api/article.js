@@ -72,24 +72,6 @@ export const getArticleByContent = (content) => {
   });
 };
 
-/** 文章点赞 */
-export const articleLike = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/article/like/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
-/** 取消文章点赞 */
-export const cancelArticleLike = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/article/cancelLike/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
 /** 文章增加阅读时长 */
 export const readingDuration = (id, duration) => {
   return new Promise((resolve, reject) => {

@@ -8,21 +8,3 @@ export const getTalkList = (param) => {
     });
   });
 };
-
-/** 说说点赞 */
-export const talkLike = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/talk/like/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
-
-/** 取消说说点赞 */
-export const cancelTalkLike = (id) => {
-  return new Promise((resolve, reject) => {
-    http.put("/api/talk/cancelLike/" + id, {}).then((res) => {
-      resolve(res);
-    });
-  });
-};
