@@ -14,7 +14,7 @@ const route = useRoute();
 const staticStore = staticData();
 const { getPageHeaderList } = storeToRefs(staticStore);
 
-const saying = ref(["且做等春树！"]);
+const saying = ref([]);
 const showScrollBottom = ref(true);
 
 gsap.registerPlugin(ScrollTrigger);
@@ -38,6 +38,16 @@ const scrollListener = debounce(() => {
   }
 }, 50);
 
+const initOneSentence = async () => {
+  fetch("https://api.vvhan.com/api/ian/rand?type=json")
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.success) {
+        saying.value = [res.data.content];
+      }
+    });
+};
+
 const initScrollEvent = () => {
   window.addEventListener("scroll", scrollListener);
 };
@@ -55,6 +65,7 @@ const getBgCover = computed(() => {
 });
 
 onMounted(() => {
+  initOneSentence();
   initScrollEvent();
 
   gsap.to(".bg", {
