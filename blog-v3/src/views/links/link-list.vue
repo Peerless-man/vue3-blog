@@ -10,6 +10,7 @@ import { user } from "@/store/index.js";
 import { storeToRefs } from "pinia";
 
 import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 import linkApply from "./link-apply.vue";
 import { _removeLocalItem, _setLocalItem } from "@/utils/tool";
 

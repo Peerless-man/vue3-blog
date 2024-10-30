@@ -3,6 +3,7 @@ import { ref, reactive, onMounted, h } from "vue";
 import { updateUserInfo, updateUserPassword, getUserInfoById, imgUpload } from "@/api/user";
 import { user } from "@/store/index";
 import Upload from "@/components/Upload/upload.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 import { ElNotification, ElMessageBox } from "element-plus";
 import router from "@/router";

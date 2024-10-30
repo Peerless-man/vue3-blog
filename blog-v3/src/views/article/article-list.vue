@@ -7,6 +7,7 @@ import { getArticleListByTagId, getArticleListByCategoryId } from "@/api/article
 import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
 import Tooltip from "@/components/ToolTip/tooltip.vue";
 import Pagination from "@/components/Pagination/pagination.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const router = useRouter();
 const articleList = ref([]);

@@ -3,6 +3,7 @@
 import { ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { frontCategory, backCategory } from "./data";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const router = useRouter();
 const route = useRoute();

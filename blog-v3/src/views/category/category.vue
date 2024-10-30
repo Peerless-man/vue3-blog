@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { getAllCategory } from "@/api/category";
 
 import GsapCount from "@/components/GsapCount/index";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const router = useRouter();
 const categoryList = ref([]);

@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { getAllAlbum } from "@/api/photo";
 
 import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const albumList = ref([]);
 const loading = ref(false);

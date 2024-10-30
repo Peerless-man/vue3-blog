@@ -10,6 +10,7 @@ import { ElNotification } from "element-plus";
 import TextOverflow from "@/components/TextOverflow/index.vue";
 import Comment from "@/components/Comment/Comment.vue";
 import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const userStore = user();
 const talkList = ref([]);

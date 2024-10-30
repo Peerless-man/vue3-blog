@@ -397,6 +397,20 @@ watch(
   }
 );
 
+watch(
+  () => chatVisible.value,
+  (newV) => {
+    if (newV) {
+      document.documentElement.style.overflowY = "hidden";
+    } else {
+      document.documentElement.style.overflowY = "visible";
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+
 onMounted(() => {
   getMessageList();
 });

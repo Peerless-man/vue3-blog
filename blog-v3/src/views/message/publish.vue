@@ -10,6 +10,7 @@ import { ElNotification } from "element-plus";
 import { user } from "@/store/index";
 import { storeToRefs } from "pinia";
 
+import PageHeader from "@/components/PageHeader/index.vue";
 import { addMessage, updateMessage, getMessageTag } from "@/api/message";
 import { _getLocalItem, _removeLocalItem, _setLocalItem } from "@/utils/tool";
 import { debounce } from "@/utils/tool";

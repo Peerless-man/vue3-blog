@@ -3,6 +3,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { frontSite, backSite, frontCategory, backCategory } from "./data";
+import PageHeader from "@/components/PageHeader/index.vue";
 
 const route = useRoute();
 const active = ref(0);
